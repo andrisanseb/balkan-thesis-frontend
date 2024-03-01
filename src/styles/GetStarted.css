@@ -1,0 +1,39 @@
+.get-started-container {
+    /* display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+    height: 100vh;
+    align-content: center;
+    background-image: url('https://www.cassidytravel.ie/images/city_breaks_to_london_4');
+    background-position: center center; */
+
+    background-color: #ccf2ff;
+    background-image: linear-gradient(rgba(4,9,30,0.1),rgba(4,9,30,0.1)),url(https://www.croatiatours-villas.com/uploads/imgcache/large/articles/bosnia-4683579_1920.jpg);
+    background-position: center;
+    background-size: cover;
+    position:relative;
+    height: 90vh;
+
+
+}
+
+.get-started-container > div {
+    width: 48%;
+}
+
+/* p {
+    color:brown;
+    font-size: 30px;
+    background-color: aliceblue;
+} */
+
+@media (max-width: 768px) {
+    .get-started-container {
+        flex-direction: column;
+    }
+
+    .get-started-container > div {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}

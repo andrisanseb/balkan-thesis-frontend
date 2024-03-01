@@ -1,0 +1,50 @@
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 20px 40px;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-left a {
+    margin-right: 20px;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-left a.active {
+    color: dodgerblue;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.username {
+    margin-right: 10px;
+}
+
+.navbar-right a {
+    margin-right: 20px;
+    color: #333;
+    text-decoration: none;
+}
+
+.nav-bar-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}

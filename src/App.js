@@ -1,25 +1,114 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate
+} from "react-router-dom";
 
-function App() {
+import React, { useState, useEffect } from 'react';
+import AuthService from "./services/AuthService";
+import {NavBar} from "./components/Nav";
+import {Footer} from "./components/Footer";
+import {BackButton} from "./components/BackButton";
+import {Profile} from "./components/user/Profile";
+import {GetStarted} from "./components/GetStarted";
+import {LoginForm} from "./components/auth/LoginForm";
+import {RegisterForm} from "./components/auth/RegisterForm";
+import UserDetails from "./components/user/UserDetails";
+import {Header} from "./components/Header";
+import {Logo} from "./components/Logo";
+import {Home} from "./components/Home";
+import DestinationList from "./components/destination/DestinationList";
+import DestinationDetails from "./components/destination/DestinationDetails";
+import PlanNewTrip from "./components/planNewTrip/PlanNewTrip";
+import RoadTripOLD from "./components/planNewTrip/RoadTrip";
+import RoadTripManual from "./components/planNewTrip/RoadTripManual";
+import RoadTrip from "./components/roadTrip/RoadTrip";
+
+
+export default function App() {
+  const location = useLocation();
+  const showNav = location.pathname !== "/";
+  const showBack = location.pathname !== "/";
+  const currentUser = AuthService.getCurrentUser();
+  const navigate = useNavigate();
+  const currentPath = location.pathname;
+
+
+  //ConsumerAPI
+  // const [pois, setPois] = useState([]);
+
+  // useEffect(() => {
+  //   fetchPois();
+  // }, []);
+
+  // const fetchPois = async () => {
+  //   try {
+  //     const response = await fetch('http://localhost:4000/api/pois');
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch POIs');
+  //     }
+  //     const data = await response.json();
+  //     setPois(data);
+  //   } catch (error) {
+  //     console.error('Error fetching POIs:', error);
+  //   }
+  // };
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+        {/* <div>
+      <h1>Points of Interest</h1>
+      <ul>
+        {pois.map(poi => (
+          <li key={poi.xid}>{poi.name}</li>
+        ))}
+      </ul>
+    </div> */}
+      {showNav && (
+        <header>
+          <NavBar />
+        </header>
+      )}
+      {showBack && (
+        <div className="logo-back-button-container">
+          {/* <BackButton /> */}
+          <Header currentPath={currentPath} />
+          {/* <Logo /> */}
+        </div>
+      )}
+      <main>
+        <Routes>
+        <Route path="" element = {<Home />} />
+        <Route path="/get-started" element = {<GetStarted/>} />
+          <Route
+            path="/login"
+            element={
+              currentUser ? <Navigate to="/my-profile" /> : <LoginForm />
+            }
+          />
+          <Route
+            path="/my-profile"
+            element={currentUser ? <Profile /> : <GetStarted />}
+          />
+          <Route path="/logout" element={<Navigate to="/" />} />
+          <Route path="register" element={<RegisterForm />} />
+          <Route path="/users/:id" element={<UserDetails />} />
+          <Route path="/explore/destinations" element={<DestinationList />} />
+          <Route path="/explore/destinations/:id" element={<DestinationDetails />} />
+          <Route path="/roadTrip" element={<RoadTrip />} />
+          <Route path="/planNewTrip" element={<PlanNewTrip />} />
+          <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} />
+          <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} />
+
+
+        </Routes>
+      </main>
+      <footer><Footer /></footer>
+    </>
   );
 }
-
-export default App;

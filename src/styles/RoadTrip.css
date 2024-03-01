@@ -1,0 +1,7 @@
+.choose-roadtrip-container {
+    width: 100%;
+    background-color: red;
+    margin: auto;
+    display: flex;
+    min-height: 80vh;
+}
