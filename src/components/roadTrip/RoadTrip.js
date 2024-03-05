@@ -4,8 +4,9 @@ import AuthService from '../../services/AuthService';
 import  '../../styles/RoadTrip.css';
 import { FaCheck } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
 
-import 'leaflet/dist/leaflet.css';
 
 
 
@@ -117,7 +118,32 @@ const RoadTrip = () => {
             default:
             return null;
         }
-        };
+    };
+
+
+    const MapComponent = () => {
+        return (
+            <div className='map-container'>
+            <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '400px', width: '100%' }} scrollWheelZoom={false}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {/* Add markers for each location */}
+            {/* {selectedDestinations.map(location => (
+              <Marker key={location.id} position={[location.latitude, location.longitude]}>
+                <Popup>{location.name}</Popup>
+              </Marker>
+            ))} */}
+            {/* Display the route */}
+            {/* <Polyline positions={routeCoordinates} color="blue" /> */}
+            <Marker position={[51.505, -0.09]}>
+                <Popup>
+                    A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+            </Marker>
+          </MapContainer>
+            </div>
+
+        );
+      };
 
 
 
@@ -189,8 +215,10 @@ const RoadTrip = () => {
       );
       
       const Card3 = ({ onNext }) => (
+
         <div>
-          <h2>Map</h2>
+            <h2>Card3: Map</h2>
+            <MapWithOpenStreetMapProvider selectedDestinations={selectedDestinations} routeData={routeData} />
         </div>
       );
 
@@ -198,13 +226,9 @@ const RoadTrip = () => {
 
 
     return (
-        <>
         <div>
             {renderCard()}
         </div>
-
-      
-    </>
     );
 
 

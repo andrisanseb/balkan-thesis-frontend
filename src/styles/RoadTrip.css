@@ -5,3 +5,12 @@
     display: flex;
     min-height: 80vh;
 }
+
+
+
+
+.map-container {
+    width: 100%; /* Set the width to 100% of the parent container */
+    position: relative; /* Ensure proper positioning of child elements */
+    overflow: hidden; 
+}

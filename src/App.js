@@ -27,6 +27,7 @@ import PlanNewTrip from "./components/planNewTrip/PlanNewTrip";
 import RoadTripOLD from "./components/planNewTrip/RoadTrip";
 import RoadTripManual from "./components/planNewTrip/RoadTripManual";
 import RoadTrip from "./components/roadTrip/RoadTrip";
+import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMapProvider";
 
 
 export default function App() {
@@ -104,7 +105,7 @@ export default function App() {
           <Route path="/planNewTrip" element={<PlanNewTrip />} />
           <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} />
           <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} />
-
+          <Route path="/test" element={<MapWithOpenStreetMapProvider />} />
 
         </Routes>
       </main>

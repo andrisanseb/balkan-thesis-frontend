@@ -37,6 +37,7 @@ export const NavBar = () => {
                     <NavLink to="/explore">EXPLORE</NavLink>
                     <NavLink to="/roadTrip">ROAD TRIP</NavLink>
                     <NavLink to="/planNewTrip">PLAN NEW TRIP</NavLink>
+                    <NavLink to="/test">Test Component</NavLink>
 
 
                 </div>
