@@ -4,8 +4,12 @@ import  '../styles/Footer.css';
 
 export const Footer = () => {
   return (
-    <footer>
-    <h3>FOOTER SPACE</h3>
+    <footer className="footer">
+      <div className="container">
+        <p className="footer-text">
+          Sebastian Andrisan &copy; {new Date().getFullYear()} | Digital Systems University of Piraeus 
+        </p>
+      </div>
     </footer>
   );
 }
