@@ -7,7 +7,7 @@ export const Footer = () => {
     <footer className="footer">
       <div className="container">
         <p className="footer-text">
-          Your Name &copy; {new Date().getFullYear()} | Your University
+          Sebastian Andrisan &copy; {new Date().getFullYear()} | Digital Systems University of Piraeus 
         </p>
       </div>
     </footer>
