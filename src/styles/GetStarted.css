@@ -21,12 +21,6 @@
     width: 48%;
 }
 
-/* p {
-    color:brown;
-    font-size: 30px;
-    background-color: aliceblue;
-} */
-
 @media (max-width: 768px) {
     .get-started-container {
         flex-direction: column;

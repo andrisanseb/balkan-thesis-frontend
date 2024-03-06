@@ -1,0 +1,110 @@
+/* Floating chat container */
+.floating-chat {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background-color: #007bff;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.4s ease; /* Add transition for smooth animation */
+}
+
+/* Chat icon */
+.chat-icon img {
+    width: 63px; /* Adjust the size of the chat icon */
+    height: 63px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Chat body */
+.chat-body {
+    display: none;
+    position: absolute;
+    bottom: 80px; /* Adjust distance from the bottom as needed */
+    right: 0px; /* Adjust distance from the right as needed */
+    width: 240px;
+    max-height: 300px; /* Limit height of the chat body */
+    overflow-y: auto; /* Add scrollbar when content overflows */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background-color: #f0f0f0; /* Change background color for better contrast */
+    z-index: 999;
+}
+
+/* Open state for chat body */
+.floating-chat.open .chat-body {
+    display: block;
+}
+
+/* Small text at the bottom */
+.floating-chat .small-text {
+    position: absolute;
+    top: -5px;
+    font-size: 12px;
+    color: #0d0e0d;
+    font-weight: 600;
+}
+
+/* Hover effect for chat icon */
+.floating-chat:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+
+
+/* Chat messages */
+.chat-message {
+    margin-bottom: 10px;
+}
+
+/* Bot message */
+.message.right {
+    background-color: #007bff; /* Blue color for user messages */
+    color: #fff; /* White text color */
+    border-top-right-radius: 0;
+    margin-left: auto;
+}
+
+/* User response */
+.message.left {
+    background-color: #cabfbf; /* Light gray color for bot responses */
+    color: #000; /* Black text color */
+    border-top-left-radius: 0;
+    margin-right: auto;
+
+}
+
+/* Message container */
+.message {
+    width: fit-content; /* Adjust width based on content */
+    font-size: 11px;
+    max-width: 88%; /* Limit message width to 80% of chat body */
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+/* Input field */
+.chat-input {
+    width: calc(100% - 60px); /* Adjust width to fit send button */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Send button */
+.send-button {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #070707;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}

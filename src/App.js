@@ -28,6 +28,7 @@ import RoadTripOLD from "./components/planNewTrip/RoadTrip";
 import RoadTripManual from "./components/planNewTrip/RoadTripManual";
 import RoadTrip from "./components/roadTrip/RoadTrip";
 import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMapProvider";
+import Assistant from "./components/Assistant"
 
 
 export default function App() {
@@ -83,6 +84,7 @@ export default function App() {
         </div>
       )}
       <main>
+        <Assistant/>
         <Routes>
         <Route path="" element = {<Home />} />
         <Route path="/get-started" element = {<GetStarted/>} />
