@@ -31,8 +31,17 @@ export const NavBar = () => {
             <div className="navbar-container">
                 <div className="navbar-left">
                     <NavLink to="/get-started">HOME</NavLink>
-                    <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
+                    {/* <NavLink to="/explore/destinations">DESTINATIONS</NavLink> */}
                     <NavLink to="/activities">ACTIVITIES</NavLink>
+                    <div className="dropdown">
+                        <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
+                        <div className="dropdown-content">
+                            <Link to="/explore/popular">Popular</Link>
+                            <Link to="/reviews">Reviews</Link>
+                            <Link to="/fun">Fun</Link>
+                            <Link to="/feed">My Feed</Link>
+                        </div>
+                    </div>
                     {/* <NavLink to="/itineraries">ITINERARIES</NavLink> */}
                     <NavLink to="/explore">EXPLORE</NavLink>
                     <NavLink to="/roadTrip">ROAD TRIP</NavLink>
