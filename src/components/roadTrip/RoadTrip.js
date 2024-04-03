@@ -10,8 +10,11 @@ import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
 
 
 
-const RoadTrip = () => {
-    const [destinations, setDestinations] = useState([]);
+const RoadTrip = ({ destinations }) => {
+    //INFO: lines commented after getting destinations as props.
+
+
+    // const [destinations, setDestinations] = useState([]);
     const [selectedDestinations, setSelectedDestinations] = useState([]);
     const [currentView, setCurrentView] = useState(1);
 
@@ -23,10 +26,8 @@ const RoadTrip = () => {
 
 
 
-
-
     useEffect(() => {
-        fetchDestinations();
+        // fetchDestinations();
         // Clear states when URL changes
         return () => {
             setSelectedDestinations([]);
@@ -36,16 +37,16 @@ const RoadTrip = () => {
     }, [location.pathname]); // Run this effect whenever the location pathname changes
 
 
-    const fetchDestinations = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/destinations');
-            const data = await response.json();
-            setDestinations(data);
-            console.log(data);
-        } catch (error) {
-            console.error('Error fetching destinations:', error);
-        }
-    };
+    // const fetchDestinations = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:4000/destinations');
+    //         const data = await response.json();
+    //         setDestinations(data);
+    //         console.log(data);
+    //     } catch (error) {
+    //         console.error('Error fetching destinations:', error);
+    //     }
+    // };
 
     if (!destinations) {
         return <div>Loading...</div>;

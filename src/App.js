@@ -10,17 +10,17 @@ import {
 
 import React, { useState, useEffect } from 'react';
 import AuthService from "./services/AuthService";
-import {NavBar} from "./components/Nav";
-import {Footer} from "./components/Footer";
-import {BackButton} from "./components/BackButton";
-import {Profile} from "./components/user/Profile";
-import {GetStarted} from "./components/GetStarted";
-import {LoginForm} from "./components/auth/LoginForm";
-import {RegisterForm} from "./components/auth/RegisterForm";
+import { NavBar } from "./components/Nav";
+import { Footer } from "./components/Footer";
+import { BackButton } from "./components/BackButton";
+import { Profile } from "./components/user/Profile";
+import { GetStarted } from "./components/GetStarted";
+import { LoginForm } from "./components/auth/LoginForm";
+import { RegisterForm } from "./components/auth/RegisterForm";
 import UserDetails from "./components/user/UserDetails";
-import {Header} from "./components/Header";
-import {Logo} from "./components/Logo";
-import {Home} from "./components/Home";
+import { Header } from "./components/Header";
+import { Logo } from "./components/Logo";
+import { Home } from "./components/Home";
 import DestinationList from "./components/destination/DestinationList";
 import DestinationDetails from "./components/destination/DestinationDetails";
 import PlanNewTrip from "./components/planNewTrip/PlanNewTrip";
@@ -40,6 +40,36 @@ export default function App() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
+  // fetch all destinations and activities
+  // props passed to components
+  const [destinations, setDestinations] = useState([]);
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    fetchDestinations();
+    fetchActivities();
+  }, []);
+
+
+  const fetchDestinations = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/destinations');
+      const data = await response.json();
+      setDestinations(data);
+    } catch (error) {
+      console.error('Error fetching destinations:', error);
+    }
+  };
+
+  const fetchActivities = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/activities');
+      const data = await response.json();
+      setActivities(data);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  };
 
   //ConsumerAPI
   // const [pois, setPois] = useState([]);
@@ -64,7 +94,7 @@ export default function App() {
 
   return (
     <>
-        {/* <div>
+      {/* <div>
       <h1>Points of Interest</h1>
       <ul>
         {pois.map(poi => (
@@ -85,31 +115,25 @@ export default function App() {
         </div>
       )}
       <main>
-        <Assistant/>
+        <Assistant />
         <Routes>
-        <Route path="" element = {<Home />} />
-        <Route path="/get-started" element = {<GetStarted/>} />
-          <Route
-            path="/login"
-            element={
-              currentUser ? <Navigate to="/my-profile" /> : <LoginForm />
-            }
-          />
-          <Route
-            path="/my-profile"
-            element={currentUser ? <Profile /> : <GetStarted />}
-          />
+          <Route path="" element={<Home />} />
+          <Route path="/get-started" element={<GetStarted />} />
+          <Route path="/login" element={ currentUser ? <Navigate to="/my-profile" /> : <LoginForm /> } />
+          <Route path="/my-profile" element={currentUser ? <Profile /> : <GetStarted />} />
           <Route path="/logout" element={<Navigate to="/" />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="/users/:id" element={<UserDetails />} />
-          <Route path="/explore/destinations" element={<DestinationList />} />
+          <Route path="/explore/destinations" element={<DestinationList destinations={destinations} />} />
           <Route path="/explore/destinations/:id" element={<DestinationDetails />} />
-          <Route path="/roadTrip" element={<RoadTrip />} />
-          <Route path="/planNewTrip" element={<PlanNewTrip />} />
-          <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} />
-          <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} />
-          <Route path="/reviews" element={<Review />} />
-          <Route path="/test" element={<MapWithOpenStreetMapProvider />} />
+          <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
+          <Route path="/reviews" element={<Review destinations={destinations} />} />
+
+          {/* --- old versions - tests --- */}
+          {/* <Route path="/planNewTrip" element={<PlanNewTrip />} /> */}
+          {/* <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} /> */}
+          {/* <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} /> */}
+          {/* <Route path="/test" element={<MapWithOpenStreetMapProvider />} /> */}
 
         </Routes>
       </main>
