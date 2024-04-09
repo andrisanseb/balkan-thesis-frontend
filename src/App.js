@@ -43,7 +43,8 @@ export default function App() {
   // fetch all destinations and activities
   // props passed to components
   const [destinations, setDestinations] = useState([]);
-  const [activities, setActivities] = useState([]);
+  // same as destination.activities
+  const [activities, setActivities] = useState([]); 
 
   useEffect(() => {
     fetchDestinations();

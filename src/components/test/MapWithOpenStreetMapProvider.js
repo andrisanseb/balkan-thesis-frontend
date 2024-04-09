@@ -30,7 +30,7 @@ const MapWithOpenStreetMapProvider = ({ selectedDestinations, routeData }) => {
   }, []); // Empty dependency array ensures this effect runs only once when the component mounts
 
   return (
-    <div id="map" style={{ height: '650px', width: '47%' }}>
+    <div id="map" style={{ height: '650px', width: '100%' }}>
     </div>
   );
 };

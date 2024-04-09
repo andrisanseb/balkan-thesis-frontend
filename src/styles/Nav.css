@@ -12,13 +12,18 @@
 }
 
 .navbar-left a {
-    margin-right: 20px;
+    margin-right: 40px;
     color: #333;
     text-decoration: none;
     font-weight: bold;
+    font-size: 25px;
 }
 
 .navbar-left a.active {
+    text-decoration: underline;
+}
+
+.navbar-left a:hover {
     color: dodgerblue;
 }
 

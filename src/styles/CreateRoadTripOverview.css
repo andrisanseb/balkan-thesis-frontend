@@ -1,0 +1,29 @@
+.activity-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .activity-box {
+    /* width: calc(50% - 10px); */
+    width: 200px;
+    
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .activity-box.selected {
+    border-color: #007bff;
+  }
+  
+  .activity-name {
+    font-weight: bold;
+  }
+  
+  .activity-description,
+  .activity-cost,
+  .activity-duration {
+    margin-top: 5px;
+  }
