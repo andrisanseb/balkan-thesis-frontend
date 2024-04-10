@@ -14,6 +14,7 @@ import {
 import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
 import CreateRoadTripOverview from "./CreateRoadTripOverview";
 import ActivitySelector from "./ActivitySelector";
+import DaysOrganiser from "./DaysOrganiser";
 
 const RoadTrip = ({ destinations }) => {
 
@@ -85,7 +86,7 @@ const RoadTrip = ({ destinations }) => {
 
       const data = await response.json();
       setRouteData(data); // Store route data in state
-    //   console.log(data);
+      //   console.log(data);
     } catch (error) {
       console.error("Error calculating route:", error);
     }
@@ -114,6 +115,8 @@ const RoadTrip = ({ destinations }) => {
         return <Card2 onNext={nextView} />;
       case 3:
         return <Card3 onNext={nextView} />;
+      case 4:
+        return <Card4 onNext={nextView} />;
       default:
         return null;
     }
@@ -229,35 +232,40 @@ const RoadTrip = ({ destinations }) => {
   );
 
   const Card3 = ({ onNext }) => (
-    // <div className="card-container">
-    //   <div className="map-container">
-    //     <h2>Map</h2>
-    //     <MapWithOpenStreetMapProvider
-    //       selectedDestinations={selectedDestinations}
-    //       routeData={routeData}
-    //     />
-    //   </div>
-    //   <div className="activities-container">
-    //     <h2>Activities</h2>
-    //     <CreateRoadTripOverview
-    //       selectedDestinations={selectedDestinations}
-    //       routeData={routeData}
-    //     />
-    //   </div>
-    // </div>
     <div>
-        <ActivitySelector selectedDestinations={selectedDestinations}/>
+      <ActivitySelector selectedDestinations={selectedDestinations} />
+      <button onClick={onNext}>Next, (Show Map)</button>
     </div>
   );
 
-  
-  
-  
-  
-  
-  
-  
-  
+
+  const Card4 = ({ onNext }) => (
+    <div className="create-road-trip-overview-container">
+      <div className="map-container">
+        <h2>Map</h2>
+        <MapWithOpenStreetMapProvider
+          selectedDestinations={selectedDestinations}
+          routeData={routeData}
+        />
+      </div>
+      <div className="planner-container">
+        <DaysOrganiser
+          // selectedDestinations={selectedDestinations}
+          // selectedActivities={selectedActivities}
+          // routeData={routeData}
+        />
+      </div>
+    </div>
+  );
+
+
+
+
+
+
+
+
+
   return <div>{renderCard()}</div>;
 };
 export default RoadTrip;

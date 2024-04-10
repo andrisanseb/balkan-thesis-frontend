@@ -8,24 +8,6 @@ const DestinationList = ({ destinations }) => {
     const currentUser = AuthService.getCurrentUser();
     const navigate = useNavigate();
 
-    // Version: before using props from App.js
-    // const [destinations, setDestinations] = useState([]);
-// 
-    // useEffect(() => {
-    //     fetchDestinations();
-    // }, []);
-
-    // const fetchDestinations = async () => {
-    //     try {
-    //         const response = await fetch('http://localhost:4000/destinations');
-    //         const data = await response.json();
-    //         setDestinations(data);
-    //         console.log(data);
-    //     } catch (error) {
-    //         console.error('Error fetching destinations:', error);
-    //     }
-    // };
-
     if (!destinations) {
         return <div>Loading...</div>;
     }

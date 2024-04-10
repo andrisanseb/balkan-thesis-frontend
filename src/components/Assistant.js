@@ -64,13 +64,11 @@ const Assistant = () => {
 
     return (
         <div className={`floating-chat ${isOpen ? 'open' : ''}`} onClick={toggleChat}>
-            {/* Chat icon */}
             <div className="chat-icon">
                 <img src={icon} alt="Chat Icon" />
             </div>
-            {/* Small text at the bottom */}
             <div className="small-text">GuideAI</div>
-            {/* Chat body */}
+
             {isOpen && (
                 <div className="chat-body" onClick={handleChatBodyClick}>
                     {/* Chat messages */}
@@ -81,9 +79,8 @@ const Assistant = () => {
                             </div>
                         </div>
                     ))}
-                    {/* Loading indicator */}
                     {loading && <div className="loading-indicator">Hmm..</div>}
-                    {/* Message input field */}
+
                     <input
                         type="text"
                         className='chat-input'
@@ -91,7 +88,7 @@ const Assistant = () => {
                         value={message}
                         onChange={handleMessageChange}
                     />
-                    {/* Send message button */}
+
                     <button className='send-button' onClick={handleSendMessage}>
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>

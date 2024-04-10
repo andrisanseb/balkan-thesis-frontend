@@ -1,0 +1,26 @@
+.days-organiser-container {
+    width:100%;
+    margin:20px auto;
+    background-color: rgb(179, 160, 160); /* For browsers that do not support gradients */
+    background-image: linear-gradient(to bottom right,rgb(218, 228, 235), rgb(211, 239, 243));
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+}
+
+.days-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Allow boxes to wrap to the next row */
+    justify-content: center; /* Center boxes horizontally */
+}
+
+.day-box {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+    margin: 10px;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}

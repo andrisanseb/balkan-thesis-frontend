@@ -30,6 +30,8 @@ import RoadTrip from "./components/roadTrip/RoadTrip";
 import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMapProvider";
 import Assistant from "./components/Assistant"
 import Review from "./components/Review";
+import DaysOrganiser from "./components/roadTrip/DaysOrganiser";
+import ActivitiesExplore from "./activities/ActivitiesExplore";
 
 
 export default function App() {
@@ -40,17 +42,11 @@ export default function App() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
-  // fetch all destinations and activities
-  // props passed to components
   const [destinations, setDestinations] = useState([]);
-  // same as destination.activities
-  const [activities, setActivities] = useState([]); 
 
   useEffect(() => {
-    fetchDestinations();
-    fetchActivities();
+    fetchDestinations()
   }, []);
-
 
   const fetchDestinations = async () => {
     try {
@@ -59,16 +55,6 @@ export default function App() {
       setDestinations(data);
     } catch (error) {
       console.error('Error fetching destinations:', error);
-    }
-  };
-
-  const fetchActivities = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/activities');
-      const data = await response.json();
-      setActivities(data);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
     }
   };
 
@@ -129,12 +115,13 @@ export default function App() {
           <Route path="/explore/destinations/:id" element={<DestinationDetails />} />
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
           <Route path="/reviews" element={<Review destinations={destinations} />} />
+          <Route path="/activities" element={<ActivitiesExplore />} />
 
           {/* --- old versions - tests --- */}
           {/* <Route path="/planNewTrip" element={<PlanNewTrip />} /> */}
           {/* <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} /> */}
           {/* <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} /> */}
-          {/* <Route path="/test" element={<MapWithOpenStreetMapProvider />} /> */}
+          <Route path="/test" element={<DaysOrganiser />} />
 
         </Routes>
       </main>
