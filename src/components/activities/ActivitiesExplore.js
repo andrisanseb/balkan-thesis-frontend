@@ -45,16 +45,16 @@ const ActivitiesExplore = () => {
     useEffect(() => {
         console.log("Selected category changed:", selectedCategory);
         switch (selectedCategory) {
-            case 1: setSelectedImage(process.env.PUBLIC_URL +'/airplane.jpg'); break;
-            case 2: setSelectedImage('https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'); break;
-            case 3: setSelectedImage(process.env.PUBLIC_URL +'/airplane.jpg'); break;
-            case 4: setSelectedImage(process.env.PUBLIC_URL +'/airplane.jpg'); break;
-            case 5: setSelectedImage(process.env.PUBLIC_URL +'/airplane.jpg'); break;
+            case 1: setSelectedImage(process.env.PUBLIC_URL +'/images/culture.jpg'); break;
+            case 2: setSelectedImage(process.env.PUBLIC_URL +'/images/gastronomy.jpg'); break;
+            case 3: setSelectedImage(process.env.PUBLIC_URL +'/images/nature.jpg'); break;
+            case 4: setSelectedImage(process.env.PUBLIC_URL +'/images/culture.jpg'); break;
+            case 5: setSelectedImage('https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'); break;
             default: setSelectedImage('https://www.sarahdegheselle.com/wp-content/uploads/2018/10/balkan-campers-88-scaled.jpg'); break;
         }
     }, [selectedCategory]); // Run this effect whenever selectedCategory changes
 
-    
+
     // Star - Reviews
     // const calculateStarRating = (activity) => {
     //     const activityReviews = reviews.filter(review => review.activity_id === activity.id);
