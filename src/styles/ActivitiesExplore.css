@@ -1,0 +1,73 @@
+.experiences-section {
+    padding: 20px;
+}
+
+.content-section {
+    margin-top: 20px;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.category-menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.category-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 30px;
+}
+
+.category-button:hover {
+    background-color: #0056b3;
+}
+
+.category-button.active {
+    color: red;
+}
+
+.image-container {
+    width: 100%;
+    overflow: hidden;
+    max-height: 300px;
+}
+
+.category-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+
+
+/* Reviews */
+.star-container {
+    width: 100px;
+    /* Adjust width of star */
+    height: 20px;
+    /* Adjust height of star */
+    background-color: #f0f0f0;
+    /* Empty star color */
+    position: relative;
+    overflow: hidden;
+}
+
+.star-filled {
+    width: 0;
+    height: 100%;
+    background-color: #ffd700;
+    /* Filled star color */
+    position: absolute;
+    top: 0;
+    left: 0;
+}

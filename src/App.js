@@ -31,7 +31,7 @@ import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMap
 import Assistant from "./components/Assistant"
 import Review from "./components/Review";
 import DaysOrganiser from "./components/roadTrip/DaysOrganiser";
-import ActivitiesExplore from "./activities/ActivitiesExplore";
+import ActivitiesExplore from "./components/activities/ActivitiesExplore";
 
 
 export default function App() {
@@ -115,7 +115,7 @@ export default function App() {
           <Route path="/explore/destinations/:id" element={<DestinationDetails />} />
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
           <Route path="/reviews" element={<Review destinations={destinations} />} />
-          <Route path="/activities" element={<ActivitiesExplore />} />
+          <Route path="/experiences" element={<ActivitiesExplore />} />
 
           {/* --- old versions - tests --- */}
           {/* <Route path="/planNewTrip" element={<PlanNewTrip />} /> */}

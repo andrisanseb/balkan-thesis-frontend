@@ -29,16 +29,6 @@ const Review = ({ destinations }) => {
   const selectedType = 1;
   const selectedId = 1;
 
-
-  // TODO: get destinations and activities from the startup load
-  // useEffect(() => {
-  //     // fetchDestinations();
-  //     // fetchActivities();
-  //     // fetchReviews();
-  // }, []);
-
-
-
   const handleReviewChange = (e) => {
     setStars(parseInt(e.target.value));
   };

@@ -1,48 +1,48 @@
 .activities {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .activity-box {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 10px;
-    width: calc(33.33% - 20px); 
-    box-sizing: border-box;
-    cursor: pointer;
-    position: relative;
-  }
-  
-  .activity-box:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .activity-box.selected {
-    border-color: #007bff; 
-  }
-  
-  .activity-name {
-    font-weight: bold;
-  }
-  
-  .activity-description {
-    margin-top: 5px;
-    font-size: 14px;
-  }
-  
-  .activity-cost {
-    margin-top: 5px;
-    font-style: italic;
-  }
-  
-  .activity-duration {
-    margin-top: 5px;
-  }
-  
-  .checkmark {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    color: green; 
-  }
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.activity-box {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px;
+  width: calc(33.33% - 20px);
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+}
+
+.activity-box:hover {
+  background-color: #f0f0f0;
+}
+
+.activity-box.selected {
+  border-color: #007bff;
+}
+
+.activity-name {
+  font-weight: bold;
+}
+
+.activity-description {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.activity-cost {
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.activity-duration {
+  margin-top: 5px;
+}
+
+.checkmark {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: green;
+}

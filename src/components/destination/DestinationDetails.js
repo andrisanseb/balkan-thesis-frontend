@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import AuthService from '../../services/AuthService';
-import  '../../styles/DestinationDetails.css';
+// import  '../../styles/DestinationDetails.css';
 
 
 const DestinationDetails = () => {

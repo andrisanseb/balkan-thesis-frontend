@@ -1,9 +1,8 @@
 .days-organiser-container {
     width:100%;
     margin:20px auto;
-    background-color: rgb(179, 160, 160); /* For browsers that do not support gradients */
+    background-color: rgb(179, 160, 160);
     background-image: linear-gradient(to bottom right,rgb(218, 228, 235), rgb(211, 239, 243));
-
     display: flex;
     flex-direction: column;
     align-items: center; /* Center horizontally */
@@ -13,14 +12,58 @@
     display: flex;
     flex-wrap: wrap; /* Allow boxes to wrap to the next row */
     justify-content: center; /* Center boxes horizontally */
+    gap: 20px;
+}
+
+.day-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.activity {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: grab;
+}
+
+.activity:hover {
+    background-color: #e0e0e0;
+}
+
+.activity.dragging {
+    opacity: 0.5;
 }
 
 .day-box {
-    width: 200px;
-    height: 200px;
+    position: relative;
     border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    width: 200px;
     margin: 10px;
+}
+
+.remove-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: transparent;
+    color: #110404;
+    border: none;
+    width: 25px;
+    height: 25px;
+    font-size: 21px;
+    cursor: pointer;
     display: flex;
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.remove-button:hover {
+    color: #d32f2f;
 }
