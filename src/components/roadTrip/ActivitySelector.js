@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import "../../styles/ActivitySelector.css";
 
-const ActivitySelector = ({ selectedDestinations }) => {
+const ActivitySelector = ({ selectedDestinations, onSelectedActivitiesChange}) => {
 
   const [selectedActivities, setSelectedActivities] = useState([]);
 
@@ -21,6 +21,7 @@ const ActivitySelector = ({ selectedDestinations }) => {
 
   const handleSubmit = () => {
     console.log("Selected activities:", selectedActivities);
+    onSelectedActivitiesChange(selectedActivities);
   };
 
   // Flatten the selectedDestinations array and shuffle the activities
@@ -65,7 +66,7 @@ const ActivitySelector = ({ selectedDestinations }) => {
           )}
         </div>
       ))}
-      <button onClick={handleSubmit}>Submit</button>
+      <button onClick={handleSubmit}>Submit Activities to DaysPlanner</button>
     </div>
   );
 };

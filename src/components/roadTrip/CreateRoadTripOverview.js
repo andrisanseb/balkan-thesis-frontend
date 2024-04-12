@@ -21,7 +21,9 @@ const CreateRoadTripOverview = ({ selectedDestinations }) => {
     setSelectedActivities((prevSelectedActivities) => {
       const isSelected = prevSelectedActivities.includes(activity);
       return isSelected
-        ? prevSelectedActivities.filter((selectedActivity) => selectedActivity !== activity)
+        ? prevSelectedActivities.filter(
+            (selectedActivity) => selectedActivity !== activity
+          )
         : [...prevSelectedActivities, activity];
     });
   };
@@ -41,7 +43,9 @@ const CreateRoadTripOverview = ({ selectedDestinations }) => {
           {activities.map((activity) => (
             <div
               key={activity.id}
-              className={`activity-box ${selectedActivities.includes(activity) ? 'selected' : ''}`}
+              className={`activity-box ${
+                selectedActivities.includes(activity) ? "selected" : ""
+              }`}
               onClick={() => toggleActivitySelection(activity)}
             >
               <p className="activity-name">{activity.name}</p>
@@ -64,7 +68,9 @@ const CreateRoadTripOverview = ({ selectedDestinations }) => {
                   {activity.duration !== 1 ? "s" : ""}
                 </p>
               )}
-              {selectedActivities.includes(activity) && <FaCheck className="checkmark" />}
+              {selectedActivities.includes(activity) && (
+                <FaCheck className="checkmark" />
+              )}
             </div>
           ))}
         </div>

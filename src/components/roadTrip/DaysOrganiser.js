@@ -67,36 +67,23 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
 
-const DaysOrganiser = () => {
+const DaysOrganiser = ({selectedActivities}) => {
     const [daysData, setDaysData] = useState([]);
     const [totalDays, setTotalDays] = useState(3);
 
     useEffect(() => {
         distributeActivitiesRandomly();
+        console.log(selectedActivities);
     }, []);
 
     // useEffect(() => {
     //     distributeActivitiesRandomly();
     // }, [totalDays]);
 
-    const generateDummyActivities = () => {
-        // Generate dummy activities
-        const dummyActivities = [
-            { id: 1, name: "Activity 1" },
-            { id: 2, name: "Activity 2" },
-            { id: 3, name: "Activity 3" },
-            { id: 4, name: "Activity 4" },
-            { id: 5, name: "Activity 5" }
-        ];
-
-        return dummyActivities;
-    };
-
     const distributeActivitiesRandomly = () => {
-        const dummyActivities = generateDummyActivities();
         const days = Array.from({ length: totalDays }, () => ({ activities: [] }));
 
-        dummyActivities.forEach((activity) => {
+        selectedActivities.forEach((activity) => {
             const randomDayIndex = Math.floor(Math.random() * totalDays);
             days[randomDayIndex].activities.push(activity);
         });
@@ -183,7 +170,7 @@ const DaysOrganiser = () => {
                 <div className="days-wrapper">{renderDayBoxes()}</div>
                 <div className="buttons">
                     <button onClick={addDay}>Add Day</button>
-                    <button onClick={handleSubmit}>Submit</button>
+                    <button onClick={handleSubmit}>Submit to Db not ready</button>
                 </div>
             </div>
         </DragDropContext>

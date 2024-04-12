@@ -43,7 +43,7 @@ export const NavBar = () => {
                     </div>
                     <NavLink to="/experiences">EXPERIENCES</NavLink>
                     <NavLink to="/roadTrip">ROAD TRIP</NavLink>
-                    <NavLink to="/test">Test</NavLink>
+                    {/* <NavLink to="/test">Test</NavLink> */}
                     {/* <NavLink to="/itineraries">ITINERARIES</NavLink> */}
                     {/* <NavLink to="/explore">EXPLORE</NavLink> */}
                     {/* <NavLink to="/planNewTrip">PLAN NEW TRIP</NavLink> */}

@@ -19,6 +19,7 @@ import DaysOrganiser from "./DaysOrganiser";
 const RoadTrip = ({ destinations }) => {
 
   const [selectedDestinations, setSelectedDestinations] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
   const [currentView, setCurrentView] = useState(1);
 
   const location = useLocation();
@@ -40,6 +41,10 @@ const RoadTrip = ({ destinations }) => {
   if (!destinations) {
     return <div>Loading...</div>;
   }
+
+  const handleSelectedActivitiesChange = (activities) => {
+    setSelectedActivities(activities);
+  };
 
   const addSelectedDestination = (destination) => {
     setSelectedDestinations((prevSelectedDestinations) => [
@@ -233,16 +238,20 @@ const RoadTrip = ({ destinations }) => {
 
   const Card3 = ({ onNext }) => (
     <div>
-      <ActivitySelector selectedDestinations={selectedDestinations} />
-      <button onClick={onNext}>Next, (Show Map)</button>
+      <ActivitySelector selectedDestinations={selectedDestinations} onSelectedActivitiesChange={handleSelectedActivitiesChange}/>
+      <button onClick={onNext}>Submit First, Proceed to Overview</button>
     </div>
   );
+
+
+  const createRoadTrip = () => {
+    // submit to db
+  }
 
 
   const Card4 = ({ onNext }) => (
     <div className="create-road-trip-overview-container">
       <div className="map-container">
-        <h2>Map</h2>
         <MapWithOpenStreetMapProvider
           selectedDestinations={selectedDestinations}
           routeData={routeData}
@@ -250,11 +259,14 @@ const RoadTrip = ({ destinations }) => {
       </div>
       <div className="planner-container">
         <DaysOrganiser
-          // selectedDestinations={selectedDestinations}
-          // selectedActivities={selectedActivities}
+          selectedDestinations={selectedDestinations}
+          selectedActivities={selectedActivities}
           // routeData={routeData}
         />
       </div>
+      {/* <div className="button-container">
+        <button onClick={createRoadTrip()}>Create RoadTrip</button>
+      </div> */}
     </div>
   );
 
