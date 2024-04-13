@@ -23,7 +23,6 @@ import { Logo } from "./components/Logo";
 import { Home } from "./components/Home";
 import DestinationList from "./components/destination/DestinationList";
 import DestinationDetails from "./components/destination/DestinationDetails";
-import PlanNewTrip from "./components/planNewTrip/PlanNewTrip";
 import RoadTripOLD from "./components/planNewTrip/RoadTrip";
 import RoadTripManual from "./components/planNewTrip/RoadTripManual";
 import RoadTrip from "./components/roadTrip/RoadTrip";
@@ -118,7 +117,6 @@ export default function App() {
           <Route path="/experiences" element={<ActivitiesExplore />} />
 
           {/* --- old versions - tests --- */}
-          {/* <Route path="/planNewTrip" element={<PlanNewTrip />} /> */}
           {/* <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} /> */}
           {/* <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} /> */}
           <Route path="/test" element={<DaysOrganiser />} />

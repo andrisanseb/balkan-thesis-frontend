@@ -5,9 +5,6 @@ import  '../../styles/DestinationsList.css';
 
 
 const DestinationList = ({ destinations }) => {
-    const currentUser = AuthService.getCurrentUser();
-    const navigate = useNavigate();
-
     if (!destinations) {
         return <div>Loading...</div>;
     }
@@ -21,7 +18,6 @@ const DestinationList = ({ destinations }) => {
                         let destination_img = process.env.PUBLIC_URL +'/images/destination/'+destination.img_path;
                         let country_flag_img = process.env.PUBLIC_URL +'/images/country/flags/'+destination.country.name.slice(0,3).toLowerCase()+'.png';
                         let destination_details_path = "/explore/destinations/"+destination.id;
-                        // console.log(destination_details_path);
                             return (
                                 <div key={destination.id} className='card' style={{backgroundImage: "url(" + destination_img + ")"}}>
                                     <div className='card-content'>

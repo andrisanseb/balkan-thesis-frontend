@@ -1,16 +1,19 @@
 .days-organiser-container {
     /* width:100%; */
     background-color: rgb(179, 160, 160);
-    background-image: linear-gradient(to bottom right,rgb(218, 228, 235), rgb(211, 239, 243));
+    background-image: linear-gradient(to bottom right, rgb(218, 228, 235), rgb(211, 239, 243));
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center horizontally */
+    align-items: center;
+    /* Center horizontally */
 }
 
 .days-wrapper {
     display: flex;
-    flex-wrap: wrap; /* Allow boxes to wrap to the next row */
-    justify-content: center; /* Center boxes horizontally */
+    flex-wrap: wrap;
+    /* Allow boxes to wrap to the next row */
+    justify-content: center;
+    /* Center boxes horizontally */
     gap: 12px;
 }
 
@@ -69,5 +72,25 @@
 }
 
 ul {
-    padding-inline-start: 0px;  /* cancels default ul css */
+    padding-inline-start: 0px;
+    /* cancels default ul css */
+}
+
+.activity-summary {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.activity-summary p {
+    margin: 0;
+}
+
+.summary-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.duration,
+.cost {
+    font-size: 14px;
 }

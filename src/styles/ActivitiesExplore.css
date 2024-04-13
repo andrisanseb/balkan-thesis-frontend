@@ -25,15 +25,13 @@
     padding: 10px 20px;
     margin: 5px;
     border-radius: 30px;
+    font-weight: 700;
 }
 
 .category-button:hover {
     background-color: #0056b3;
 }
 
-.category-button.active {
-    color: red;
-}
 
 .image-container {
     width: 100%;
@@ -47,27 +45,6 @@
     display: block;
 }
 
-
-
-
-/* Reviews */
-.star-container {
-    width: 100px;
-    /* Adjust width of star */
-    height: 20px;
-    /* Adjust height of star */
-    background-color: #f0f0f0;
-    /* Empty star color */
-    position: relative;
-    overflow: hidden;
-}
-
-.star-filled {
-    width: 0;
-    height: 100%;
-    background-color: #ffd700;
-    /* Filled star color */
-    position: absolute;
-    top: 0;
-    left: 0;
+.active-button {
+    color: red;
 }
