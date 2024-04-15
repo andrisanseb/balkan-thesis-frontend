@@ -17,17 +17,19 @@ import ActivitySelector from "./ActivitySelector";
 import DaysOrganiser from "./DaysOrganiser";
 
 const RoadTrip = ({ destinations }) => {
-
   const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [currentView, setCurrentView] = useState(1);
+  const [daysData, setDaysData] = useState(null);
 
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const currentUser = AuthService.getCurrentUser();
   const location = useLocation();
 
   // Route
   const apiKey = "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
   const [routeData, setRouteData] = useState(null);
-
 
   useEffect(() => {
     // Clear states when URL changes
@@ -35,6 +37,7 @@ const RoadTrip = ({ destinations }) => {
       setSelectedDestinations([]);
       setCurrentView(1);
       setRouteData(null);
+      setDaysData(null);
     };
   }, [location.pathname]); // Run this effect whenever the location pathname changes
 
@@ -44,6 +47,10 @@ const RoadTrip = ({ destinations }) => {
 
   const handleSelectedActivitiesChange = (activities) => {
     setSelectedActivities(activities);
+  };
+
+  const handleDaysDataChange = (days) => {
+    setDaysData(days);
   };
 
   const addSelectedDestination = (destination) => {
@@ -63,7 +70,6 @@ const RoadTrip = ({ destinations }) => {
   const nextView = () => {
     setCurrentView(currentView + 1);
   };
-
 
   // API: Calculates Route Between Selected Destinations
   const calculateRoute = async () => {
@@ -104,7 +110,6 @@ const RoadTrip = ({ destinations }) => {
           <h2>Route Data</h2>
           <p>Distance: {routeData.routes[0].summary.distance} meters</p>
           <p>Duration: {routeData.routes[0].summary.duration} seconds</p>
-          {/* You can display more route information here */}
         </div>
       );
     } else {
@@ -127,33 +132,33 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-  const MapComponent = () => {
-    return (
-      <div className="map-container">
-        <MapContainer
-          center={[51.505, -0.09]}
-          zoom={13}
-          style={{ height: "400px", width: "100%" }}
-          scrollWheelZoom={false}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {/* Add markers for each location */}
-          {/* {selectedDestinations.map(location => (
-              <Marker key={location.id} position={[location.latitude, location.longitude]}>
-                <Popup>{location.name}</Popup>
-              </Marker>
-            ))} */}
-          {/* Display the route */}
-          {/* <Polyline positions={routeCoordinates} color="blue" /> */}
-          <Marker position={[51.505, -0.09]}>
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </div>
-    );
-  };
+  // const MapComponent = () => {
+  //   return (
+  //     <div className="map-container">
+  //       <MapContainer
+  //         center={[51.505, -0.09]}
+  //         zoom={13}
+  //         style={{ height: "400px", width: "100%" }}
+  //         scrollWheelZoom={false}
+  //       >
+  //         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+  //         {/* Add markers for each location */}
+  //         {/* {selectedDestinations.map(location => (
+  //             <Marker key={location.id} position={[location.latitude, location.longitude]}>
+  //               <Popup>{location.name}</Popup>
+  //             </Marker>
+  //           ))} */}
+  //         {/* Display the route */}
+  //         {/* <Polyline positions={routeCoordinates} color="blue" /> */}
+  //         <Marker position={[51.505, -0.09]}>
+  //           <Popup>
+  //             A pretty CSS3 popup. <br /> Easily customizable.
+  //           </Popup>
+  //         </Marker>
+  //       </MapContainer>
+  //     </div>
+  //   );
+  // };
 
   const Card1 = ({ onNext }) => (
     <div>
@@ -238,16 +243,42 @@ const RoadTrip = ({ destinations }) => {
 
   const Card3 = ({ onNext }) => (
     <div>
-      <ActivitySelector selectedDestinations={selectedDestinations} onSelectedActivitiesChange={handleSelectedActivitiesChange}/>
+      <ActivitySelector
+        selectedDestinations={selectedDestinations}
+        onSelectedActivitiesChange={handleSelectedActivitiesChange}
+      />
       <button onClick={onNext}>Submit First, Proceed to Overview</button>
     </div>
   );
 
-
+  //TODO: debug! (check parameters - make it async (e)? - remove try?)
+  // break it! post 1 time only.
   const createRoadTrip = () => {
-    // submit to db
-  }
+    try {
+      const response = fetch("http://localhost:4000/roadTrip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name:"name",
+          description:"description",
+          user_id: currentUser.id,
+          route: null,
+          days: null,
+        }),
+      });
 
+      if (response.ok) {
+        // navigate("/my-roadtrips");
+        console.log("created!");
+      } else {
+        throw new Error("Road Trip creation failed.");
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   const Card4 = ({ onNext }) => (
     <div className="create-road-trip-overview-container">
@@ -261,22 +292,15 @@ const RoadTrip = ({ destinations }) => {
         <DaysOrganiser
           selectedDestinations={selectedDestinations}
           selectedActivities={selectedActivities}
+          handleDaysDataChange={handleDaysDataChange}
           // routeData={routeData}
         />
       </div>
-      {/* <div className="button-container">
+      <div className="button-container">
         <button onClick={createRoadTrip()}>Create RoadTrip</button>
-      </div> */}
+      </div>
     </div>
   );
-
-
-
-
-
-
-
-
 
   return <div>{renderCard()}</div>;
 };

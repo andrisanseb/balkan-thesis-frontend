@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
 
-const DaysOrganiser = ({ selectedActivities }) => {
+const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(3);
 
   useEffect(() => {
     distributeActivitiesRandomly();
-    console.log(selectedActivities);
+    // console.log(selectedActivities);
   }, []);
 
   useEffect(() => {
@@ -65,14 +65,13 @@ const DaysOrganiser = ({ selectedActivities }) => {
   };
 
   const renderDayBoxes = () => {
+
     return daysData.map((day, index) => {
-      // Calculate total cost for the day
       const totalCost = day.activities.reduce(
         (acc, activity) => acc + activity.cost,
         0
       );
 
-      // Calculate total duration for the day
       const totalDuration = day.activities.reduce(
         (acc, activity) => acc + activity.duration,
         0
@@ -146,6 +145,8 @@ const DaysOrganiser = ({ selectedActivities }) => {
 
   const handleSubmit = () => {
     // Handle form submission
+    handleDaysDataChange(JSON.stringify(daysData));
+    console.log(daysData);
   };
 
   const updateTotal = () => {
@@ -160,7 +161,7 @@ const DaysOrganiser = ({ selectedActivities }) => {
         <div className="days-wrapper">{renderDayBoxes()}</div>
         <div className="buttons">
           <button onClick={addDay}>Add Day</button>
-          <button onClick={handleSubmit}>Submit to Db not ready</button>
+          <button onClick={handleSubmit}>Save the daysData</button>
         </div>
       </div>
     </DragDropContext>
