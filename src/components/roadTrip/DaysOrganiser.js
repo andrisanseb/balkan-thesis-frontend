@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
+import { FaClock } from "react-icons/fa";
 
-const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
+const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) => {
   const [daysData, setDaysData] = useState([]);
-  const [totalDays, setTotalDays] = useState(3);
+  const [totalDays, setTotalDays] = useState(selectedActivities.length);
 
   useEffect(() => {
     distributeActivitiesRandomly();
@@ -65,7 +66,6 @@ const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
   };
 
   const renderDayBoxes = () => {
-
     return daysData.map((day, index) => {
       const totalCost = day.activities.reduce(
         (acc, activity) => acc + activity.cost,
@@ -77,7 +77,6 @@ const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
         0
       );
 
-      // Helper function to format duration nicely
       const formatDuration = (duration) => {
         if (duration >= 60) {
           const hours = Math.floor(duration / 60);
@@ -120,7 +119,17 @@ const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          {activity.name}
+                          <span className="activity-name">{activity.name}</span>
+                          <div className="activity-details">
+                            <p className="duration">
+                              <FaClock /> {formatDuration(activity.duration)}
+                            </p>
+                            <p className="cost">
+                              {activity.cost === 0
+                                ? "free"
+                                : `${activity.cost} €`}
+                            </p>
+                          </div>
                         </li>
                       )}
                     </Draggable>
@@ -130,12 +139,14 @@ const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
             )}
           </Droppable>
           <div className="activity-summary">
-            <p>Activities</p>
+            <p>Total:</p>
             <div className="summary-details">
               <p className="duration">
-                duration: {formatDuration(totalDuration)}
+                <FaClock /> {formatDuration(totalDuration)}
               </p>
-              <p className="cost">cost: {totalCost} €</p>
+              <p className="cost">
+                {totalCost === 0 ? "free" : `${totalCost} €`}
+              </p>
             </div>
           </div>
         </div>
@@ -144,7 +155,6 @@ const DaysOrganiser = ({ selectedActivities , handleDaysDataChange}) => {
   };
 
   const handleSubmit = () => {
-    // Handle form submission
     handleDaysDataChange(JSON.stringify(daysData));
     console.log(daysData);
   };

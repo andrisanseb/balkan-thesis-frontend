@@ -11,9 +11,7 @@
 .days-wrapper {
     display: flex;
     flex-wrap: wrap;
-    /* Allow boxes to wrap to the next row */
     justify-content: center;
-    /* Center boxes horizontally */
     gap: 12px;
 }
 
@@ -31,6 +29,7 @@
     margin-bottom: 10px;
     cursor: grab;
     list-style-type: none;
+    font-size: 14px;
 }
 
 .activity:hover {
@@ -93,4 +92,19 @@ ul {
 .duration,
 .cost {
     font-size: 14px;
+}
+
+.activity-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.activity-name {
+    margin-bottom: 5px;
+}
+
+.activity .duration,
+.activity .cost {
+    font-size: 11px;
 }

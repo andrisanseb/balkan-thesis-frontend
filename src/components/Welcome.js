@@ -3,15 +3,17 @@ import AuthService from '../services/AuthService';
 import { Link } from 'react-router-dom';
 import '../styles/Welcome.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faPaw } from '@fortawesome/free-solid-svg-icons';
+import {user } from '@fortawesome/free-solid-svg-icons';
 
 export const Welcome = () => {
     const currentUser = AuthService.getCurrentUser();
 
     return (
         <div className="welcome-container">
-            <h2>WELCOME {currentUser && currentUser.username.toUpperCase()} <FontAwesomeIcon icon={faPaw}/> </h2>
-            <div className="card-container">
+            <h2>WELCOME {currentUser && currentUser.username.toUpperCase()} 
+            {/* <FontAwesomeIcon icon={user}/>  */}
+            </h2>
+            {/* <div className="card-container">
                 <div className="card-row">
                     <Link to="/my-profile" className="card">
                         <div className="card-content">MY PROFILE</div>
@@ -34,7 +36,7 @@ export const Welcome = () => {
                         <div className="card-content">FAVORITES</div>
                     </Link>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

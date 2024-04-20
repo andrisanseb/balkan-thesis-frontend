@@ -23,7 +23,7 @@ const RoadTrip = ({ destinations }) => {
   const [daysData, setDaysData] = useState(null);
 
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const currentUser = AuthService.getCurrentUser();
   const location = useLocation();
 
@@ -71,6 +71,7 @@ const RoadTrip = ({ destinations }) => {
     setCurrentView(currentView + 1);
   };
 
+
   // API: Calculates Route Between Selected Destinations
   const calculateRoute = async () => {
     try {
@@ -96,26 +97,32 @@ const RoadTrip = ({ destinations }) => {
       );
 
       const data = await response.json();
-      setRouteData(data); // Store route data in state
-      //   console.log(data);
+      setRouteData(data.routes[0]);
+      console.log(data.routes[0]);
     } catch (error) {
       console.error("Error calculating route:", error);
     }
   };
 
-  const showRouteData = () => {
-    if (routeData) {
-      return (
-        <div>
-          <h2>Route Data</h2>
-          <p>Distance: {routeData.routes[0].summary.distance} meters</p>
-          <p>Duration: {routeData.routes[0].summary.duration} seconds</p>
-        </div>
-      );
-    } else {
-      return <p>No route data available</p>;
-    }
-  };
+const showRouteData = () => {
+  if (routeData) {
+    const distanceKm = (routeData.summary.distance / 1000).toFixed(2);
+
+    const durationSeconds = routeData.summary.duration;
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.floor((durationSeconds % 3600) / 60);
+
+    return (
+      <div>
+        <h4>Road Trip:</h4>
+        <p>Distance: {distanceKm} km</p>
+        <p>Duration: {hours} hours {minutes} minutes</p>
+      </div>
+    );
+  } else {
+    return <p>No route data available</p>;
+  }
+};
 
   const renderCard = () => {
     switch (currentView) {
@@ -125,8 +132,6 @@ const RoadTrip = ({ destinations }) => {
         return <Card2 onNext={nextView} />;
       case 3:
         return <Card3 onNext={nextView} />;
-      case 4:
-        return <Card4 onNext={nextView} />;
       default:
         return null;
     }
@@ -208,41 +213,10 @@ const RoadTrip = ({ destinations }) => {
 
   const Card2 = ({ onNext }) => (
     <div>
-      <h2>Card 2</h2>
-      <p>This is the content of Card 2</p>
-      {selectedDestinations && selectedDestinations.length > 0 && (
-        <div className="selected-destinations-section">
-          <h2 className="title">Selected Destinations</h2>
-          <ul>
-            {selectedDestinations.map((selectedDestination, index) => (
-              <li key={index}>
-                <strong>Name:</strong> {selectedDestination.name}
-                <br />
-                <strong>Description:</strong> {selectedDestination.description}
-                <br />
-                <strong>Longitude:</strong> {selectedDestination.longitude}
-                <br />
-                <strong>Latitude:</strong> {selectedDestination.latitude}
-                <br />
-                <strong>Country:</strong> {selectedDestination.country.name}
-                <br />
-              </li>
-            ))}
-          </ul>
-
-          <div>
-            <button onClick={calculateRoute}>Calculate Route</button>
-            {showRouteData()}
-          </div>
-        </div>
-      )}
-
-      <button onClick={onNext}>Next, (Show Map)</button>
-    </div>
-  );
-
-  const Card3 = ({ onNext }) => (
-    <div>
+      <div>
+        <button onClick={calculateRoute}>Calculate Route</button>
+        {showRouteData()}
+      </div>
       <ActivitySelector
         selectedDestinations={selectedDestinations}
         onSelectedActivitiesChange={handleSelectedActivitiesChange}
@@ -261,8 +235,8 @@ const RoadTrip = ({ destinations }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name:"name",
-          description:"description",
+          name: "name",
+          description: "description",
           user_id: currentUser.id,
           route: null,
           days: null,
@@ -280,7 +254,7 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-  const Card4 = ({ onNext }) => (
+  const Card3 = ({ onNext }) => (
     <div className="create-road-trip-overview-container">
       <div className="map-container">
         <MapWithOpenStreetMapProvider
@@ -293,7 +267,7 @@ const RoadTrip = ({ destinations }) => {
           selectedDestinations={selectedDestinations}
           selectedActivities={selectedActivities}
           handleDaysDataChange={handleDaysDataChange}
-          // routeData={routeData}
+          routeData={routeData}
         />
       </div>
       <div className="button-container">
