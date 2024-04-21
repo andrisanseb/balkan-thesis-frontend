@@ -6,7 +6,7 @@ import "../../styles/ActivitiesExplore.css";
 const ActivitiesExplore = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activities, setActivities] = useState([]);
-  const [reviews, setReviews] = useState([]);
+  // const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {

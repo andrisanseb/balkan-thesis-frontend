@@ -41,6 +41,12 @@ const RoadTrip = ({ destinations }) => {
     };
   }, [location.pathname]); // Run this effect whenever the location pathname changes
 
+  useEffect(() => {
+    if (currentView === 2 && routeData == null) {
+      calculateRoute();
+    }
+  }, [currentView]); // Run this effect when currentView changes
+
   if (!destinations) {
     return <div>Loading...</div>;
   }
@@ -71,17 +77,16 @@ const RoadTrip = ({ destinations }) => {
     setCurrentView(currentView + 1);
   };
 
-
   // API: Calculates Route Between Selected Destinations
   const calculateRoute = async () => {
     try {
       const selectedDestinationsCoordinates = selectedDestinations.map(
         (destination) => [destination.longitude, destination.latitude]
       );
-      const startFinishPoint = [
-        selectedDestinations[0].longitude,
-        selectedDestinations[0].latitude,
-      ];
+      // const startFinishPoint = [
+      //   selectedDestinations[0].longitude,
+      //   selectedDestinations[0].latitude,
+      // ];
 
       const response = await fetch(
         `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}`,
@@ -92,6 +97,8 @@ const RoadTrip = ({ destinations }) => {
           },
           body: JSON.stringify({
             coordinates: selectedDestinationsCoordinates,
+            // instructions: "false",
+            // options:{"avoid_features":["ferries","tollways","highways"]}
           }),
         }
       );
@@ -104,31 +111,34 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-const showRouteData = () => {
-  if (routeData) {
-    const distanceKm = (routeData.summary.distance / 1000).toFixed(2);
+  const showRouteData = () => {
+    if (routeData) {
+      const distanceKm = (routeData.summary.distance / 1000).toFixed(2);
 
-    const durationSeconds = routeData.summary.duration;
-    const hours = Math.floor(durationSeconds / 3600);
-    const minutes = Math.floor((durationSeconds % 3600) / 60);
+      const durationSeconds = routeData.summary.duration;
+      const hours = Math.floor(durationSeconds / 3600);
+      const minutes = Math.floor((durationSeconds % 3600) / 60);
 
-    return (
-      <div>
-        <h4>Road Trip:</h4>
-        <p>Distance: {distanceKm} km</p>
-        <p>Duration: {hours} hours {minutes} minutes</p>
-      </div>
-    );
-  } else {
-    return <p>No route data available</p>;
-  }
-};
+      return (
+        <div>
+          <h4>Road Trip:</h4>
+          <p>Distance: {distanceKm} km</p>
+          <p>
+            Duration: {hours} hours {minutes} minutes
+          </p>
+        </div>
+      );
+    } else {
+      return <p>No route data available</p>;
+    }
+  };
 
   const renderCard = () => {
     switch (currentView) {
       case 1:
         return <Card1 onNext={nextView} />;
       case 2:
+        // calculateRoute();
         return <Card2 onNext={nextView} />;
       case 3:
         return <Card3 onNext={nextView} />;
@@ -136,34 +146,6 @@ const showRouteData = () => {
         return null;
     }
   };
-
-  // const MapComponent = () => {
-  //   return (
-  //     <div className="map-container">
-  //       <MapContainer
-  //         center={[51.505, -0.09]}
-  //         zoom={13}
-  //         style={{ height: "400px", width: "100%" }}
-  //         scrollWheelZoom={false}
-  //       >
-  //         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-  //         {/* Add markers for each location */}
-  //         {/* {selectedDestinations.map(location => (
-  //             <Marker key={location.id} position={[location.latitude, location.longitude]}>
-  //               <Popup>{location.name}</Popup>
-  //             </Marker>
-  //           ))} */}
-  //         {/* Display the route */}
-  //         {/* <Polyline positions={routeCoordinates} color="blue" /> */}
-  //         <Marker position={[51.505, -0.09]}>
-  //           <Popup>
-  //             A pretty CSS3 popup. <br /> Easily customizable.
-  //           </Popup>
-  //         </Marker>
-  //       </MapContainer>
-  //     </div>
-  //   );
-  // };
 
   const Card1 = ({ onNext }) => (
     <div>
@@ -213,13 +195,15 @@ const showRouteData = () => {
 
   const Card2 = ({ onNext }) => (
     <div>
-      <div>
+      {/* <div>
         <button onClick={calculateRoute}>Calculate Route</button>
         {showRouteData()}
-      </div>
+      </div> */}
       <ActivitySelector
         selectedDestinations={selectedDestinations}
         onSelectedActivitiesChange={handleSelectedActivitiesChange}
+        onNext={onNext}
+        calculateRoute={calculateRoute}
       />
       <button onClick={onNext}>Submit First, Proceed to Overview</button>
     </div>
@@ -227,31 +211,32 @@ const showRouteData = () => {
 
   //TODO: debug! (check parameters - make it async (e)? - remove try?)
   // break it! post 1 time only.
-  const createRoadTrip = () => {
-    try {
-      const response = fetch("http://localhost:4000/roadTrip", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "name",
-          description: "description",
-          user_id: currentUser.id,
-          route: null,
-          days: null,
-        }),
-      });
+  const createRoadTrip = async ()  => {
+    console.log("post roadtrip attempt");
+    // try {
+    //   const response = fetch("http://localhost:4000/roadTrip", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       name: "name",
+    //       description: "description",
+    //       user_id: 1, // TODO: get real user id
+    //       route: JSON.stringify(routeData),
+    //       days: null,
+    //     }),
+    //   });
 
-      if (response.ok) {
-        // navigate("/my-roadtrips");
-        console.log("created!");
-      } else {
-        throw new Error("Road Trip creation failed.");
-      }
-    } catch (error) {
-      setError(error.message);
-    }
+    //   if (response.ok) {
+    //     // navigate("/my-roadtrips");
+    //     console.log("created!");
+    //   } else {
+    //     throw new Error("Road Trip creation failed.");
+    //   }
+    // } catch (error) {
+    //   setError(error.message);
+    // }
   };
 
   const Card3 = ({ onNext }) => (
@@ -268,10 +253,11 @@ const showRouteData = () => {
           selectedActivities={selectedActivities}
           handleDaysDataChange={handleDaysDataChange}
           routeData={routeData}
+          createRoadTrip={createRoadTrip}
         />
       </div>
       <div className="button-container">
-        <button onClick={createRoadTrip()}>Create RoadTrip</button>
+        <button onClick={createRoadTrip}>Create RoadTrip</button>
       </div>
     </div>
   );

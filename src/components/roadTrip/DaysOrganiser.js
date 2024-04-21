@@ -3,9 +3,18 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
 import { FaClock } from "react-icons/fa";
 
-const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) => {
+const DaysOrganiser = ({
+  selectedDestinations,
+  selectedActivities,
+  handleDaysDataChange,
+  routeData,
+  createRoadTrip,
+}) => {
   const [daysData, setDaysData] = useState([]);
-  const [totalDays, setTotalDays] = useState(selectedActivities.length);
+  const [totalDays, setTotalDays] = useState(selectedDestinations.length);
+
+  const [fuelConsumption, setFuelConsumption] = useState(0);
+  const [gasCost, setGasCost] = useState(0);
 
   useEffect(() => {
     distributeActivitiesRandomly();
@@ -37,11 +46,23 @@ const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) 
   };
 
   const removeDay = (indexToRemove) => {
-    if (totalDays > 1) {
+    if (totalDays > 1 && indexToRemove >= 0 && indexToRemove < totalDays) {
       setTotalDays(totalDays - 1);
-      setDaysData((prevDaysData) =>
-        prevDaysData.filter((_, index) => index !== indexToRemove)
-      );
+
+      if (daysData[indexToRemove].activities.length > 0) {
+        const activitiesToMove = daysData[indexToRemove].activities;
+        const updatedDaysData = [...daysData];
+        updatedDaysData.splice(indexToRemove, 1);
+
+        const randomDayIndex = Math.floor(Math.random() * totalDays);
+        updatedDaysData[randomDayIndex].activities.push(...activitiesToMove);
+
+        setDaysData(updatedDaysData);
+      } else {
+        setDaysData((prevDaysData) =>
+          prevDaysData.filter((_, index) => index !== indexToRemove)
+        );
+      }
     }
   };
 
@@ -138,7 +159,7 @@ const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) 
               </ul>
             )}
           </Droppable>
-          <div className="activity-summary">
+          {/* <div className="activity-summary">
             <p>Total:</p>
             <div className="summary-details">
               <p className="duration">
@@ -148,7 +169,7 @@ const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) 
                 {totalCost === 0 ? "free" : `${totalCost} €`}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       );
     });
@@ -157,6 +178,7 @@ const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) 
   const handleSubmit = () => {
     handleDaysDataChange(JSON.stringify(daysData));
     console.log(daysData);
+    createRoadTrip();
   };
 
   const updateTotal = () => {
@@ -164,17 +186,73 @@ const DaysOrganiser = ({ selectedActivities, handleDaysDataChange, routeData }) 
     // No need to store them in state
   };
 
+  const convertMetersToKilometers = (meters) => {
+    return (meters / 1000).toFixed(2);
+  };
+
+  const convertSecondsToHoursMinutes = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  const handleFuelConsumptionChange = (e) => {
+    setFuelConsumption(parseFloat(e.target.value));
+  };
+
+  const calculateGasCost = () => {
+    const totalDistance = routeData.summary.distance;
+    const gasPricePerLiter = 1.82; // find prices
+    const totalLiters = (totalDistance / 1000) * (fuelConsumption / 100);
+    const totalCost = totalLiters * gasPricePerLiter;
+    setGasCost(totalCost);
+  };
+
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="days-organiser-container">
-        <h1>Days Planner</h1>
-        <div className="days-wrapper">{renderDayBoxes()}</div>
-        <div className="buttons">
-          <button onClick={addDay}>Add Day</button>
-          <button onClick={handleSubmit}>Save the daysData</button>
+    <div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="days-organiser-container">
+          <h1>Days Planner</h1>
+          <div className="days-wrapper">{renderDayBoxes()}</div>
+          <div className="buttons">
+            <button onClick={addDay}>Add Day</button>
+            <button onClick={handleSubmit}>Save the daysData</button>
+          </div>
+        </div>
+      </DragDropContext>
+
+      <div className="route-info-container">
+        {routeData && (
+          <div className="route-info">
+            {routeData.segments.map((segment, index) => (
+              <div key={index} className="segment-info">
+                <p>
+                  <span className="destination-names">{selectedDestinations[index].name}</span> ➔{" "}
+                  <span className="destination-names">{selectedDestinations[index + 1].name}</span>
+                </p>
+                <p>
+                  Distance: {convertMetersToKilometers(segment.distance)} km
+                </p>
+                <p>
+                  Duration: {convertSecondsToHoursMinutes(segment.duration)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="fuel-cost-input">
+          <label htmlFor="fuelConsumption">Enter Fuel Consumption (litres per 100km): </label>
+          <input
+            type="number"
+            id="fuelConsumption"
+            value={fuelConsumption}
+            onChange={handleFuelConsumptionChange}
+          />
+          <button onClick={calculateGasCost}>Calculate Gas Cost</button>
+          <p>Gas Cost: {gasCost.toFixed(2)} €</p>
         </div>
       </div>
-    </DragDropContext>
+    </div>
   );
 };
 
