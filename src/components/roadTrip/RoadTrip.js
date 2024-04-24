@@ -25,20 +25,19 @@ const RoadTrip = ({ destinations }) => {
   const [routeData, setRouteData] = useState(null);
 
   useEffect(() => {
-    // Clear states when URL changes
     return () => {
       setSelectedDestinations([]);
       setCurrentView(1);
       setRouteData(null);
       setDaysData(null);
     };
-  }, [location.pathname]); // Run this effect whenever the location pathname changes
+  }, [location.pathname]);
 
   useEffect(() => {
     if (currentView === 2 && routeData == null) {
       calculateRoute();
     }
-  }, [currentView]); // Run this effect when currentView changes
+  }, [currentView]);
 
   if (!destinations) {
     return <div>Loading...</div>;
@@ -104,34 +103,11 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-  const showRouteData = () => {
-    if (routeData) {
-      const distanceKm = (routeData.summary.distance / 1000).toFixed(2);
-
-      const durationSeconds = routeData.summary.duration;
-      const hours = Math.floor(durationSeconds / 3600);
-      const minutes = Math.floor((durationSeconds % 3600) / 60);
-
-      return (
-        <div>
-          <h4>Road Trip:</h4>
-          <p>Distance: {distanceKm} km</p>
-          <p>
-            Duration: {hours} hours {minutes} minutes
-          </p>
-        </div>
-      );
-    } else {
-      return <p>No route data available</p>;
-    }
-  };
-
   const renderCard = () => {
     switch (currentView) {
       case 1:
         return <Card1 onNext={nextView} />;
       case 2:
-        // calculateRoute();
         return <Card2 onNext={nextView} />;
       case 3:
         return <Card3 onNext={nextView} />;
@@ -245,9 +221,6 @@ const RoadTrip = ({ destinations }) => {
           createRoadTrip={createRoadTrip}
         />
       </div>
-      {/* <div className="button-container">
-        <button onClick={createRoadTrip}>Create RoadTrip</button>
-      </div> */}
     </div>
   );
 

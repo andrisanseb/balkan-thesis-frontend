@@ -5,23 +5,6 @@ import '../styles/Nav.css';
 
 export const NavBar = () => {
     const currentUser = AuthService.getCurrentUser();
-    const [user, setUser] = useState(false);
-
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
-    //fails because id is not saved.
-    const fetchUser = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/users/${currentUser.id}`);  
-            const data = await response.json();
-            setUser(data);
-            console.log(data);
-        } catch (error) {
-            console.error('Error fetching user:', error);
-        }
-    }
 
     const handleLogout = () => {
         AuthService.logout();
@@ -49,7 +32,7 @@ export const NavBar = () => {
                     {currentUser ? (
                         <div className="user-info">
                             <Link className="username" to="/my-profile">{currentUser.username.toUpperCase()}</Link>
-                            <Link onClick={handleLogout} to="/get-started">LOGOUT</Link>
+                            <Link onClick={handleLogout} to="/">LOGOUT</Link>
                         </div>
                     ) : (
                         <Link to="/login">LOGIN</Link>
