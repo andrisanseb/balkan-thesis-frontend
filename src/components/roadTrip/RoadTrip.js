@@ -4,13 +4,6 @@ import AuthService from "../../services/AuthService";
 import "../../styles/RoadTrip.css";
 import { FaCheck } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-} from "react-leaflet";
 import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
 import CreateRoadTripOverview from "./CreateRoadTripOverview";
 import ActivitySelector from "./ActivitySelector";
@@ -195,48 +188,44 @@ const RoadTrip = ({ destinations }) => {
 
   const Card2 = ({ onNext }) => (
     <div>
-      {/* <div>
-        <button onClick={calculateRoute}>Calculate Route</button>
-        {showRouteData()}
-      </div> */}
       <ActivitySelector
         selectedDestinations={selectedDestinations}
         onSelectedActivitiesChange={handleSelectedActivitiesChange}
         onNext={onNext}
         calculateRoute={calculateRoute}
       />
-      <button onClick={onNext}>Submit First, Proceed to Overview</button>
     </div>
   );
 
-  //TODO: debug! (check parameters - make it async (e)? - remove try?)
-  // break it! post 1 time only.
   const createRoadTrip = async ()  => {
     console.log("post roadtrip attempt");
-    // try {
-    //   const response = fetch("http://localhost:4000/roadTrip", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       name: "name",
-    //       description: "description",
-    //       user_id: 1, // TODO: get real user id
-    //       route: JSON.stringify(routeData),
-    //       days: null,
-    //     }),
-    //   });
+    try {
+      const response = await fetch("http://localhost:4000/roadTrip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "name",
+          description: "description", //remove description maybe
+          user_id: currentUser.id,  //TODO: add to DTO (backend)
+          // route: JSON.stringify(routeData), //post beautified version
+          route: null,
+          days: null,
+        }),
+      });
 
-    //   if (response.ok) {
-    //     // navigate("/my-roadtrips");
-    //     console.log("created!");
-    //   } else {
-    //     throw new Error("Road Trip creation failed.");
-    //   }
-    // } catch (error) {
-    //   setError(error.message);
-    // }
+      if (response.ok) {
+        console.log("created!");
+        //TODO: my roadtrip(s) overview
+        // navigate("/my-roadtrips");
+        navigate("/");
+      } else {
+        throw new Error("Road Trip creation failed.");
+      }
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const Card3 = ({ onNext }) => (
@@ -256,9 +245,9 @@ const RoadTrip = ({ destinations }) => {
           createRoadTrip={createRoadTrip}
         />
       </div>
-      <div className="button-container">
+      {/* <div className="button-container">
         <button onClick={createRoadTrip}>Create RoadTrip</button>
-      </div>
+      </div> */}
     </div>
   );
 

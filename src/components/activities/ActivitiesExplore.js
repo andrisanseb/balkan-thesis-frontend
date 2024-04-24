@@ -138,7 +138,6 @@ const ActivitiesExplore = () => {
   return (
     <div className="experiences-section">
       <div className="content-section">
-        <h2 className="title">Explore</h2>
         <div className="image-container">
           <img
             src={selectedImage}

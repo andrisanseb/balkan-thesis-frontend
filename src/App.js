@@ -1,14 +1,13 @@
 import "./App.css";
 import {
-  Link,
   Navigate,
   Route,
   Routes,
   useLocation,
-  useNavigate
+  useNavigate,
 } from "react-router-dom";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import AuthService from "./services/AuthService";
 import { NavBar } from "./components/Nav";
 import { Footer } from "./components/Footer";
@@ -20,23 +19,20 @@ import { RegisterForm } from "./components/auth/RegisterForm";
 import UserDetails from "./components/user/UserDetails";
 import { Header } from "./components/Header";
 import { Logo } from "./components/Logo";
-import { Home } from "./components/Home";
 import DestinationList from "./components/destination/DestinationList";
 import DestinationDetails from "./components/destination/DestinationDetails";
 import RoadTripOLD from "./components/planNewTrip/RoadTrip";
-import RoadTripManual from "./components/planNewTrip/RoadTripManual";
 import RoadTrip from "./components/roadTrip/RoadTrip";
 import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMapProvider";
-import Assistant from "./components/Assistant"
+import Assistant from "./components/Assistant";
 import Review from "./components/Review";
 import DaysOrganiser from "./components/roadTrip/DaysOrganiser";
 import ActivitiesExplore from "./components/activities/ActivitiesExplore";
 
-
 export default function App() {
   const location = useLocation();
-  const showNav = location.pathname !== "/";
-  const showBack = location.pathname !== "/";
+  // const showNav = location.pathname !== "/";
+  // const showBack = location.pathname !== "/";
   const currentUser = AuthService.getCurrentUser();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -44,16 +40,16 @@ export default function App() {
   const [destinations, setDestinations] = useState([]);
 
   useEffect(() => {
-    fetchDestinations()
+    fetchDestinations();
   }, []);
 
   const fetchDestinations = async () => {
     try {
-      const response = await fetch('http://localhost:4000/destinations');
+      const response = await fetch("http://localhost:4000/destinations");
       const data = await response.json();
       setDestinations(data);
     } catch (error) {
-      console.error('Error fetching destinations:', error);
+      console.error("Error fetching destinations:", error);
     }
   };
 
@@ -77,7 +73,6 @@ export default function App() {
   //   }
   // };
 
-
   return (
     <>
       {/* <div>
@@ -88,42 +83,57 @@ export default function App() {
         ))}
       </ul>
     </div> */}
-      {showNav && (
+      {
         <header>
           <NavBar />
         </header>
-      )}
-      {showBack && (
+      }
+      {/* {showBack && (
         <div className="logo-back-button-container">
-          {/* <BackButton /> */}
+          <BackButton />
           <Header currentPath={currentPath} />
-          {/* <Logo /> */}
+          <Logo />
         </div>
-      )}
+      )} */}
       <main>
         <Assistant />
         <Routes>
-          <Route path="" element={<Home />} />
-          <Route path="/get-started" element={<GetStarted />} />
-          <Route path="/login" element={ currentUser ? <Navigate to="/my-profile" /> : <LoginForm /> } />
-          <Route path="/my-profile" element={currentUser ? <Profile /> : <GetStarted />} />
+          <Route path="" element={<GetStarted />} />
+          <Route
+            path="/login"
+            element={
+              currentUser ? <Navigate to="/my-profile" /> : <LoginForm />
+            }
+          />
+          <Route
+            path="/my-profile"
+            element={currentUser ? <Profile /> : <GetStarted />}
+          />
           <Route path="/logout" element={<Navigate to="/" />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="/users/:id" element={<UserDetails />} />
-          <Route path="/explore/destinations" element={<DestinationList destinations={destinations} />} />
-          <Route path="/explore/destinations/:id" element={<DestinationDetails />} />
-          <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
-          <Route path="/reviews" element={<Review destinations={destinations} />} />
+          <Route
+            path="/explore/destinations"
+            element={<DestinationList destinations={destinations} />}
+          />
+          <Route
+            path="/explore/destinations/:id"
+            element={<DestinationDetails />}
+          />
+          <Route
+            path="/roadTrip"
+            element={<RoadTrip destinations={destinations} />}
+          />
+          <Route
+            path="/reviews"
+            element={<Review destinations={destinations} />}
+          />
           <Route path="/experiences" element={<ActivitiesExplore />} />
-
-          {/* --- old versions - tests --- */}
-          {/* <Route path="/planNewTrip/roadTrip" element={<RoadTripOLD />} /> */}
-          {/* <Route path="/planNewTrip/roadTrip/create/manual" element={<RoadTripManual />} /> */}
-          <Route path="/test" element={<DaysOrganiser />} />
-
         </Routes>
       </main>
-      <footer><Footer /></footer>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 }

@@ -11,9 +11,10 @@ export const NavBar = () => {
         fetchUser();
     }, []);
 
+    //fails because id is not saved.
     const fetchUser = async () => {
         try {
-            const response = await fetch(`http://localhost:4000/users/${currentUser.id}`);
+            const response = await fetch(`http://localhost:4000/users/${currentUser.id}`);  
             const data = await response.json();
             setUser(data);
             console.log(data);
@@ -30,7 +31,7 @@ export const NavBar = () => {
         <nav>
             <div className="navbar-container">
                 <div className="navbar-left">
-                    <NavLink to="/get-started">HOME</NavLink>
+                    <NavLink to="/">HOME</NavLink>
                     {/* <NavLink to="/explore/destinations">DESTINATIONS</NavLink> */}
                     <div className="dropdown">
                         <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
@@ -43,11 +44,6 @@ export const NavBar = () => {
                     </div>
                     <NavLink to="/experiences">EXPERIENCES</NavLink>
                     <NavLink to="/roadTrip">ROAD TRIP</NavLink>
-                    {/* <NavLink to="/test">Test</NavLink> */}
-                    {/* <NavLink to="/itineraries">ITINERARIES</NavLink> */}
-                    {/* <NavLink to="/explore">EXPLORE</NavLink> */}
-                    {/* <NavLink to="/planNewTrip">PLAN NEW TRIP</NavLink> */}
-
                 </div>
                 <div className="navbar-right">
                     {currentUser ? (

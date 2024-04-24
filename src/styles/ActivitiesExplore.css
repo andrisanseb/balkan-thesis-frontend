@@ -1,5 +1,5 @@
 .experiences-section {
-    padding: 20px;
+    padding: 0px;
 }
 
 .content-section {
@@ -28,15 +28,10 @@
     font-weight: 700;
 }
 
-.category-button:hover {
-    background-color: #0056b3;
-}
-
-
 .image-container {
     width: 100%;
     overflow: hidden;
-    max-height: 300px;
+    max-height: 350px;
 }
 
 .category-image {
@@ -45,6 +40,16 @@
     display: block;
 }
 
+.category-button:hover {
+    background-color: #0056b3;
+    color:white;
+}
+
+
 .active-button {
-    color: red;
+    color: #0056b3;
+}
+
+.active-button:hover {
+    color: white;
 }

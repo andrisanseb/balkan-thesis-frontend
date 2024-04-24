@@ -33,7 +33,7 @@ export const LoginForm = () => {
                 if (data.accessToken) {
                     localStorage.setItem('user', JSON.stringify(data));
                 }
-                navigate('/get-started');
+                navigate('/');
             } else {
                 throw new Error('Login failed.');
             }
