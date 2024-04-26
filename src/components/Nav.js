@@ -35,7 +35,10 @@ export const NavBar = () => {
                             <Link onClick={handleLogout} to="/">LOGOUT</Link>
                         </div>
                     ) : (
-                        <Link to="/login">LOGIN</Link>
+                        <div>
+                            <Link to="/login">LOGIN</Link>
+                            <Link to="/register">REGISTER</Link>
+                        </div>
                     )}
                 </div>
             </div>

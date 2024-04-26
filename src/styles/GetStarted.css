@@ -4,20 +4,5 @@
     background-position: center;
     background-size: cover;
     position: relative;
-    height: 90vh;
-}
-
-.get-started-container>div {
-    width: 48%;
-}
-
-@media (max-width: 768px) {
-    .get-started-container {
-        flex-direction: column;
-    }
-
-    .get-started-container>div {
-        width: 100%;
-        margin-bottom: 20px;
-    }
+    height: 80vh;
 }

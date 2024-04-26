@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { RegisterForm } from './auth/RegisterForm';
 import { LoginForm } from './auth/LoginForm';
 import '../styles/GetStarted.css';
 import AuthService from '../services/AuthService';
@@ -12,14 +11,14 @@ export const GetStarted = () => {
 
     return (
         <div className="get-started-container">
-            {currentUser ? (
+            {/* {currentUser ? (
                 <Welcome /> ) : (
                <>
                 <div>
-                    <LoginForm classname="form-login"/>
+                    <LoginForm className="logform"/>
                 </div>
                </>
-            )}
+            )} */}
         </div>
     );
 };

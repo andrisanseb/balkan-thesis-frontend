@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import AuthService from "../../services/AuthService";
 import "../../styles/ActivitiesExplore.css";
+import { FaSpinner } from "react-icons/fa"; // Import loading spinner icon
+
 
 const ActivitiesExplore = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activities, setActivities] = useState([]);
   // const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
+  const [categoryInfo, setCategoryInfo] = useState("");
+  const [funFact, setFunFact] = useState("");
+  const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
     fetchActivities();
@@ -18,6 +24,7 @@ const ActivitiesExplore = () => {
       const response = await fetch("http://localhost:4000/activities");
       const data = await response.json();
       setActivities(data.data); // because of DTO
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching activities:", error);
     }
@@ -29,35 +36,39 @@ const ActivitiesExplore = () => {
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/culture.jpg"
         );
+        setCategoryInfo("Explore the rich history and traditions of the Balkans, from ancient ruins to vibrant folk dances.");
+        setFunFact("Did you know that the Balkans are home to some of the world's oldest continuously inhabited cities?");
         break;
       case "Gastronomy":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/gastronomy.jpg"
         );
+        setCategoryInfo("Indulge in the diverse flavors of Balkan cuisine, where hearty stews and freshly caught seafood await.");
+        setFunFact("The Balkans are known for their unique dishes such as cevapi, burek, and baklava.");
         break;
       case "Nature":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/nature.jpg"
         );
-        break;
-      case "Culture":
-        setSelectedImage(
-          process.env.PUBLIC_URL + "/images/category/culture.jpg"
-        );
+        setCategoryInfo("Immerse yourself in the breathtaking landscapes of the Balkans, from lush forests to cascading waterfalls.");
+        setFunFact("The Balkans are home to one of Europe's last remaining rainforests, the Biogradska Gora National Park.");
         break;
       case "Religion":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/religion.jpg"
         );
+        setCategoryInfo("Discover the spiritual heritage of the Balkans, where ancient churches and mosques dot the countryside.");
+        setFunFact("The Balkans have a rich religious history, with influences from Christianity, Islam, and other faiths.");
         break;
       default:
         setSelectedImage(
           "https://www.sarahdegheselle.com/wp-content/uploads/2018/10/balkan-campers-88-scaled.jpg"
         );
+        setCategoryInfo("Embark on a journey through the Balkans and uncover a world of adventure and discovery.");
+        setFunFact("The Balkans offer a diverse range of experiences, from historic cities to stunning coastlines.");
         break;
     }
-  }, [selectedCategory]); // Run this effect whenever selectedCategory changes
-
+  }, [selectedCategory]);
   // TODO:
   // backend endpoint
   // const fetchReviews = async () => {
@@ -146,6 +157,15 @@ const ActivitiesExplore = () => {
           />
         </div>
         <div className="category-menu">{renderCategoryButtons()}</div>
+        <div className="category-info">
+          <p>{categoryInfo}</p>
+          <p>{funFact}</p>
+        </div>
+        {loading ? (
+        <div className="loading-container">
+          <FaSpinner className="spinner" />
+        </div>
+      ) : (
         <div className="cards">
           {filteredActivities.map((activity) => (
             <div key={activity.id} className="card">
@@ -157,6 +177,7 @@ const ActivitiesExplore = () => {
             </div>
           ))}
         </div>
+      )}
       </div>
     </div>
   );

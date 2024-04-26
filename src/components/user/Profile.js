@@ -13,21 +13,6 @@ export const Profile = () => {
     const [imageFile, setImageFile] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
-    const fetchUser = async () => {
-        try {
-            const response = await fetch(`http://localhost:4000/users/${currentUser.id}`);
-            const data = await response.json();
-            setUser(data);
-            console.log(data);
-        } catch (error) {
-            console.error('Error fetching user:', error);
-        }
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
