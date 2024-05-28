@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../styles/ActivitiesExplore.css";
-import { FaSpinner } from "react-icons/fa"; // Import loading spinner icon
-
+import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
 
 const ActivitiesExplore = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -12,8 +11,7 @@ const ActivitiesExplore = () => {
   const [categoryInfo, setCategoryInfo] = useState("");
   const [funFact, setFunFact] = useState("");
   const [loading, setLoading] = useState(true);
-
-
+  const [likedActivities, setLikedActivities] = useState({}); // handle in backend (table)
 
   useEffect(() => {
     fetchActivities();
@@ -36,36 +34,56 @@ const ActivitiesExplore = () => {
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/culture.jpg"
         );
-        setCategoryInfo("Explore the rich history and traditions of the Balkans, from ancient ruins to vibrant folk dances.");
-        setFunFact("Did you know that the Balkans are home to some of the world's oldest continuously inhabited cities?");
+        setCategoryInfo(
+          "Explore the rich history and traditions of the Balkans, from ancient ruins to vibrant folk dances."
+        );
+        setFunFact(
+          "Did you know that the Balkans are home to some of the world's oldest continuously inhabited cities?"
+        );
         break;
       case "Gastronomy":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/gastronomy.jpg"
         );
-        setCategoryInfo("Indulge in the diverse flavors of Balkan cuisine, where hearty stews and freshly caught seafood await.");
-        setFunFact("The Balkans are known for their unique dishes such as cevapi, burek, and baklava.");
+        setCategoryInfo(
+          "Indulge in the diverse flavors of Balkan cuisine, where hearty stews and freshly caught seafood await."
+        );
+        setFunFact(
+          "The Balkans are known for their unique dishes such as cevapi, burek, and baklava."
+        );
         break;
       case "Nature":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/nature.jpg"
         );
-        setCategoryInfo("Immerse yourself in the breathtaking landscapes of the Balkans, from lush forests to cascading waterfalls.");
-        setFunFact("The Balkans are home to one of Europe's last remaining rainforests, the Biogradska Gora National Park.");
+        setCategoryInfo(
+          "Immerse yourself in the breathtaking landscapes of the Balkans, from lush forests to cascading waterfalls."
+        );
+        setFunFact(
+          "The Balkans are home to one of Europe's last remaining rainforests, the Biogradska Gora National Park."
+        );
         break;
       case "Religion":
         setSelectedImage(
           process.env.PUBLIC_URL + "/images/category/religion.jpg"
         );
-        setCategoryInfo("Discover the spiritual heritage of the Balkans, where ancient churches and mosques dot the countryside.");
-        setFunFact("The Balkans have a rich religious history, with influences from Christianity, Islam, and other faiths.");
+        setCategoryInfo(
+          "Discover the spiritual heritage of the Balkans, where ancient churches and mosques dot the countryside."
+        );
+        setFunFact(
+          "The Balkans have a rich religious history, with influences from Christianity, Islam, and other faiths."
+        );
         break;
       default:
         setSelectedImage(
           "https://www.sarahdegheselle.com/wp-content/uploads/2018/10/balkan-campers-88-scaled.jpg"
         );
-        setCategoryInfo("Embark on a journey through the Balkans and uncover a world of adventure and discovery.");
-        setFunFact("The Balkans offer a diverse range of experiences, from historic cities to stunning coastlines.");
+        setCategoryInfo(
+          "Embark on a journey through the Balkans and uncover a world of adventure and discovery."
+        );
+        setFunFact(
+          "The Balkans offer a diverse range of experiences, from historic cities to stunning coastlines."
+        );
         break;
     }
   }, [selectedCategory]);
@@ -146,6 +164,13 @@ const ActivitiesExplore = () => {
     );
   }
 
+  const toggleLike = (activityId) => {
+    setLikedActivities((prevLikedActivities) => ({
+      ...prevLikedActivities,
+      [activityId]: !prevLikedActivities[activityId],
+    }));
+  };
+
   return (
     <div className="experiences-section">
       <div className="content-section">
@@ -162,22 +187,34 @@ const ActivitiesExplore = () => {
           <p>{funFact}</p>
         </div>
         {loading ? (
-        <div className="loading-container">
-          <FaSpinner className="spinner" />
-        </div>
-      ) : (
-        <div className="cards">
-          {filteredActivities.map((activity) => (
-            <div key={activity.id} className="card">
-              <div className="card-content">
-                <p className="activity-name">{activity.name}</p>
-                <p className="activity-description">{activity.description}</p>
-                {/* <div className="star-rating">{renderStars(calculateStarRating(activity))}</div> */}
+          <div className="loading-container">
+            <FaSpinner className="spinner" />
+          </div>
+        ) : (
+          <div className="cards">
+            {filteredActivities.map((activity) => (
+              <div key={activity.id} className="card">
+                <div className="card-content">
+                  <p className="activity-name">{activity.name}</p>
+                  <p className="activity-description">{activity.description}</p>
+                  {/* <div className="star-rating">{renderStars(calculateStarRating(activity))}</div> */}
+                </div>
+                {/* <FaHeart className="heart-icon" /> */}
+                {likedActivities[activity.id] ? (
+                  <FaHeart
+                    className="heart-icon liked"
+                    onClick={() => toggleLike(activity.id)}
+                  />
+                ) : (
+                  <FaRegHeart
+                    className="heart-icon"
+                    onClick={() => toggleLike(activity.id)}
+                  />
+                )}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
