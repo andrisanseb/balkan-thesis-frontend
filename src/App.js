@@ -39,6 +39,7 @@ export default function App() {
 
   const [destinations, setDestinations] = useState([]);
 
+
   useEffect(() => {
     fetchDestinations();
   }, []);
@@ -52,6 +53,7 @@ export default function App() {
       console.error("Error fetching destinations:", error);
     }
   };
+
 
   //ConsumerAPI
   // const [pois, setPois] = useState([]);

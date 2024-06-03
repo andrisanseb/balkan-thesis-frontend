@@ -11,7 +11,7 @@ const DaysOrganiser = ({
   createRoadTrip,
 }) => {
   const [daysData, setDaysData] = useState([]);
-  const [totalDays, setTotalDays] = useState(selectedDestinations.length);
+  const [totalDays, setTotalDays] = useState(selectedDestinations.length + 1);
 
   const [fuelConsumption, setFuelConsumption] = useState(0);
   const [gasCost, setGasCost] = useState(0);
@@ -208,6 +208,14 @@ const DaysOrganiser = ({
     setGasCost(totalCost);
   };
 
+  const roundTripHandler = (index) => {
+    if (index + 1 >= selectedDestinations.length) {
+      return selectedDestinations[0].name;
+    } else {
+      return selectedDestinations[index + 1].name;
+    }
+  };
+
   return (
     <div>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -227,8 +235,13 @@ const DaysOrganiser = ({
             {routeData.segments.map((segment, index) => (
               <div key={index} className="segment-info">
                 <p>
-                  <span className="destination-names">{selectedDestinations[index].name}</span> ➔{" "}
-                  <span className="destination-names">{selectedDestinations[index + 1].name}</span>
+                  <span className="destination-names">
+                    {selectedDestinations[index].name}
+                  </span>{" "}
+                  ➔{" "}
+                  <span className="destination-names">
+                    {roundTripHandler(index)}
+                  </span>
                 </p>
                 <p>
                   Distance: {convertMetersToKilometers(segment.distance)} km
@@ -241,7 +254,9 @@ const DaysOrganiser = ({
           </div>
         )}
         <div className="fuel-cost-input">
-          <label htmlFor="fuelConsumption">Enter Fuel Consumption (litres per 100km): </label>
+          <label htmlFor="fuelConsumption">
+            Enter Fuel Consumption (litres per 100km):{" "}
+          </label>
           <input
             type="number"
             id="fuelConsumption"

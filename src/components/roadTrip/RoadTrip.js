@@ -21,7 +21,7 @@ const RoadTrip = ({ destinations }) => {
   const location = useLocation();
 
   // Route
-  const apiKey = "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
+  const openRouteServiceApiKey = "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
   const [routeData, setRouteData] = useState(null);
 
   useEffect(() => {
@@ -75,13 +75,14 @@ const RoadTrip = ({ destinations }) => {
       const selectedDestinationsCoordinates = selectedDestinations.map(
         (destination) => [destination.longitude, destination.latitude]
       );
-      // const startFinishPoint = [
-      //   selectedDestinations[0].longitude,
-      //   selectedDestinations[0].latitude,
-      // ];
 
+      selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
+
+      console.log(selectedDestinationsCoordinates);
+
+      // POST
       const response = await fetch(
-        `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}`,
+        `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${openRouteServiceApiKey}`,
         {
           method: "POST",
           headers: {
@@ -89,8 +90,6 @@ const RoadTrip = ({ destinations }) => {
           },
           body: JSON.stringify({
             coordinates: selectedDestinationsCoordinates,
-            // instructions: "false",
-            // options:{"avoid_features":["ferries","tollways","highways"]}
           }),
         }
       );

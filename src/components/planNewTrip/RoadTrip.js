@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import  '../../styles/RoadTrip.css';
 
 
-
+// UNUSED TODO: delete later
 const RoadTrip = () => {
     const [roadTripOption, setRoadTripOption] = useState("");
     const navigate = useNavigate();

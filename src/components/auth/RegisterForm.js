@@ -9,26 +9,9 @@ export const RegisterForm = () => {
   const [first_name, setFirst_Name] = useState("");
   const [last_name, setLast_Name] = useState("");
 
-//   let [country, setCountry] = useState(1);
-//   const [countryList, setCountryList] = useState([{ name: "", id: "" }]);
-
   const API_URL = "http://localhost:4000/";
   const navigate = useNavigate();
   const [error, setError] = useState("");
-
-//   useEffect(() => {
-//     fetchCountries();
-//   }, []);
-
-//   const fetchCountries = async () => {
-//     try {
-//       const response = await fetch(API_URL + "countries");
-//       const data = await response.json();
-//       setCountryList(data);
-//     } catch (error) {
-//       console.error("Error fetching countries:", error);
-//     }
-//   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,10 +20,6 @@ export const RegisterForm = () => {
     if (name === "email") setEmail(value);
     if (name === "first_name") setFirst_Name(value);
     if (name === "last_name") setLast_Name(value);
-    // if (name === 'country') {
-    //     country = e.target.value;
-    //     setCountry(e.target.value)
-    // };
   };
 
   const handleSubmit = async (e) => {
@@ -138,18 +117,6 @@ export const RegisterForm = () => {
             required
           />
         </div>
-
-        {/* <div className="form-group">
-                    <label>COUNTRY
-                        <select className="form-control" name="country" value={country} onChange={handleInputChange}>
-                            {countryList.map(country => (
-                                <option value={country.id} key={country.id} >{country.name}</option>
-                            ))
-                            }
-                        </select>
-                    </label>
-                </div> */}
-
         <div className="form-group">
           <button type="submit">REGISTER</button>
         </div>

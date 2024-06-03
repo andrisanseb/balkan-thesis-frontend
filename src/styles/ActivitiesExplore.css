@@ -1,9 +1,13 @@
 .experiences-section {
-    padding: 0px;
+    background-color: #c6c6cf;
+    font-family: 'Arial', sans-serif;
 }
 
 .experiences-section .content-section {
     margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 .category-menu {
@@ -13,43 +17,78 @@
 }
 
 .category-button {
-    background-color: transparent;
+    /* background-color: #e0e0e0; */
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    padding: 10px 20px;
+    font-size: 20px;
+    padding: 10px 24px;
     margin: 5px;
     border-radius: 30px;
     font-weight: 700;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.category-button:hover {
+    background-color: #042f5c;
+    color: white;
+}
+
+.active-button {
+    color: white;
+    background-color: #042f5c;
+}
+
+.active-button:hover {
+    color: white;
+    background-color: #042f5c;
 }
 
 .image-container {
+    position: relative;
     width: 100%;
     overflow: hidden;
-    max-height: 450px;
+    max-height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .category-image {
-    width: 100%;
-    height: 100%;
+    max-width: 80%;
+    height: auto;
     display: block;
     object-fit: cover;
     object-position: center;
 }
 
-.category-button:hover {
-    background-color: #0056b3;
+.category-info {
+    position: absolute;
+    background-color: rgba(128, 128, 128, 0.8);
+    border-radius: 9px;
+    padding: 20px;
     color: white;
+    bottom: 100px;
+    right: 40px;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    font-size: 18px;
+    line-height: 1.5;
+    overflow: hidden;
+    backdrop-filter: blur(7px);
 }
 
-.active-button {
-    color: #0056b3;
+.category-info p:first-child {
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
-.active-button:hover {
-    color: white;
+.category-info p:last-child {
+    color: #cecdcd;
 }
 
+
+/* Loading Spinner */
 .loading-container {
     display: flex;
     justify-content: center;
@@ -73,27 +112,6 @@
     }
 }
 
-
-.category-info {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.category-info p:first-child {
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.category-info p:last-child {
-    color: #555;
-}
-
-
 .cards {
     display: flex;
     flex-wrap: wrap;
@@ -109,6 +127,12 @@
     overflow: hidden;
     width: 300px;
     position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card-content {
@@ -120,6 +144,7 @@
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
+    color: #333;
 }
 
 .activity-description {
@@ -127,6 +152,7 @@
     color: #555;
 }
 
+/* Heart icon styles */
 .heart-icon {
     position: absolute;
     bottom: 5px;
@@ -138,5 +164,9 @@
 }
 
 .heart-icon.liked {
+    color: #ff4d4d;
+}
+
+.heart-icon:hover {
     color: #ff4d4d;
 }

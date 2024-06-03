@@ -2,31 +2,52 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../styles/ActivitiesExplore.css";
 import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
+import AuthService from "../../services/AuthService";
 
 const ActivitiesExplore = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activities, setActivities] = useState([]);
-  // const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [categoryInfo, setCategoryInfo] = useState("");
   const [funFact, setFunFact] = useState("");
   const [loading, setLoading] = useState(true);
-  const [likedActivities, setLikedActivities] = useState({}); // handle in backend (table)
+  const [favoriteActivities, setFavoriteActivities] = useState({});
+  const currentUser = AuthService.getCurrentUser();
 
-  useEffect(() => {
-    fetchActivities();
-  }, []);
-
-  const fetchActivities = async () => {
+  const fetchActivitiesAndFavorites = async () => {
     try {
-      const response = await fetch("http://localhost:4000/activities");
-      const data = await response.json();
-      setActivities(data.data); // because of DTO
+      // Fetch activities
+      const activitiesResponse = await fetch(
+        "http://localhost:4000/activities"
+      );
+      const activitiesData = await activitiesResponse.json();
+
+      setActivities(activitiesData.data); // because of DTO
+
+      // Fetch favorite activities for the user
+      const favoritesResponse = await fetch(
+        `http://localhost:4000/favoriteActivities/${currentUser.id}`
+      );
+      const favoriteActivityIds = await favoritesResponse.json();
+
+      // Map through activities to find those that match the favorite activity IDs
+      const favoriteActivities = activitiesData.data.reduce((acc, activity) => {
+        if (favoriteActivityIds.includes(activity.id)) {
+          acc[activity.id] = true;
+        }
+        return acc;
+      }, {});
+
+      setFavoriteActivities(favoriteActivities);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching activities:", error);
+      console.error("Error fetching activities or favorite activities:", error);
     }
   };
+
+  useEffect(() => {
+    fetchActivitiesAndFavorites();
+  }, []);
 
   useEffect(() => {
     switch (selectedCategory) {
@@ -87,49 +108,6 @@ const ActivitiesExplore = () => {
         break;
     }
   }, [selectedCategory]);
-  // TODO:
-  // backend endpoint
-  // const fetchReviews = async () => {
-  //     try {
-  //         const response = await fetch('http://localhost:4000/reviews');
-  //         const data = await response.json();
-  //         setActivities(data);
-  //     } catch (error) {
-  //         console.error('Error fetching activities:', error);
-  //     }
-  // };
-
-  // Star - Reviews
-  // const calculateStarRating = (activity) => {
-  //     const activityReviews = reviews.filter(review => review.activity_id === activity.id);
-  //     const starRatings = activityReviewsStars.map(review => review.stars);
-  //     starRatings.sort((a, b) => a - b); // Sort the ratings in ascending order
-  //     const sum = starRatings.reduce((total, current) => total + current, 0);
-  //     const average = sum / starRatings.length;
-  //     return average || 0;
-  // };
-
-  // const renderStars = (rating) => {
-  //     const fullStars = Math.floor(rating);
-  //     const halfStar = rating % 1 !== 0;
-  //     const emptyStars = 10 - fullStars - (halfStar ? 1 : 0);
-
-  //     const starElements = [];
-
-  //     for (let i = 0; i < fullStars; i++) {
-  //         starElements.push(<span key={i} className="star full-star"></span>);
-  //     }
-
-  //     if (halfStar) {
-  //         starElements.push(<span key="half" className="star half-star"></span>);
-  //     }
-
-  //     for (let i = 0; i < emptyStars; i++) {
-  //         starElements.push(<span key={i} className="star empty-star"></span>);
-  //     }
-
-  //     return starElements;
-  // };
 
   const changeCategory = (category) => {
     setSelectedCategory(category);
@@ -164,11 +142,42 @@ const ActivitiesExplore = () => {
     );
   }
 
-  const toggleLike = (activityId) => {
-    setLikedActivities((prevLikedActivities) => ({
-      ...prevLikedActivities,
-      [activityId]: !prevLikedActivities[activityId],
-    }));
+  const toggleFavorite = async (activityId) => {
+    try {
+      // If the activity is currently favorite, remove it from favorites
+      if (favoriteActivities[activityId]) {
+        await fetch(`http://localhost:4000/favoriteActivities`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            activityId: activityId,
+          }),
+        });
+      } else {
+        // If the activity is not currently favorite, add it to favorites
+        await fetch(`http://localhost:4000/favoriteActivities`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            activityId: activityId,
+          }),
+        });
+      }
+
+      // Update the local state to reflect the change in favorite status
+      setFavoriteActivities((prevFavoriteActivities) => ({
+        ...prevFavoriteActivities,
+        [activityId]: !prevFavoriteActivities[activityId],
+      }));
+    } catch (error) {
+      console.error("Error toggling favorite activity:", error);
+    }
   };
 
   return (
@@ -177,15 +186,16 @@ const ActivitiesExplore = () => {
         <div className="image-container">
           <img
             src={selectedImage}
-            alt="Selected Category Image"
+            alt="Selected Category img"
             className="category-image"
           />
+          <div className="category-info">
+            <p>{categoryInfo}</p>
+            <p>{funFact}</p>
+          </div>
         </div>
         <div className="category-menu">{renderCategoryButtons()}</div>
-        <div className="category-info">
-          <p>{categoryInfo}</p>
-          <p>{funFact}</p>
-        </div>
+
         {loading ? (
           <div className="loading-container">
             <FaSpinner className="spinner" />
@@ -197,18 +207,16 @@ const ActivitiesExplore = () => {
                 <div className="card-content">
                   <p className="activity-name">{activity.name}</p>
                   <p className="activity-description">{activity.description}</p>
-                  {/* <div className="star-rating">{renderStars(calculateStarRating(activity))}</div> */}
                 </div>
-                {/* <FaHeart className="heart-icon" /> */}
-                {likedActivities[activity.id] ? (
+                {favoriteActivities[activity.id] ? (
                   <FaHeart
                     className="heart-icon liked"
-                    onClick={() => toggleLike(activity.id)}
+                    onClick={() => toggleFavorite(activity.id)}
                   />
                 ) : (
                   <FaRegHeart
                     className="heart-icon"
-                    onClick={() => toggleLike(activity.id)}
+                    onClick={() => toggleFavorite(activity.id)}
                   />
                 )}
               </div>
