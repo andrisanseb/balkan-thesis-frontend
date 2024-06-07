@@ -37,12 +37,12 @@
 }
 
 .map-container {
-    flex: 0 0 30%; /* Set width to 30% */
-    max-height: 600px; /* Set max height */
-    overflow: hidden; /* Hide overflow content */
-  }
-  
-  .planner-container {
-    flex: 1; /* Take up remaining space */
-    overflow-y: auto; /* Add vertical scroll if needed */
-  }
+    flex: 0 0 30%;
+    max-height: 600px;
+    overflow: hidden;
+}
+
+.planner-container {
+    flex: 1;
+    overflow-y: auto;
+}

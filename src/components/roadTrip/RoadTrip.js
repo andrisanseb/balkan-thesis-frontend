@@ -21,7 +21,8 @@ const RoadTrip = ({ destinations }) => {
   const location = useLocation();
 
   // Route
-  const openRouteServiceApiKey = "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
+  const openRouteServiceApiKey =
+    "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
   const [routeData, setRouteData] = useState(null);
 
   useEffect(() => {
@@ -69,6 +70,10 @@ const RoadTrip = ({ destinations }) => {
     setCurrentView(currentView + 1);
   };
 
+  // optimal order of destinations
+  const turf = require("@turf/turf");
+  // TODO: turf + tsp algorithm on coordinates before calling api
+
   // API: Calculates Route Between Selected Destinations
   const calculateRoute = async () => {
     try {
@@ -77,8 +82,6 @@ const RoadTrip = ({ destinations }) => {
       );
 
       selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
-
-      console.log(selectedDestinationsCoordinates);
 
       // POST
       const response = await fetch(
@@ -132,9 +135,6 @@ const RoadTrip = ({ destinations }) => {
                 "/images/country/flags/" +
                 destination.country.name.slice(0, 3).toLowerCase() +
                 ".png";
-              let destination_details_path =
-                "/explore/destinations/" + destination.id;
-
               return (
                 <div
                   key={destination.id}
@@ -172,8 +172,16 @@ const RoadTrip = ({ destinations }) => {
     </div>
   );
 
-  const createRoadTrip = async ()  => {
+  const createRoadTrip = async () => {
     console.log("post roadtrip attempt");
+
+    //TODO: beautified version
+    // var routeDataCopy = routeData;
+    // delete routeDataCopy.way_points;
+    // delete routeDataCopy.warnings;
+    // delete routeDataCopy.extras;
+    // delete routeDataCopy.bbox;
+
     try {
       const response = await fetch("http://localhost:4000/roadTrip", {
         method: "POST",
@@ -183,10 +191,9 @@ const RoadTrip = ({ destinations }) => {
         body: JSON.stringify({
           name: "name",
           description: "description", //remove description maybe
-          user_id: currentUser.id,  //TODO: add to DTO (backend)
-          // route: JSON.stringify(routeData), //post beautified version
-          route: null,
-          days: null,
+          userId: currentUser.id,
+          route: JSON.stringify(routeData),
+          days: JSON.stringify(daysData),   //post beautified version
         }),
       });
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
-import { FaClock } from "react-icons/fa";
+import { FaSpinner, FaClock } from "react-icons/fa";
+
 
 const DaysOrganiser = ({
   selectedDestinations,
@@ -16,9 +17,9 @@ const DaysOrganiser = ({
   const [fuelConsumption, setFuelConsumption] = useState(0);
   const [gasCost, setGasCost] = useState(0);
 
+
   useEffect(() => {
     distributeActivitiesRandomly();
-    // console.log(selectedActivities);
   }, []);
 
   useEffect(() => {
@@ -229,6 +230,13 @@ const DaysOrganiser = ({
         </div>
       </DragDropContext>
 
+
+      {routeData == null ? (
+          <div className="loading-container">
+            <p>calculating optimal route...</p>
+            <FaSpinner className="spinner" />
+          </div>
+        ) : (
       <div className="route-info-container">
         {routeData && (
           <div className="route-info">
@@ -267,6 +275,7 @@ const DaysOrganiser = ({
           <p>Gas Cost: {gasCost.toFixed(2)} €</p>
         </div>
       </div>
+        )}
     </div>
   );
 };
