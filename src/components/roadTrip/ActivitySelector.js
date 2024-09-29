@@ -41,7 +41,6 @@ const ActivitySelector = ({
   };
 
   const handleSubmit = () => {
-    // console.log("Selected activities:", selectedActivities);
     onSelectedActivitiesChange(selectedActivities);
     onNext();
   };

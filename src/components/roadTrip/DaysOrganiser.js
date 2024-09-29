@@ -160,7 +160,7 @@ const DaysOrganiser = ({
               </ul>
             )}
           </Droppable>
-          {/* <div className="activity-summary">
+          <div className="activity-summary">
             <p>Total:</p>
             <div className="summary-details">
               <p className="duration">
@@ -170,7 +170,7 @@ const DaysOrganiser = ({
                 {totalCost === 0 ? "free" : `${totalCost} €`}
               </p>
             </div>
-          </div> */}
+          </div>
         </div>
       );
     });
@@ -178,7 +178,6 @@ const DaysOrganiser = ({
 
   const handleSubmit = () => {
     handleDaysDataChange(JSON.stringify(daysData));
-    console.log(daysData);
     createRoadTrip();
   };
 
@@ -203,7 +202,7 @@ const DaysOrganiser = ({
 
   const calculateGasCost = () => {
     const totalDistance = routeData.summary.distance;
-    const gasPricePerLiter = 1.82; // find prices
+    const gasPricePerLiter = 1.82; // TODO: find prices
     const totalLiters = (totalDistance / 1000) * (fuelConsumption / 100);
     const totalCost = totalLiters * gasPricePerLiter;
     setGasCost(totalCost);
