@@ -11,7 +11,6 @@ import React, { useState, useEffect } from "react";
 import AuthService from "./services/AuthService";
 import { NavBar } from "./components/Nav";
 import { Footer } from "./components/Footer";
-import { BackButton } from "./components/BackButton";
 import { Profile } from "./components/user/Profile";
 import { GetStarted } from "./components/GetStarted";
 import { LoginForm } from "./components/auth/LoginForm";
@@ -21,7 +20,6 @@ import { Header } from "./components/Header";
 import { Logo } from "./components/Logo";
 import DestinationList from "./components/destination/DestinationList";
 import DestinationDetails from "./components/destination/DestinationDetails";
-import RoadTripOLD from "./components/planNewTrip/RoadTrip";
 import RoadTrip from "./components/roadTrip/RoadTrip";
 import MapWithOpenStreetMapProvider from "./components/test/MapWithOpenStreetMapProvider";
 import Assistant from "./components/Assistant";
@@ -90,13 +88,6 @@ export default function App() {
           <NavBar />
         </header>
       }
-      {/* {showBack && (
-        <div className="logo-back-button-container">
-          <BackButton />
-          <Header currentPath={currentPath} />
-          <Logo />
-        </div>
-      )} */}
       <main>
         <Assistant />
         <Routes>

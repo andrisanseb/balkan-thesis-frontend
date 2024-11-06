@@ -71,7 +71,7 @@ const RoadTrip = ({ destinations }) => {
   };
 
   // optimal order of destinations
-  const turf = require("@turf/turf");
+  //const turf = require("@turf/turf");
   // TODO: turf + tsp algorithm on coordinates before calling api
 
   // API: Calculates Route Between Selected Destinations

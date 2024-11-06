@@ -18,11 +18,12 @@ export const NavBar = () => {
                     {/* <NavLink to="/explore/destinations">DESTINATIONS</NavLink> */}
                     <div className="dropdown">
                         <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
+                        {/* Popularity - Reviews together in /destinations link*/}
                         <div className="dropdown-content">
                             <Link to="/explore/popular">Popular</Link>
                             <Link to="/reviews">Reviews</Link>
-                            <Link to="/fun">Fun</Link>
-                            <Link to="/feed">My Feed</Link>
+                            {/* <Link to="/fun">Fun</Link> */}
+                            {/* <Link to="/feed">My Feed</Link> */}
                         </div>
                     </div>
                     <NavLink to="/experiences">EXPERIENCES</NavLink>
