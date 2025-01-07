@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React from "react";
 import AuthService from "../../services/AuthService";
 // import '../../styles/UserDetails.css'
 

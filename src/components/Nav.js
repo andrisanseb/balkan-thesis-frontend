@@ -1,4 +1,3 @@
-import React, {useEffect, useState} from 'react';
 import {Link, NavLink} from 'react-router-dom';
 import AuthService from '../services/AuthService';
 import '../styles/Nav.css';
@@ -22,8 +21,6 @@ export const NavBar = () => {
                         <div className="dropdown-content">
                             <Link to="/explore/popular">Popular</Link>
                             <Link to="/reviews">Reviews</Link>
-                            {/* <Link to="/fun">Fun</Link> */}
-                            {/* <Link to="/feed">My Feed</Link> */}
                         </div>
                     </div>
                     <NavLink to="/experiences">EXPERIENCES</NavLink>

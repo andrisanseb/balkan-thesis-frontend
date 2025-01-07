@@ -4,7 +4,11 @@ import "../../styles/ActivitiesExplore.css";
 import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
 
+
+//TODO: fix, dto may have changed, Id is broken
 const ActivitiesExplore = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [activities, setActivities] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
@@ -18,7 +22,7 @@ const ActivitiesExplore = () => {
     try {
       // Fetch activities
       const activitiesResponse = await fetch(
-        "http://localhost:4000/activities"
+         API_URL+"/activities"
       );
       const activitiesData = await activitiesResponse.json();
 
@@ -26,7 +30,7 @@ const ActivitiesExplore = () => {
 
       // Fetch favorite activities for the user
       const favoritesResponse = await fetch(
-        `http://localhost:4000/favoriteActivities/${currentUser.id}`
+        API_URL+"/favoriteActivities/${currentUser.id}"
       );
       const favoriteActivityIds = await favoritesResponse.json();
 
@@ -146,7 +150,7 @@ const ActivitiesExplore = () => {
     try {
       // If the activity is currently favorite, remove it from favorites
       if (favoriteActivities[activityId]) {
-        await fetch(`http://localhost:4000/favoriteActivities`, {
+        await fetch(API_URL+"/favoriteActivities", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -158,7 +162,7 @@ const ActivitiesExplore = () => {
         });
       } else {
         // If the activity is not currently favorite, add it to favorites
-        await fetch(`http://localhost:4000/favoriteActivities`, {
+        await fetch(API_URL+"favoriteActivities", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -4,11 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 
+//API is down TODO: fix or find other!!!
 const Assistant = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const X_RapidAPI_Key = process.env.REACT_APP_X_RAPIDAPI_KEY;
 
     let icon = process.env.PUBLIC_URL + '/assistant.jpg';
 
@@ -28,14 +31,13 @@ const Assistant = () => {
             const newUserMessage = { text: message, fromUser: true };
             setChatHistory([...chatHistory, newUserMessage]);
 
-
             // Fetch bot response from API
             const url = 'https://models3.p.rapidapi.com/?model_id=27&prompt=' + encodeURIComponent(message);
             const options = {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
-                    'X-RapidAPI-Key': 'bf5fe43074msh65fcb7ca1d9c562p11533djsn0156473d1a3a',
+                    'X-RapidAPI-Key': X_RapidAPI_Key,
                     'X-RapidAPI-Host': 'models3.p.rapidapi.com'
                 },
                 body: JSON.stringify({}) // No need to send any data in the body

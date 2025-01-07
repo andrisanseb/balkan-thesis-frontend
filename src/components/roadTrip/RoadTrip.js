@@ -10,6 +10,8 @@ import ActivitySelector from "./ActivitySelector";
 import DaysOrganiser from "./DaysOrganiser";
 
 const RoadTrip = ({ destinations }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [currentView, setCurrentView] = useState(1);
@@ -21,8 +23,8 @@ const RoadTrip = ({ destinations }) => {
   const location = useLocation();
 
   // Route
-  const openRouteServiceApiKey =
-    "5b3ce3597851110001cf6248f5e662ffc8c848ff8e860b2b731eb023";
+  const openRouteServiceApiKey = process.env.REACT_APP_OPEN_ROUTE_SERVICE_API_KEY;
+  
   const [routeData, setRouteData] = useState(null);
 
   useEffect(() => {
@@ -183,7 +185,7 @@ const RoadTrip = ({ destinations }) => {
     // delete routeDataCopy.bbox;
 
     try {
-      const response = await fetch("http://localhost:4000/roadTrip", {
+      const response = await fetch(API_URL+"/roadTrip", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

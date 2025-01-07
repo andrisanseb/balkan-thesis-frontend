@@ -3,13 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../../styles/Form.css';
 
 export const LoginForm = () => {
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-    const API_URL = 'http://localhost:4000/';
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -20,7 +19,7 @@ export const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(API_URL + 'api/auth/login', {
+            const response = await fetch(API_URL + '/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

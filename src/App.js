@@ -28,6 +28,8 @@ import DaysOrganiser from "./components/roadTrip/DaysOrganiser";
 import ActivitiesExplore from "./components/activities/ActivitiesExplore";
 
 export default function App() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const location = useLocation();
   // const showNav = location.pathname !== "/";
   // const showBack = location.pathname !== "/";
@@ -44,7 +46,7 @@ export default function App() {
 
   const fetchDestinations = async () => {
     try {
-      const response = await fetch("http://localhost:4000/destinations");
+      const response = await fetch(API_URL+"/destinations");
       const data = await response.json();
       setDestinations(data);
     } catch (error) {

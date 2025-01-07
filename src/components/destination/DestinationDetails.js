@@ -5,6 +5,8 @@ import AuthService from '../../services/AuthService';
 
 
 const DestinationDetails = () => {
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const [destination, setDestination] = useState([]);
     const [country, setCountry] = useState([]);
     const [activities, setActivities] = useState([]);
@@ -19,7 +21,7 @@ const DestinationDetails = () => {
 
     const fetchDestination = async () => {
         try {
-            const response = await fetch('http://localhost:4000/destinations/'+destinationId);
+            const response = await fetch(API_URL+"/destinations/"+destinationId);
             const data = await response.json();
             setDestination(data);
             setCountry(data.country);

@@ -7,6 +7,8 @@ import '../styles/RoadTrip.css';
 
 // TODO: part1 = review dests only
 const Review = ({ destinations }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   // user
   const currentUser = AuthService.getCurrentUser();
   // const currentUserId = currentUser.id;
@@ -40,7 +42,7 @@ const Review = ({ destinations }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:4000/review', {
+      const response = await fetch(API_URL+'/review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
 export const Profile = () => {
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const currentUser = AuthService.getCurrentUser();
     const [user, setUser] = useState(false);
     const [username, setUsername] = useState('');
@@ -24,7 +26,7 @@ export const Profile = () => {
         formData.append('image', imageFile);
 
         try {
-            const response = await fetch(`http://localhost:4000/users/${currentUser.id}`, {
+            const response = await fetch(API_URL+`/users/${currentUser.id}`, {
                 method: 'PUT',
 
                 body: formData,

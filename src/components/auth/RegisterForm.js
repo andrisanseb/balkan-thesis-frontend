@@ -3,13 +3,14 @@ import "../../styles/Form.css";
 import { useNavigate } from "react-router-dom";
 
 export const RegisterForm = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [first_name, setFirst_Name] = useState("");
   const [last_name, setLast_Name] = useState("");
 
-  const API_URL = "http://localhost:4000/";
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
@@ -25,7 +26,7 @@ export const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(API_URL + "api/auth/register", {
+      const response = await fetch(API_URL + "/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
