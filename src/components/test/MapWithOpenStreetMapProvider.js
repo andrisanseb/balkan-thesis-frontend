@@ -39,7 +39,7 @@ const MapWithOpenStreetMapProvider = ({ selectedDestinations, routeData }) => {
 
 
   return (
-    <div id="map" style={{ height: '650px', width: '100%' }}></div>
+    <div id="map" className="map-container" style={{ height: '650px', width: '100%' }}></div>
   );
 };
 

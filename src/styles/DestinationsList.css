@@ -6,7 +6,6 @@
 
 .destinations-section .content-section {
     width: 100%;
-    margin: 20px auto;
     background-color: red;
     background-image: linear-gradient(to bottom right, rgb(218, 228, 235), rgb(153, 194, 199));
 }
@@ -16,7 +15,6 @@
     font-size: 46px;
     color: white;
     text-transform: uppercase;
-    padding: 30px;
 }
 
 .destinations-section .content-section .cards {

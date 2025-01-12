@@ -120,8 +120,9 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
+  //TODO: make own js ui file
   const Card1 = ({ onNext }) => (
-    <div>
+    <div className="page-container">
       <div className="destinations-section">
         <div className="content-section">
           <h2 className="title">Destinations</h2>
@@ -159,19 +160,17 @@ const RoadTrip = ({ destinations }) => {
           </div>
         </div>
       </div>
-      <button onClick={onNext}>Continue</button>
+      <button onClick={onNext}>Next</button>
     </div>
   );
 
   const Card2 = ({ onNext }) => (
-    <div>
-      <ActivitySelector
-        selectedDestinations={selectedDestinations}
-        onSelectedActivitiesChange={handleSelectedActivitiesChange}
-        onNext={onNext}
-        calculateRoute={calculateRoute}
-      />
-    </div>
+    <ActivitySelector
+      selectedDestinations={selectedDestinations}
+      onSelectedActivitiesChange={handleSelectedActivitiesChange}
+      onNext={onNext}
+      calculateRoute={calculateRoute}
+    />
   );
 
   const createRoadTrip = async () => {
@@ -213,22 +212,18 @@ const RoadTrip = ({ destinations }) => {
   };
 
   const Card3 = ({ onNext }) => (
-    <div className="create-road-trip-overview-container">
-      <div className="map-container">
-        <MapWithOpenStreetMapProvider
-          selectedDestinations={selectedDestinations}
-          routeData={routeData}
-        />
-      </div>
-      <div className="planner-container">
-        <DaysOrganiser
-          selectedDestinations={selectedDestinations}
-          selectedActivities={selectedActivities}
-          handleDaysDataChange={handleDaysDataChange}
-          routeData={routeData}
-          createRoadTrip={createRoadTrip}
-        />
-      </div>
+    <div id="create-road-trip-overview-container" className="page-container">
+      <MapWithOpenStreetMapProvider
+        selectedDestinations={selectedDestinations}
+        routeData={routeData}
+      />
+      <DaysOrganiser
+        selectedDestinations={selectedDestinations}
+        selectedActivities={selectedActivities}
+        handleDaysDataChange={handleDaysDataChange}
+        routeData={routeData}
+        createRoadTrip={createRoadTrip}
+      />
     </div>
   );
 

@@ -3,8 +3,6 @@ import {
   Navigate,
   Route,
   Routes,
-  useLocation,
-  useNavigate,
 } from "react-router-dom";
 
 import React, { useState, useEffect } from "react";
@@ -28,17 +26,10 @@ import DaysOrganiser from "./components/roadTrip/DaysOrganiser";
 import ActivitiesExplore from "./components/activities/ActivitiesExplore";
 
 export default function App() {
+
   const API_URL = process.env.REACT_APP_API_URL;
-
-  const location = useLocation();
-  // const showNav = location.pathname !== "/";
-  // const showBack = location.pathname !== "/";
   const currentUser = AuthService.getCurrentUser();
-  const navigate = useNavigate();
-  const currentPath = location.pathname;
-
   const [destinations, setDestinations] = useState([]);
-
 
   useEffect(() => {
     fetchDestinations();
@@ -54,37 +45,8 @@ export default function App() {
     }
   };
 
-
-  //ConsumerAPI
-  // const [pois, setPois] = useState([]);
-
-  // useEffect(() => {
-  //   fetchPois();
-  // }, []);
-
-  // const fetchPois = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:4000/api/pois');
-  //     if (!response.ok) {
-  //       throw new Error('Failed to fetch POIs');
-  //     }
-  //     const data = await response.json();
-  //     setPois(data);
-  //   } catch (error) {
-  //     console.error('Error fetching POIs:', error);
-  //   }
-  // };
-
   return (
     <>
-      {/* <div>
-      <h1>Points of Interest</h1>
-      <ul>
-        {pois.map(poi => (
-          <li key={poi.xid}>{poi.name}</li>
-        ))}
-      </ul>
-    </div> */}
       {
         <header>
           <NavBar />

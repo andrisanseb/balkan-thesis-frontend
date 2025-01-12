@@ -1,18 +1,8 @@
-.choose-roadtrip-container {
-    width: 100%;
-    background-color: red;
-    margin: auto;
-    display: flex;
-    min-height: 80vh;
-}
-
-
 .map-container {
     width: 100%;
     position: relative;
     overflow: hidden;
 }
-
 
 .card-container {
     display: flex;
@@ -28,11 +18,8 @@
     padding-left: 20px;
 }
 
-
-
-
 /* Card 4: Map + Planner*/
-.create-road-trip-overview-container {
+#create-road-trip-overview-container {
     display: flex;
 }
 
