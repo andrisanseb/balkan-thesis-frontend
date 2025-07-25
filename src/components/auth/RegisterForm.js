@@ -38,6 +38,7 @@ export const RegisterForm = () => {
           );
         }
         navigate("/");
+        window.location.reload();
       } else {
         const errData = await response.json();
         throw new Error(errData.message || "Register failed.");

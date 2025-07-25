@@ -32,7 +32,8 @@ export const LoginForm = () => {
                 if (data.accessToken) {
                     localStorage.setItem('user', JSON.stringify(data));
                 }
-                navigate('/');
+                navigate("/");
+                window.location.reload();            
             } else {
                 throw new Error('Login failed.');
             }

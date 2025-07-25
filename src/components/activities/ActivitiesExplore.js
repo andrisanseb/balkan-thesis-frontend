@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../styles/ActivitiesExplore.css";
 import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
 
-
-//TODO: fix, dto may have changed, Id is broken
 const ActivitiesExplore = () => {
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [activities, setActivities] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [categoryInfo, setCategoryInfo] = useState("");
@@ -21,16 +18,14 @@ const ActivitiesExplore = () => {
   const fetchActivitiesAndFavorites = async () => {
     try {
       // Fetch activities
-      const activitiesResponse = await fetch(
-         API_URL+"/activities"
-      );
+      const activitiesResponse = await fetch(API_URL + "/activities");
       const activitiesData = await activitiesResponse.json();
 
       setActivities(activitiesData.data); // because of DTO
 
       // Fetch favorite activities for the user
       const favoritesResponse = await fetch(
-        API_URL+"/favoriteActivities/${currentUser.id}"
+          API_URL + "/favoriteActivities/" + currentUser.id
       );
       const favoriteActivityIds = await favoritesResponse.json();
 
@@ -46,6 +41,7 @@ const ActivitiesExplore = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching activities or favorite activities:", error);
+      setLoading(false);
     }
   };
 
@@ -56,9 +52,7 @@ const ActivitiesExplore = () => {
   useEffect(() => {
     switch (selectedCategory) {
       case "Culture":
-        setSelectedImage(
-          process.env.PUBLIC_URL + "/images/category/culture.jpg"
-        );
+        setSelectedImage(process.env.PUBLIC_URL + "/images/category/culture.jpg");
         setCategoryInfo(
           "Explore the rich history and traditions of the Balkans, from ancient ruins to vibrant folk dances."
         );
@@ -67,9 +61,7 @@ const ActivitiesExplore = () => {
         );
         break;
       case "Gastronomy":
-        setSelectedImage(
-          process.env.PUBLIC_URL + "/images/category/gastronomy.jpg"
-        );
+        setSelectedImage(process.env.PUBLIC_URL + "/images/category/gastronomy.jpg");
         setCategoryInfo(
           "Indulge in the diverse flavors of Balkan cuisine, where hearty stews and freshly caught seafood await."
         );
@@ -78,9 +70,7 @@ const ActivitiesExplore = () => {
         );
         break;
       case "Nature":
-        setSelectedImage(
-          process.env.PUBLIC_URL + "/images/category/nature.jpg"
-        );
+        setSelectedImage(process.env.PUBLIC_URL + "/images/category/nature.jpg");
         setCategoryInfo(
           "Immerse yourself in the breathtaking landscapes of the Balkans, from lush forests to cascading waterfalls."
         );
@@ -89,9 +79,7 @@ const ActivitiesExplore = () => {
         );
         break;
       case "Religion":
-        setSelectedImage(
-          process.env.PUBLIC_URL + "/images/category/religion.jpg"
-        );
+        setSelectedImage(process.env.PUBLIC_URL + "/images/category/religion.jpg");
         setCategoryInfo(
           "Discover the spiritual heritage of the Balkans, where ancient churches and mosques dot the countryside."
         );
@@ -118,20 +106,11 @@ const ActivitiesExplore = () => {
   };
 
   const renderCategoryButtons = () => {
-    const categories = [
-      "All",
-      "Culture",
-      "Gastronomy",
-      "Nature",
-      "Leisure",
-      "Religion",
-    ];
+    const categories = ["All", "Culture", "Gastronomy", "Nature", "Leisure", "Religion"];
     return categories.map((category, index) => (
       <button
         key={index}
-        className={`category-button ${
-          selectedCategory === category ? "active-button" : ""
-        }`}
+        className={`category-button ${selectedCategory === category ? "active-button" : ""}`}
         onClick={() => changeCategory(category)}
       >
         {category}
@@ -150,7 +129,7 @@ const ActivitiesExplore = () => {
     try {
       // If the activity is currently favorite, remove it from favorites
       if (favoriteActivities[activityId]) {
-        await fetch(API_URL+"/favoriteActivities", {
+        await fetch(API_URL + "/favoriteActivities", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -162,7 +141,7 @@ const ActivitiesExplore = () => {
         });
       } else {
         // If the activity is not currently favorite, add it to favorites
-        await fetch(API_URL+"favoriteActivities", {
+        await fetch(API_URL + "/favoriteActivities", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -188,11 +167,7 @@ const ActivitiesExplore = () => {
     <div className="experiences-section">
       <div className="content-section">
         <div className="image-container">
-          <img
-            src={selectedImage}
-            alt="Selected Category img"
-            className="category-image"
-          />
+          <img src={selectedImage} alt="Selected Category img" className="category-image" />
           <div className="category-info">
             <p>{categoryInfo}</p>
             <p>{funFact}</p>
@@ -203,6 +178,10 @@ const ActivitiesExplore = () => {
         {loading ? (
           <div className="loading-container">
             <FaSpinner className="spinner" />
+          </div>
+        ) : filteredActivities.length === 0 ? (
+          <div className="no-activities-message">
+            No activities found in this category.
           </div>
         ) : (
           <div className="cards">
@@ -231,4 +210,5 @@ const ActivitiesExplore = () => {
     </div>
   );
 };
+
 export default ActivitiesExplore;

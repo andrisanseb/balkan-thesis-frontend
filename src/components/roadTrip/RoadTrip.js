@@ -42,7 +42,7 @@ const RoadTrip = ({ destinations }) => {
     }
   }, [currentView]);
 
-  if (!destinations) {
+  if (!destinations) {  //TODO: create and use loading spinner
     return <div>Loading...</div>;
   }
 
@@ -174,8 +174,6 @@ const RoadTrip = ({ destinations }) => {
   );
 
   const createRoadTrip = async () => {
-    console.log("post roadtrip attempt");
-
     //TODO: beautified version
     // var routeDataCopy = routeData;
     // delete routeDataCopy.way_points;
@@ -190,8 +188,7 @@ const RoadTrip = ({ destinations }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: "name",
-          description: "description", //remove description maybe
+          name: "TODO ask for name input",
           userId: currentUser.id,
           route: JSON.stringify(routeData),
           days: JSON.stringify(daysData),   //post beautified version

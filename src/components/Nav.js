@@ -1,12 +1,18 @@
 import {Link, NavLink} from 'react-router-dom';
 import AuthService from '../services/AuthService';
 import '../styles/Nav.css';
+import { useNavigate } from "react-router-dom";
+
 
 export const NavBar = () => {
+
+    const navigate = useNavigate();
     const currentUser = AuthService.getCurrentUser();
 
     const handleLogout = () => {
         AuthService.logout();
+        navigate("/");
+        window.location.reload();
     };
 
     return (
@@ -14,10 +20,8 @@ export const NavBar = () => {
             <div className="navbar-container">
                 <div className="navbar-left">
                     <NavLink to="/">HOME</NavLink>
-                    {/* <NavLink to="/explore/destinations">DESTINATIONS</NavLink> */}
                     <div className="dropdown">
                         <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
-                        {/* Popularity - Reviews together in /destinations link*/}
                         <div className="dropdown-content">
                             <Link to="/explore/popular">Popular</Link>
                             <Link to="/reviews">Reviews</Link>
