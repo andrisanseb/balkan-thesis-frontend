@@ -173,13 +173,17 @@ const RoadTrip = ({ destinations }) => {
     />
   );
 
-  const createRoadTrip = async () => {
+  const createRoadTrip = async (days) => {
     //TODO: beautified version
     // var routeDataCopy = routeData;
     // delete routeDataCopy.way_points;
     // delete routeDataCopy.warnings;
     // delete routeDataCopy.extras;
     // delete routeDataCopy.bbox;
+
+    const simplifiedDays = JSON.parse(JSON.stringify(days)).map(day => ({
+      activityIds: day.activities.map(activity => activity.id)
+    }));
 
     try {
       const response = await fetch(API_URL+"/roadTrip", {
@@ -191,12 +195,11 @@ const RoadTrip = ({ destinations }) => {
           name: "TODO ask for name input",
           userId: currentUser.id,
           route: JSON.stringify(routeData),
-          days: JSON.stringify(daysData),   //post beautified version
+          days: JSON.stringify(simplifiedDays),
         }),
       });
 
       if (response.ok) {
-        console.log("created!");
         //TODO: my roadtrip(s) overview
         // navigate("/my-roadtrips");
         navigate("/");
@@ -217,10 +220,11 @@ const RoadTrip = ({ destinations }) => {
       <DaysOrganiser
         selectedDestinations={selectedDestinations}
         selectedActivities={selectedActivities}
-        handleDaysDataChange={handleDaysDataChange}
         routeData={routeData}
+        handleDaysDataChange={handleDaysDataChange}
         createRoadTrip={createRoadTrip}
       />
+
     </div>
   );
 

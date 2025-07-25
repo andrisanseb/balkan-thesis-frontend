@@ -3,11 +3,6 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
 import { FaSpinner, FaClock } from "react-icons/fa";
 
-{/* TODO: day depends on 1 destination or 2 if that day user is travelling from dest1 -> dest2.
-  User can add activities of those destination only.
-  FUTURE FEATURE: add more days (optional)
-  */}
-
 const DaysOrganiser = ({
   selectedDestinations,
   selectedActivities,
@@ -22,7 +17,9 @@ const DaysOrganiser = ({
   const [gasCost, setGasCost] = useState(0);
 
   useEffect(() => {
-    distributeActivitiesRandomly();
+    if (selectedActivities && selectedActivities.length > 0) {
+      distributeActivitiesRandomly();
+    }
   }, []);
 
   useEffect(() => {
@@ -180,8 +177,8 @@ const DaysOrganiser = ({
   };
 
   const handleSubmit = () => {
-    handleDaysDataChange(JSON.stringify(daysData));
-    createRoadTrip();
+    handleDaysDataChange(daysData);
+    createRoadTrip(daysData); 
   };
 
   const updateTotal = () => {

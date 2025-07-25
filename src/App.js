@@ -37,7 +37,16 @@ export default function App() {
 
   const fetchDestinations = async () => {
     try {
-      const response = await fetch(API_URL+"/destinations");
+      //const response = await fetch(API_URL+"/destinations");
+      //console.log(response);
+      const response = await fetch(API_URL+"/destinations", {
+        method: "GET",
+        headers: {
+            "Accept": "application/json",
+        },
+    });
+
+      console.log(response);
       const data = await response.json();
       setDestinations(data);
     } catch (error) {
