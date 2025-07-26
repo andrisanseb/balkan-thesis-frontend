@@ -6,12 +6,6 @@ html, body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 p { /* overrides user agent stylesheet issue */
@@ -20,9 +14,4 @@ p { /* overrides user agent stylesheet issue */
   margin-block-end: 0em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-}
-
-/* GLOBAL CSS */
-.page-container {
-  margin: 0 40px;
 }

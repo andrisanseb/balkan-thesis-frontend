@@ -17,15 +17,27 @@ const ActivitiesExplore = () => {
 
   const fetchActivitiesAndFavorites = async () => {
     try {
-      // Fetch activities
-      const activitiesResponse = await fetch(API_URL + "/activities");
-      const activitiesData = await activitiesResponse.json();
+      // Check cache for activities
+      const cachedActivities = localStorage.getItem("activities");
+      const cacheTime = localStorage.getItem("activities_cache_time");
+      const now = Date.now();
+      const cacheValid = cacheTime && now - cacheTime < 24 * 60 * 60 * 1000; // 24 hours
+
+      let activitiesData;
+      if (cachedActivities && cacheValid) {
+        activitiesData = { data: JSON.parse(cachedActivities) };
+      } else {
+        const activitiesResponse = await fetch(API_URL + "/activities");
+        activitiesData = await activitiesResponse.json();
+        localStorage.setItem("activities", JSON.stringify(activitiesData.data));
+        localStorage.setItem("activities_cache_time", Date.now());
+      }
 
       setActivities(activitiesData.data); // because of DTO
 
       // Fetch favorite activities for the user
       const favoritesResponse = await fetch(
-          API_URL + "/favoriteActivities/" + currentUser.id
+        API_URL + "/favoriteActivities/" + currentUser.id
       );
       const favoriteActivityIds = await favoritesResponse.json();
 

@@ -11,14 +11,14 @@ export const GetStarted = () => {
 
     return (
         <div className="get-started-container">
-            {/* {currentUser ? (
+            {currentUser ? (
                 <Welcome /> ) : (
                <>
                 <div>
                     <LoginForm className="logform"/>
                 </div>
                </>
-            )} */}
+            )} 
         </div>
     );
 };

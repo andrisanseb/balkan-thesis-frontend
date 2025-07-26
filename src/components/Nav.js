@@ -20,13 +20,6 @@ export const NavBar = () => {
             <div className="navbar-container">
                 <div className="navbar-left">
                     <NavLink to="/">HOME</NavLink>
-                    <div className="dropdown">
-                        <NavLink to="/explore/destinations">DESTINATIONS</NavLink>
-                        <div className="dropdown-content">
-                            <Link to="/explore/popular">Popular</Link>
-                            <Link to="/reviews">Reviews</Link>
-                        </div>
-                    </div>
                     <NavLink to="/experiences">EXPERIENCES</NavLink>
                     <NavLink to="/roadTrip">ROAD TRIP</NavLink>
                 </div>
