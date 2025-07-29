@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../styles/Form.css';
+import AuthService from "../../services/AuthService";
 
 export const LoginForm = () => {
     const API_URL = process.env.REACT_APP_API_URL;
@@ -30,7 +31,7 @@ export const LoginForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.accessToken) {
-                    localStorage.setItem('user', JSON.stringify(data));
+                    AuthService.setCurrentUser(data);
                 }
                 navigate("/");
                 window.location.reload();            

@@ -4,29 +4,37 @@ import "../../styles/ActivitySelector.css";
 
 const ActivitySelector = ({
   selectedDestinations,
+  selectedActivities: selectedActivitiesProp = [],
   onSelectedActivitiesChange,
   onNext,
 }) => {
-  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState(
+    selectedActivitiesProp
+  );
   const [allActivities, setAllActivities] = useState([]);
 
   useEffect(() => {
-    // Use a local variable to track whether shuffling has been done
-    let shufflingDone = false;
-
-    // Check if shuffling has already been done
-    if (!shufflingDone) {
-      // Flatten the selectedDestinations array and shuffle the activities
-      const allActivities = selectedDestinations.flatMap(
-        (destination) => destination.activities
-      );
-      const shuffledActivities = allActivities.sort(() => Math.random() - 0.5);
-      setAllActivities(shuffledActivities);
-
-      // Set shufflingDone to true to prevent repeated shuffling
-      shufflingDone = true;
+    let allActivities = selectedDestinations.flatMap(
+      (destination) => destination.activities
+    );
+    // Shuffle only if no activities were previously selected
+    if (!selectedActivitiesProp || selectedActivitiesProp.length === 0) {
+      allActivities = [...allActivities].sort(() => Math.random() - 0.5);
     }
-  }, [selectedDestinations]); // Only re-run if selectedDestinations change
+    setAllActivities(allActivities);
+    // Only reset selectedActivities if destinations change and selection is now invalid
+    setSelectedActivities((prev) =>
+      prev.filter((activity) =>
+        allActivities.some((a) => a.id === activity.id)
+      )
+    );
+  }, [selectedDestinations]);
+
+  // Keep parent in sync if selection changes
+  useEffect(() => {
+    onSelectedActivitiesChange(selectedActivities);
+    // eslint-disable-next-line
+  }, [selectedActivities]);
 
   // Function to handle activity selection
   const toggleActivitySelection = (activity) => {
@@ -41,7 +49,6 @@ const ActivitySelector = ({
   };
 
   const handleSubmit = () => {
-    onSelectedActivitiesChange(selectedActivities);
     onNext();
   };
 

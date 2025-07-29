@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 import "../../styles/RoadTrip.css";
-import { FaCheck } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
-import CreateRoadTripOverview from "./CreateRoadTripOverview";
 import ActivitySelector from "./ActivitySelector";
-import DaysOrganiser from "./DaysOrganiser";
+import DestinationsSelector from "./DestinationsSelector";
+import Card3 from "./Card3";
 
 const RoadTrip = ({ destinations }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -69,7 +68,11 @@ const RoadTrip = ({ destinations }) => {
   };
 
   const nextView = () => {
-    setCurrentView(currentView + 1);
+    setCurrentView((prev) => prev + 1);
+  };
+
+  const prevView = () => {
+    setCurrentView((prev) => (prev > 1 ? prev - 1 : prev));
   };
 
   // optimal order of destinations
@@ -85,7 +88,6 @@ const RoadTrip = ({ destinations }) => {
 
       selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
 
-      // POST
       const response = await fetch(
         `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${openRouteServiceApiKey}`,
         {
@@ -110,70 +112,52 @@ const RoadTrip = ({ destinations }) => {
   const renderCard = () => {
     switch (currentView) {
       case 1:
-        return <Card1 onNext={nextView} />;
+        return (
+          <DestinationsSelector
+            destinations={destinations}
+            selectedDestinations={selectedDestinations}
+            addSelectedDestination={addSelectedDestination}
+            removeSelectedDestination={removeSelectedDestination}
+            onNext={nextView}
+          />
+        );
       case 2:
-        return <Card2 onNext={nextView} />;
+        return (
+          <div>
+            <ActivitySelector
+              selectedDestinations={selectedDestinations}
+              onSelectedActivitiesChange={handleSelectedActivitiesChange}
+              selectedActivities={selectedActivities}
+              onNext={nextView}
+              calculateRoute={calculateRoute}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <button onClick={prevView}>Back</button>
+            </div>
+          </div>
+        );
       case 3:
-        return <Card3 onNext={nextView} />;
+        return (
+          <div>
+            <Card3
+              selectedDestinations={selectedDestinations}
+              routeData={routeData}
+              selectedActivities={selectedActivities}
+              handleDaysDataChange={handleDaysDataChange}
+              createRoadTrip={createRoadTrip}
+            />
+            <div style={{ marginTop: "1rem" }}>
+              <button onClick={prevView}>Back</button>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
   };
 
-  //TODO: make own js ui file
-  const Card1 = ({ onNext }) => (
-    <div className="page-container">
-      <div className="destinations-section">
-        <div className="content-section">
-          <h2 className="title">Destinations</h2>
-          <div className="cards">
-            {destinations.map((destination) => {
-              const isSelected = selectedDestinations.includes(destination);
-              let destination_img =
-                process.env.PUBLIC_URL +
-                "/images/destination/" +
-                destination.img_path;
-              let country_flag_img =
-                process.env.PUBLIC_URL +
-                "/images/country/flags/" +
-                destination.country.name.slice(0, 3).toLowerCase() +
-                ".png";
-              return (
-                <div
-                  key={destination.id}
-                  className={`card ${isSelected ? "selected" : ""}`}
-                  style={{ backgroundImage: "url(" + destination_img + ")" }}
-                  onClick={() =>
-                    isSelected
-                      ? removeSelectedDestination(destination)
-                      : addSelectedDestination(destination)
-                  }
-                >
-                  <div className="card-content">
-                    <p className="dest-name">{destination.name}</p>
-                    <img src={country_flag_img} alt="country_flag" />
-                    {isSelected && <FaCheck className="checkmark" />}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      <button onClick={onNext}>Next</button>
-    </div>
-  );
-
-  const Card2 = ({ onNext }) => (
-    <ActivitySelector
-      selectedDestinations={selectedDestinations}
-      onSelectedActivitiesChange={handleSelectedActivitiesChange}
-      onNext={onNext}
-      calculateRoute={calculateRoute}
-    />
-  );
-
   const createRoadTrip = async (days) => {
+
     //TODO: beautified version
     // var routeDataCopy = routeData;
     // delete routeDataCopy.way_points;
@@ -210,23 +194,6 @@ const RoadTrip = ({ destinations }) => {
       setError(error.message);
     }
   };
-
-  const Card3 = ({ onNext }) => (
-    <div id="create-road-trip-overview-container" className="page-container">
-      <MapWithOpenStreetMapProvider
-        selectedDestinations={selectedDestinations}
-        routeData={routeData}
-      />
-      <DaysOrganiser
-        selectedDestinations={selectedDestinations}
-        selectedActivities={selectedActivities}
-        routeData={routeData}
-        handleDaysDataChange={handleDaysDataChange}
-        createRoadTrip={createRoadTrip}
-      />
-
-    </div>
-  );
 
   return <div>{renderCard()}</div>;
 };

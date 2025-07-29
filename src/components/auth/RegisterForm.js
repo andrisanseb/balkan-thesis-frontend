@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../../styles/Form.css";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../../services/AuthService";
 
 export const RegisterForm = () => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -28,14 +29,11 @@ export const RegisterForm = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.accessToken) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              id: data.id,
-              username: form.username,
-              email: form.email,
-            })
-          );
+          AuthService.setCurrentUser({
+            id: data.id,
+            username: form.username,
+            email: form.email,
+          });
         }
         navigate("/");
         window.location.reload();

@@ -24,13 +24,14 @@ export default function App() {
     const cachedDestinations = localStorage.getItem("destinations");
     const cacheTime = localStorage.getItem("destinations_cache_time");
     const now = Date.now();
-    const cacheValid = cacheTime && now - cacheTime < 24 * 60 * 60 * 1000; // 24 hours
+    const cacheValid = cacheTime && now - cacheTime <  60 * 60 * 1000; // 1 hour
 
     if (cachedDestinations && cacheValid) {
-      setDestinations(JSON.parse(cachedDestinations));
+      setDestinations(JSON.parse(cachedDestinations).data);
     } else {
       fetchDestinations();
     }
+
   }, []);
 
   const fetchDestinations = async () => {
@@ -40,7 +41,7 @@ export default function App() {
         headers: { "Accept": "application/json" },
       });
       const data = await response.json();
-      setDestinations(data);
+      setDestinations(data.data);
       localStorage.setItem("destinations", JSON.stringify(data));
       localStorage.setItem("destinations_cache_time", Date.now());
     } catch (error) {
