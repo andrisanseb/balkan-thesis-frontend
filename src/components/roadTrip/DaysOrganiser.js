@@ -8,7 +8,6 @@ const DaysOrganiser = ({
   selectedActivities,
   handleDaysDataChange,
   routeData,
-  createRoadTrip,
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(selectedDestinations.length + 1);
@@ -23,7 +22,8 @@ const DaysOrganiser = ({
   }, []);
 
   useEffect(() => {
-    updateTotal();
+    handleDaysDataChange(daysData);
+    // eslint-disable-next-line
   }, [daysData]);
 
   const distributeActivitiesRandomly = () => {
@@ -176,16 +176,6 @@ const DaysOrganiser = ({
     });
   };
 
-  const handleSubmit = () => {
-    handleDaysDataChange(daysData);
-    createRoadTrip(daysData); 
-  };
-
-  const updateTotal = () => {
-    // Update the total cost and total duration when activities are moved
-    // No need to store them in state
-  };
-
   const convertMetersToKilometers = (meters) => {
     return (meters / 1000).toFixed(2);
   };
@@ -224,57 +214,55 @@ const DaysOrganiser = ({
           <div className="days-wrapper">{renderDayBoxes()}</div>
           <div className="buttons">
             <button onClick={addDay}>Add Day</button>
-            <button onClick={handleSubmit}>Save the daysData</button>
           </div>
         </div>
       </DragDropContext>
 
-
       {routeData == null ? (
-          <div className="loading-container">
-            <p>calculating optimal route...</p>
-            <FaSpinner className="spinner" />
-          </div>
-        ) : (
-      <div className="route-info-container">
-        {routeData && (
-          <div className="route-info">
-            {routeData.segments.map((segment, index) => (
-              <div key={index} className="segment-info">
-                <p>
-                  <span className="destination-names">
-                    {selectedDestinations[index].name}
-                  </span>{" "}
-                  ➔{" "}
-                  <span className="destination-names">
-                    {roundTripHandler(index)}
-                  </span>
-                </p>
-                <p>
-                  Distance: {convertMetersToKilometers(segment.distance)} km
-                </p>
-                <p>
-                  Duration: {convertSecondsToHoursMinutes(segment.duration)}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-        <div className="fuel-cost-input">
-          <label htmlFor="fuelConsumption">
-            Enter Fuel Consumption (litres per 100km):{" "}
-          </label>
-          <input
-            type="number"
-            id="fuelConsumption"
-            value={fuelConsumption}
-            onChange={handleFuelConsumptionChange}
-          />
-          <button onClick={calculateGasCost}>Calculate Gas Cost</button>
-          <p>Gas Cost: {gasCost.toFixed(2)} €</p>
+        <div className="loading-container">
+          <p>calculating optimal route...</p>
+          <FaSpinner className="spinner" />
         </div>
-      </div>
-        )}
+      ) : (
+        <div className="route-info-container">
+          {routeData && (
+            <div className="route-info">
+              {routeData.segments.map((segment, index) => (
+                <div key={index} className="segment-info">
+                  <p>
+                    <span className="destination-names">
+                      {selectedDestinations[index].name}
+                    </span>{" "}
+                    ➔{" "}
+                    <span className="destination-names">
+                      {roundTripHandler(index)}
+                    </span>
+                  </p>
+                  <p>
+                    Distance: {convertMetersToKilometers(segment.distance)} km
+                  </p>
+                  <p>
+                    Duration: {convertSecondsToHoursMinutes(segment.duration)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="fuel-cost-input">
+            <label htmlFor="fuelConsumption">
+              Enter Fuel Consumption (litres per 100km):{" "}
+            </label>
+            <input
+              type="number"
+              id="fuelConsumption"
+              value={fuelConsumption}
+              onChange={handleFuelConsumptionChange}
+            />
+            <button onClick={calculateGasCost}>Calculate Gas Cost</button>
+            <p>Gas Cost: {gasCost.toFixed(2)} €</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

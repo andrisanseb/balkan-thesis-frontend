@@ -7,6 +7,7 @@ const ActivitySelector = ({
   selectedActivities: selectedActivitiesProp = [],
   onSelectedActivitiesChange,
   onNext,
+  onBack,
 }) => {
   const [selectedActivities, setSelectedActivities] = useState(
     selectedActivitiesProp
@@ -48,13 +49,12 @@ const ActivitySelector = ({
     });
   };
 
-  const handleSubmit = () => {
-    onNext();
-  };
-
   return (
-    <div className="page-container">
-      <h1>Activities</h1>
+    <div className="content-wrapper">
+      <h1 className="activity-title">Activities</h1>
+      <p className="activity-description-info">
+        Select the activities you want to include in your trip. Click on an activity to add or remove it from your selection.
+      </p>
       <div className="activities">
         {allActivities.map((activity) => (
           <div
@@ -90,7 +90,16 @@ const ActivitySelector = ({
           </div>
         ))}
       </div>
-      <button onClick={handleSubmit}>Next</button>
+      <div className="button-row">
+        <button onClick={onBack} className="back-btn">Back</button>
+        <button
+          onClick={onNext}
+          className="next-btn"
+          disabled={selectedActivities.length === 0}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

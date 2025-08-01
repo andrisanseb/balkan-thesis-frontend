@@ -22,6 +22,16 @@
   border-color: #007bff;
 }
 
+.activity-title {
+  text-align: center;
+  font-size: 2.3rem;
+  color: #1976d2;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.3em;
+  margin-top: 0.2em;
+}
+
 .activity-name {
   font-weight: bold;
 }
@@ -29,6 +39,15 @@
 .activity-description {
   margin-top: 5px;
   font-size: 14px;
+}
+
+.activity-description-info {
+  text-align: center;
+  color: #4f5b62;
+  font-size: 1.13em;
+  margin-bottom: 1.7em;
+  margin-top: 0;
+  font-weight: 500;
 }
 
 .activity-cost {
@@ -45,4 +64,69 @@
   top: 5px;
   right: 5px;
   color: green;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 1.2em;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.card {
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    border-radius: 7px;
+    border: 1px solid white;
+    height: 230px;
+    width: 230px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    outline: none;
+}
+.card.selected {
+    border: 3px solid #1976d2;
+    box-shadow: 0 0 0 3px #90caf9;
+}
+.card:hover,
+.card:focus {
+    box-shadow: 0 0 0 3px #b3e5fc;
+    border-color: #1976d2;
+}
+
+.card .card-content {
+    background-color: rgb(255, 255, 255, 0.7);
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.7em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.card .card-content .dest-name {
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.card .card-content .dest-country-name {
+    font-size: 18px;
+}
+
+.card .card-content img {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #eee;
+    background-position: center center;
+    background-size: 150%;
 }

@@ -1,22 +1,4 @@
-.destinations-section {
-    width: 100%;
-    background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-/* TODO: make reusable css for all pages */
-.destinations-section .content-section {
-    width: 80%;
-    max-width: 1200px;
-    margin: 0 auto;
-    background: rgba(255,255,255,0.85);
-    box-shadow: 0 6px 32px rgba(0,0,0,0.07);
-    padding: 2.5em 2em 2em 2em;
-}
-
-.destinations-section .content-section .title {
+.title {
     text-align: center;
     font-size: 2.7rem;
     color: #1976d2;
@@ -30,7 +12,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.7em;
-    margin: 0 0 2em 0;
+    margin: 0 0 1em 0;
     padding: 0.7em 1em;
     background: #f4faff;
     border-radius: 10px;
@@ -84,41 +66,42 @@
     outline: none;
 }
 
-.destinations-section .content-section .cards {
+
+
+.destination-cards {
     display: flex;
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
     gap: 1.2em;
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
 }
 
-/* Keep the card styling as you like it */
-.destinations-section .content-section .cards .card {
+.destination-card {
     position: relative;
     background-position: center;
     background-size: cover;
     border-radius: 7px;
     border: 1px solid white;
-    height: 250px;
-    width: 250px;
+    height: 230px;
+    width: 230px;
     cursor: pointer;
     transition: box-shadow 0.2s, border-color 0.2s;
     outline: none;
 }
-.destinations-section .content-section .cards .card.selected {
+.destination-card.selected {
     border: 3px solid #1976d2;
     box-shadow: 0 0 0 3px #90caf9;
 }
-.destinations-section .content-section .cards .card:hover,
-.destinations-section .content-section .cards .card:focus {
+.destination-card:hover,
+.destination-card:focus {
     box-shadow: 0 0 0 3px #b3e5fc;
     border-color: #1976d2;
 }
 
-.destinations-section .content-section .cards .card .card-content {
+.destination-card-content {
     background-color: rgb(255, 255, 255, 0.7);
     width: 100%;
     position: absolute;
@@ -130,17 +113,17 @@
     padding-bottom: 10px;
 }
 
-.destinations-section .content-section .cards .card .card-content .dest-name {
+.destination-card-content .dest-name {
     font-size: 25px;
     font-weight: 700;
     text-align: center;
 }
 
-.destinations-section .content-section .cards .card .card-content .dest-country-name {
+.destination-card-content .dest-country-name {
     font-size: 18px;
 }
 
-.destinations-section .content-section .cards .card .card-content img {
+.destination-card-content img {
     display: inline-block;
     width: 30px;
     height: 30px;
@@ -148,28 +131,4 @@
     background-color: #eee;
     background-position: center center;
     background-size: 150%;
-}
-
-.destinations-section .content-section .next-btn {
-    margin-top: 2.5em;
-    margin-left: auto;
-    display: block;
-    padding: 0.9em 3em;
-    font-size: 1.2em;
-    background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-    transition: background 0.2s, box-shadow 0.2s;
-}
-.destinations-section .content-section .next-btn:disabled {
-    background: #b0bec5;
-    color: #fff;
-    cursor: not-allowed;
-    opacity: 0.7;
-    box-shadow: none;
 }

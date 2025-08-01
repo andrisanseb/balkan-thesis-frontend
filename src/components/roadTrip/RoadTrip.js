@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 import "../../styles/RoadTrip.css";
 import { useLocation } from "react-router-dom";
-import MapWithOpenStreetMapProvider from "../test/MapWithOpenStreetMapProvider";
 import ActivitySelector from "./ActivitySelector";
 import DestinationsSelector from "./DestinationsSelector";
 import Card3 from "./Card3";
@@ -129,11 +128,9 @@ const RoadTrip = ({ destinations }) => {
               onSelectedActivitiesChange={handleSelectedActivitiesChange}
               selectedActivities={selectedActivities}
               onNext={nextView}
+              onBack={prevView}
               calculateRoute={calculateRoute}
             />
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={prevView}>Back</button>
-            </div>
           </div>
         );
       case 3:
@@ -144,11 +141,9 @@ const RoadTrip = ({ destinations }) => {
               routeData={routeData}
               selectedActivities={selectedActivities}
               handleDaysDataChange={handleDaysDataChange}
+              onBack={prevView}
               createRoadTrip={createRoadTrip}
             />
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={prevView}>Back</button>
-            </div>
           </div>
         );
       default:

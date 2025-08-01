@@ -15,3 +15,61 @@ p { /* overrides user agent stylesheet issue */
   margin-inline-start: 0px;
   margin-inline-end: 0px;
 }
+
+/* Should be used in all pages */
+.content-wrapper {
+    width: 80%;
+    max-width: 1200px;
+    margin: auto;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 6px 32px rgba(0,0,0,0.07);
+    padding: 2.5em 2em 2em 2em;
+}
+
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    margin-top: 2em;
+}
+
+.next-btn {
+    margin-top: 2.5em;
+    margin-left: auto;
+    display: block;
+    padding: 0.9em 3em;
+    font-size: 1.2em;
+    background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.next-btn:disabled {
+    background: #b0bec5;
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+.back-btn {
+    margin-top: 2.5em;
+    margin-right: auto;
+    display: block;
+    padding: 0.9em 3em;
+    font-size: 1.2em;
+    background: linear-gradient(90deg, #1976d2 60%, #64b5f6 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}

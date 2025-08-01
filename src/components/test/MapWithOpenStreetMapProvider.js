@@ -16,8 +16,8 @@ const MapWithOpenStreetMapProvider = ({ selectedDestinations, routeData }) => {
 
     // Define custom marker icon
     const customIcon = L.icon({
-      iconUrl: process.env.PUBLIC_URL + "/map-pin.png", // Customize with your marker icon URL
-      iconSize: [32, 32], // Size of the icon
+      iconUrl: process.env.PUBLIC_URL + "/map-pin.png",
+      iconSize: [30, 30],
       iconAnchor: [16, 32], // Point of the icon which will correspond to marker's location
       popupAnchor: [0, -32] // Point from which the popup should open relative to the iconAnchor
     });
@@ -33,10 +33,6 @@ const MapWithOpenStreetMapProvider = ({ selectedDestinations, routeData }) => {
       map.remove();
     };
   }, [selectedDestinations]);
-
-
-
-
 
   return (
     <div id="map" className="map-container" style={{ height: '650px', width: '100%' }}></div>
