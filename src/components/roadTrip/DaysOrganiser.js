@@ -121,7 +121,7 @@ const DaysOrganiser = ({
     const { source, destination } = result;
     if (!destination) return;
 
-    // Prevent drag if source and destination are the same
+    // Prevent drag if source and destination are the same position
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -161,7 +161,20 @@ const DaysOrganiser = ({
       return;
     }
 
-    // Move the activity
+    // Move within the same day: reorder activities
+    if (sourceDayIndex === destDayIndex) {
+      const newActivities = Array.from(daysData[sourceDayIndex].activities);
+      const [removed] = newActivities.splice(source.index, 1);
+      newActivities.splice(destination.index, 0, removed);
+
+      const newDaysData = daysData.map((day, idx) =>
+        idx === sourceDayIndex ? { ...day, activities: newActivities } : day
+      );
+      setDaysData(newDaysData);
+      return;
+    }
+
+    // Move between different days
     const newDaysData = daysData.map((day, idx) => {
       // Remove from source
       if (idx === sourceDayIndex) {
