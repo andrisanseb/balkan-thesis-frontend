@@ -85,7 +85,8 @@ const RoadTrip = ({ destinations }) => {
         (destination) => [destination.longitude, destination.latitude]
       );
 
-      selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
+      // TODO: ADD RETURN OPTION (!!!!!!)
+      //selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
 
       const response = await fetch(
         `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${openRouteServiceApiKey}`,

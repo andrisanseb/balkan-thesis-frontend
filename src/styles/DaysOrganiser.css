@@ -1,11 +1,9 @@
 .days-organiser-container {
-    /* width:100%; */
     background-color: rgb(179, 160, 160);
     background-image: linear-gradient(to bottom right, rgb(218, 228, 235), rgb(211, 239, 243));
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center horizontally */
 }
 
 .days-wrapper {
@@ -109,8 +107,26 @@ ul {
     font-size: 11px;
 }
 
+.add-day-btn {
+    display: block;
+    margin: 0 auto 10px auto;
+    font-size: 1.5em;
+    background: #e3f2fd;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    color: #1976d2;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(25,118,210,0.08);
+    transition: background 0.2s, color 0.2s;
+}
 
-
+.add-day-btn:hover {
+    background: #bbdefb;
+    color: #0d47a1;
+}
 
 .route-info-container {
     margin-top: 20px;
@@ -164,4 +180,25 @@ ul {
 
 .gas-cost-container button:hover {
     background-color: #0056b3;
+}
+
+.day-route-info {
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.drop-not-allowed-msg {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #c62828;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1.1em;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(198,40,40,0.08);
+  transition: opacity 0.3s;
 }
