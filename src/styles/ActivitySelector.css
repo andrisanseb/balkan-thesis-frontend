@@ -130,3 +130,10 @@
     background-position: center center;
     background-size: 150%;
 }
+
+.activity-filter-row {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

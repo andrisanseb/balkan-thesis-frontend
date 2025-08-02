@@ -8,6 +8,8 @@ const Card3 = ({
   selectedActivities,
   handleDaysDataChange,
   createRoadTrip,
+  planTitle,
+  setPlanTitle,
   onBack,
 }) => {
   const [daysData, setDaysData] = useState([]);
@@ -34,6 +36,8 @@ const Card3 = ({
           selectedActivities={selectedActivities}
           routeData={routeData}
           handleDaysDataChange={handleDaysData}
+          planTitle={planTitle}
+          setPlanTitle={setPlanTitle}
         />
       </div>
       <div className="button-row">

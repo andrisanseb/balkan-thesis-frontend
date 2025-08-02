@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
 import "../../styles/ActivitySelector.css";
 
+const categories = [
+  "All",
+  "Culture",
+  "Gastronomy",
+  "Nature",
+  "Leisure",
+  "Religion",
+];
+
 const ActivitySelector = ({
   selectedDestinations,
   selectedActivities: selectedActivitiesProp = [],
@@ -13,6 +22,7 @@ const ActivitySelector = ({
     selectedActivitiesProp
   );
   const [allActivities, setAllActivities] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     let allActivities = selectedDestinations.flatMap(
@@ -49,14 +59,40 @@ const ActivitySelector = ({
     });
   };
 
+  // Filter activities by selected category
+  const filteredActivities =
+    selectedCategory === "All"
+      ? allActivities
+      : allActivities.filter((activity) => activity.category === selectedCategory);
+
   return (
     <div className="content-wrapper">
       <h1 className="activity-title">Activities</h1>
       <p className="activity-description-info">
-        Select the activities you want to include in your trip. Click on an activity to add or remove it from your selection.
+        Select the activities you want to include in your trip. Click on an
+        activity to add or remove it from your selection.
       </p>
+      <div className="activity-filter-row">
+        <label
+          htmlFor="activity-category-filter"
+          style={{ marginRight: "8px" }}
+        >
+          Filter by category:
+        </label>
+        <select
+          id="activity-category-filter"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="activities">
-        {allActivities.map((activity) => (
+        {filteredActivities.map((activity) => (
           <div
             key={activity.id}
             className={`activity-box ${
@@ -91,7 +127,9 @@ const ActivitySelector = ({
         ))}
       </div>
       <div className="button-row">
-        <button onClick={onBack} className="back-btn">Back</button>
+        <button onClick={onBack} className="back-btn">
+          Back
+        </button>
         <button
           onClick={onNext}
           className="next-btn"

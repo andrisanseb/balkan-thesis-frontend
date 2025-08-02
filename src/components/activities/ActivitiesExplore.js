@@ -3,7 +3,7 @@ import "../../styles/ActivitiesExplore.css";
 import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
 
-const ActivitiesExplore = () => {
+const ActivitiesExplore = ({ destinations }) => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -15,51 +15,41 @@ const ActivitiesExplore = () => {
   const [favoriteActivities, setFavoriteActivities] = useState({});
   const currentUser = AuthService.getCurrentUser();
 
-  const fetchActivitiesAndFavorites = async () => {
-    try {
-      // Check cache for activities
-      const cachedActivities = localStorage.getItem("activities");
-      const cacheTime = localStorage.getItem("activities_cache_time");
-      const now = Date.now();
-      const cacheValid = cacheTime && now - cacheTime < 24 * 60 * 60 * 1000; // 24 hours
-
-      let activitiesData;
-      if (cachedActivities && cacheValid) {
-        activitiesData = { data: JSON.parse(cachedActivities) };
-      } else {
-        const activitiesResponse = await fetch(API_URL + "/activities");
-        activitiesData = await activitiesResponse.json();
-        localStorage.setItem("activities", JSON.stringify(activitiesData.data));
-        localStorage.setItem("activities_cache_time", Date.now());
-      }
-
-      setActivities(activitiesData.data); // because of DTO
-
-      // Fetch favorite activities for the user
-      const favoritesResponse = await fetch(
-        API_URL + "/favoriteActivities/" + currentUser.id
+  // Get activities from destinations prop (cached)
+  useEffect(() => {
+    if (destinations && destinations.length > 0) {
+      const allActivities = destinations.flatMap(
+        (destination) => destination.activities || []
       );
-      const favoriteActivityIds = await favoritesResponse.json();
-
-      // Map through activities to find those that match the favorite activity IDs
-      const favoriteActivities = activitiesData.data.reduce((acc, activity) => {
-        if (favoriteActivityIds.includes(activity.id)) {
-          acc[activity.id] = true;
-        }
-        return acc;
-      }, {});
-
-      setFavoriteActivities(favoriteActivities);
+      setActivities(allActivities);
       setLoading(false);
-    } catch (error) {
-      console.error("Error fetching activities or favorite activities:", error);
+    } else {
+      setActivities([]);
       setLoading(false);
     }
-  };
+  }, [destinations]);
 
+  // Fetch favorite activities for the user (keep this call)
   useEffect(() => {
-    fetchActivitiesAndFavorites();
-  }, []);
+    const fetchFavorites = async () => {
+      try {
+        const favoritesResponse = await fetch(
+          API_URL + "/favoriteActivities/" + currentUser.id
+        );
+        const favoriteActivityIds = await favoritesResponse.json();
+        const favoriteActivitiesObj = activities.reduce((acc, activity) => {
+          if (favoriteActivityIds.includes(activity.id)) {
+            acc[activity.id] = true;
+          }
+          return acc;
+        }, {});
+        setFavoriteActivities(favoriteActivitiesObj);
+      } catch (error) {
+        console.error("Error fetching favorite activities:", error);
+      }
+    };
+    if (activities.length > 0) fetchFavorites();
+  }, [activities, currentUser.id, API_URL]);
 
   useEffect(() => {
     switch (selectedCategory) {
@@ -176,7 +166,7 @@ const ActivitiesExplore = () => {
   };
 
   return (
-    <div className="experiences-section">
+    <div className="activities-explore-root">
       <div className="content-section">
         <div className="image-container">
           <img src={selectedImage} alt="Selected Category img" className="category-image" />
@@ -186,7 +176,6 @@ const ActivitiesExplore = () => {
           </div>
         </div>
         <div className="category-menu">{renderCategoryButtons()}</div>
-
         {loading ? (
           <div className="loading-container">
             <FaSpinner className="spinner" />
@@ -198,10 +187,13 @@ const ActivitiesExplore = () => {
         ) : (
           <div className="cards">
             {filteredActivities.map((activity) => (
-              <div key={activity.id} className="card">
-                <div className="card-content">
+              <div key={activity.id} className="activity-card">
+                <div className="activity-card-content">
                   <p className="activity-name">{activity.name}</p>
                   <p className="activity-description">{activity.description}</p>
+                  <div className="activity-details">
+                    {/* Add more details if needed */}
+                  </div>
                 </div>
                 {favoriteActivities[activity.id] ? (
                   <FaHeart

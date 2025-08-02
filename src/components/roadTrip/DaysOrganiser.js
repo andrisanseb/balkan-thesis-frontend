@@ -8,6 +8,8 @@ const DaysOrganiser = ({
   selectedActivities,
   handleDaysDataChange,
   routeData,
+  planTitle,
+  setPlanTitle,
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(selectedDestinations.length);
@@ -15,6 +17,7 @@ const DaysOrganiser = ({
   const [fuelConsumption, setFuelConsumption] = useState(0);
   const [gasCost, setGasCost] = useState(0);
   const [dropNotAllowedMsg, setDropNotAllowedMsg] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   useEffect(() => {
     if (selectedActivities && selectedActivities.length > 0) {
@@ -432,7 +435,26 @@ const DaysOrganiser = ({
       )}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="days-organiser-container">
-          <h1>Days Planner</h1>
+          <div className="plan-title-container">
+            {isEditingTitle ? (
+              <input
+                type="text"
+                className="plan-title-input"
+                value={planTitle}
+                onChange={(e) => setPlanTitle(e.target.value)}
+                onBlur={() => setIsEditingTitle(false)}
+                autoFocus
+              />
+            ) : (
+              <h1
+                className="plan-title"
+                onClick={() => setIsEditingTitle(true)}
+                title="Click to edit plan name"
+              >
+                {planTitle}
+              </h1>
+            )}
+          </div>
           <div className="days-wrapper">{renderDayBoxes()}</div>
         </div>
       </DragDropContext>

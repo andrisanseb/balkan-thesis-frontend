@@ -67,7 +67,7 @@ export default function App() {
           <Route path="register" element={<RegisterForm />} />
           <Route path="/users/:id" element={<UserDetails />} />
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
-          <Route path="/experiences" element={<ActivitiesExplore />} />
+          <Route path="/experiences" element={<ActivitiesExplore destinations={destinations} />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </main>

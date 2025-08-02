@@ -14,6 +14,7 @@ const RoadTrip = ({ destinations }) => {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [currentView, setCurrentView] = useState(1);
   const [daysData, setDaysData] = useState(null);
+  const [planTitle, setPlanTitle] = useState("Days Planner");
 
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -142,8 +143,10 @@ const RoadTrip = ({ destinations }) => {
               routeData={routeData}
               selectedActivities={selectedActivities}
               handleDaysDataChange={handleDaysDataChange}
-              onBack={prevView}
               createRoadTrip={createRoadTrip}
+              planTitle={planTitle}
+              setPlanTitle={setPlanTitle}
+              onBack={prevView}
             />
           </div>
         );
@@ -172,7 +175,7 @@ const RoadTrip = ({ destinations }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: "TODO ask for name input",
+          name: planTitle,
           userId: currentUser.id,
           route: JSON.stringify(routeData),
           days: JSON.stringify(simplifiedDays),
