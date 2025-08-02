@@ -61,7 +61,7 @@ const DestinationsSelector = ({
     </div>
     <button
       onClick={onNext}
-      disabled={selectedDestinations.length === 0}
+      disabled={selectedDestinations.length < 2}
       className="next-btn"
     >
       Next

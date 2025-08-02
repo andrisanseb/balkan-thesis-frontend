@@ -23,15 +23,16 @@ const ActivitySelector = ({
   );
   const [allActivities, setAllActivities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedDestinationFilter, setSelectedDestinationFilter] = useState(
+    "All"
+  );
 
   useEffect(() => {
     let allActivities = selectedDestinations.flatMap(
       (destination) => destination.activities
     );
-    // Shuffle only if no activities were previously selected
-    if (!selectedActivitiesProp || selectedActivitiesProp.length === 0) {
-      allActivities = [...allActivities].sort(() => Math.random() - 0.5);
-    }
+    // Always shuffle activities randomly
+    allActivities = [...allActivities].sort(() => Math.random() - 0.5);
     setAllActivities(allActivities);
     // Only reset selectedActivities if destinations change and selection is now invalid
     setSelectedActivities((prev) =>
@@ -60,10 +61,37 @@ const ActivitySelector = ({
   };
 
   // Filter activities by selected category
-  const filteredActivities =
-    selectedCategory === "All"
-      ? allActivities
-      : allActivities.filter((activity) => activity.category === selectedCategory);
+  const filteredActivities = allActivities
+    .filter((activity) =>
+      selectedCategory === "All"
+        ? true
+        : activity.category === selectedCategory
+    )
+    .filter((activity) =>
+      selectedDestinationFilter === "All"
+        ? true
+        : String(activity.destinationId || (activity.destination && activity.destination.id)) === String(selectedDestinationFilter)
+    );
+
+  const getDestinationInfo = (activity, selectedDestinations) => {
+    if (!activity.destinationId && !activity.destination) return null;
+    const destId =
+      activity.destinationId ||
+      (activity.destination && activity.destination.id);
+    const destination = selectedDestinations.find((d) => d.id === destId);
+    if (!destination) return null;
+    const countryFlagImg =
+      process.env.PUBLIC_URL +
+      "/images/country/flags/" +
+      (destination.country && destination.country.name
+        ? destination.country.name.slice(0, 3).toLowerCase()
+        : "default") +
+      ".png";
+    return {
+      name: destination.name,
+      flag: countryFlagImg,
+    };
+  };
 
   return (
     <div className="content-wrapper">
@@ -83,6 +111,7 @@ const ActivitySelector = ({
           id="activity-category-filter"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{ marginRight: "18px" }}
         >
           {categories.map((cat) => (
             <option key={cat} value={cat}>
@@ -90,41 +119,78 @@ const ActivitySelector = ({
             </option>
           ))}
         </select>
+        <label htmlFor="activity-destination-filter" style={{ marginRight: "8px" }}>
+          Filter by destination:
+        </label>
+        <select
+          id="activity-destination-filter"
+          value={selectedDestinationFilter}
+          onChange={(e) => setSelectedDestinationFilter(e.target.value)}
+        >
+          <option value="All">All</option>
+          {selectedDestinations.map((dest) => (
+            <option key={dest.id} value={dest.id}>
+              {dest.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="activities">
-        {filteredActivities.map((activity) => (
-          <div
-            key={activity.id}
-            className={`activity-box ${
-              selectedActivities.includes(activity) ? "selected" : ""
-            }`}
-            onClick={() => toggleActivitySelection(activity)}
-          >
-            <p className="activity-name">{activity.name}</p>
-            <p className="activity-description">{activity.description}</p>
-            <p className="activity-cost">
-              Cost: {activity.cost === 0 ? "Free" : `${activity.cost} €`}
-            </p>
-            {activity.duration >= 60 ? (
-              <p className="activity-duration">
-                Duration:{" "}
-                {activity.duration >= 120
-                  ? `${Math.floor(activity.duration / 60)} hours`
-                  : "1 hour"}
-                {activity.duration % 60 !== 0 &&
-                  ` ${activity.duration % 60} minutes`}
+        {filteredActivities.map((activity) => {
+          const destInfo = getDestinationInfo(activity, selectedDestinations);
+          return (
+            <div
+              key={activity.id}
+              className={`activity-box ${
+                selectedActivities.includes(activity) ? "selected" : ""
+              }`}
+              onClick={() => toggleActivitySelection(activity)}
+            >
+              <div className="activity-dest-info">
+                {destInfo && (
+                  <>
+                    <img
+                      src={destInfo.flag}
+                      alt="country_flag"
+                      className="activity-country-flag"
+                      style={{
+                        width: 22,
+                        height: 22,
+                        borderRadius: "50%",
+                        marginRight: 6,
+                        verticalAlign: "middle",
+                      }}
+                    />
+                    <span className="activity-dest-name">{destInfo.name}</span>
+                  </>
+                )}
+              </div>
+              <p className="activity-name">{activity.name}</p>
+              <p className="activity-description">{activity.description}</p>
+              <p className="activity-cost">
+                Cost: {activity.cost === 0 ? "Free" : `${activity.cost} €`}
               </p>
-            ) : (
-              <p className="activity-duration">
-                Duration: {activity.duration} minute
-                {activity.duration !== 1 ? "s" : ""}
-              </p>
-            )}
-            {selectedActivities.includes(activity) && (
-              <FaCheck className="checkmark" />
-            )}
-          </div>
-        ))}
+              {activity.duration >= 60 ? (
+                <p className="activity-duration">
+                  Duration:{" "}
+                  {activity.duration >= 120
+                    ? `${Math.floor(activity.duration / 60)} hours`
+                    : "1 hour"}
+                  {activity.duration % 60 !== 0 &&
+                    ` ${activity.duration % 60} minutes`}
+                </p>
+              ) : (
+                <p className="activity-duration">
+                  Duration: {activity.duration} minute
+                  {activity.duration !== 1 ? "s" : ""}
+                </p>
+              )}
+              {selectedActivities.includes(activity) && (
+                <FaCheck className="checkmark" />
+              )}
+            </div>
+          );
+        })}
       </div>
       <div className="button-row">
         <button onClick={onBack} className="back-btn">

@@ -13,14 +13,17 @@ const ActivitiesExplore = ({ destinations }) => {
   const [funFact, setFunFact] = useState("");
   const [loading, setLoading] = useState(true);
   const [favoriteActivities, setFavoriteActivities] = useState({});
+  const [visibleCount, setVisibleCount] = useState(12);
   const currentUser = AuthService.getCurrentUser();
 
   // Get activities from destinations prop (cached)
   useEffect(() => {
     if (destinations && destinations.length > 0) {
-      const allActivities = destinations.flatMap(
+      let allActivities = destinations.flatMap(
         (destination) => destination.activities || []
       );
+      // Shuffle activities randomly
+      allActivities = allActivities.sort(() => Math.random() - 0.5);
       setActivities(allActivities);
       setLoading(false);
     } else {
@@ -51,7 +54,9 @@ const ActivitiesExplore = ({ destinations }) => {
     if (activities.length > 0) fetchFavorites();
   }, [activities, currentUser.id, API_URL]);
 
+  // Update category info and image based on selected category
   useEffect(() => {
+    setVisibleCount(12); // Reset pagination when category changes
     switch (selectedCategory) {
       case "Culture":
         setSelectedImage(process.env.PUBLIC_URL + "/images/category/culture.jpg");
@@ -127,6 +132,10 @@ const ActivitiesExplore = ({ destinations }) => {
     );
   }
 
+  // Pagination logic
+  const displayedActivities = filteredActivities.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredActivities.length;
+
   const toggleFavorite = async (activityId) => {
     try {
       // If the activity is currently favorite, remove it from favorites
@@ -165,9 +174,27 @@ const ActivitiesExplore = ({ destinations }) => {
     }
   };
 
+  const getDestinationInfo = (activity) => {
+    // Find the destination for this activity
+    if (!activity.destinationId && !activity.destination) return null;
+    const destId = activity.destinationId || (activity.destination && activity.destination.id);
+    const destination = destinations.find((d) => d.id === destId);
+    if (!destination) return null;
+    const countryFlagImg =
+      process.env.PUBLIC_URL +
+      "/images/country/flags/" +
+      (destination.country && destination.country.name
+        ? destination.country.name.slice(0, 3).toLowerCase()
+        : "default") +
+      ".png";
+    return {
+      name: destination.name,
+      flag: countryFlagImg,
+    };
+  };
+
   return (
-    <div className="activities-explore-root">
-      <div className="content-section">
+    <div className="activities-explore-root content-wrapper">
         <div className="image-container">
           <img src={selectedImage} alt="Selected Category img" className="category-image" />
           <div className="category-info">
@@ -185,32 +212,57 @@ const ActivitiesExplore = ({ destinations }) => {
             No activities found in this category.
           </div>
         ) : (
-          <div className="cards">
-            {filteredActivities.map((activity) => (
-              <div key={activity.id} className="activity-card">
-                <div className="activity-card-content">
-                  <p className="activity-name">{activity.name}</p>
-                  <p className="activity-description">{activity.description}</p>
-                  <div className="activity-details">
-                    {/* Add more details if needed */}
+          <>
+            <div className="cards">
+              {displayedActivities.map((activity) => {
+                const destInfo = getDestinationInfo(activity);
+                return (
+                  <div key={activity.id} className="activity-card">
+                    <div className="activity-card-content">
+                      <div className="activity-dest-info">
+                        {destInfo && (
+                          <>
+                            <img
+                              src={destInfo.flag}
+                              alt="country_flag"
+                              className="activity-country-flag"
+                              style={{ width: 22, height: 22, borderRadius: "50%", marginRight: 6, verticalAlign: "middle" }}
+                            />
+                            <span className="activity-dest-name">{destInfo.name}</span>
+                          </>
+                        )}
+                      </div>
+                      <p className="activity-name">{activity.name}</p>
+                      <p className="activity-description">{activity.description}</p>
+                      <div className="activity-details"></div>
+                    </div>
+                    {favoriteActivities[activity.id] ? (
+                      <FaHeart
+                        className="heart-icon liked"
+                        onClick={() => toggleFavorite(activity.id)}
+                      />
+                    ) : (
+                      <FaRegHeart
+                        className="heart-icon"
+                        onClick={() => toggleFavorite(activity.id)}
+                      />
+                    )}
                   </div>
-                </div>
-                {favoriteActivities[activity.id] ? (
-                  <FaHeart
-                    className="heart-icon liked"
-                    onClick={() => toggleFavorite(activity.id)}
-                  />
-                ) : (
-                  <FaRegHeart
-                    className="heart-icon"
-                    onClick={() => toggleFavorite(activity.id)}
-                  />
-                )}
+                );
+              })}
+            </div>
+            {hasMore && (
+              <div style={{ textAlign: "center", marginTop: "18px" }}>
+                <button
+                  className="show-more-btn"
+                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                >
+                  Show more
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
-      </div>
     </div>
   );
 };

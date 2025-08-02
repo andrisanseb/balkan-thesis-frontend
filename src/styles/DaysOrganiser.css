@@ -298,3 +298,13 @@ ul {
     background: #f7fafc;
     outline: none;
 }
+
+.destination-flag {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+    box-shadow: 0 1px 4px rgba(33,150,243,0.08);
+    border: 1px solid #bbdefb;
+}

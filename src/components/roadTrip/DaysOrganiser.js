@@ -305,7 +305,23 @@ const DaysOrganiser = ({
               <div>
                 <div>
                   <span className="destination-names">
-                    Explore: <strong>{day.restArrival}</strong>
+                    Explore: <strong>
+                      {day.restArrival}
+                      {/* Find the destination object by name */}
+                      {(() => {
+                        const destObj = selectedDestinations.find(
+                          (d) => d.name === day.restArrival
+                        );
+                        const flag = getCountryFlagImg(destObj);
+                        return flag ? (
+                          <img
+                            src={flag}
+                            alt="country_flag"
+                            className="destination-flag"
+                          />
+                        ) : null;
+                      })()}
+                    </strong>
                   </span>
                 </div>
                 <div>
@@ -317,12 +333,38 @@ const DaysOrganiser = ({
                 <div>
                   <span className="destination-names">
                     {selectedDestinations[travelSegmentIndex]?.name}
+                    {/* Flag for from destination */}
+                    {(() => {
+                      const fromDest = selectedDestinations[travelSegmentIndex];
+                      const flag = getCountryFlagImg(fromDest);
+                      return flag ? (
+                        <img
+                          src={flag}
+                          alt="country_flag"
+                          className="destination-flag"
+                        />
+                      ) : null;
+                    })()}
                   </span>{" "}
                   ➔{" "}
                   <span className="destination-names">
                     {selectedDestinations[travelSegmentIndex + 1]
                       ? selectedDestinations[travelSegmentIndex + 1].name
                       : selectedDestinations[0]?.name}
+                    {/* Flag for to destination */}
+                    {(() => {
+                      const toDest =
+                        selectedDestinations[travelSegmentIndex + 1] ||
+                        selectedDestinations[0];
+                      const flag = getCountryFlagImg(toDest);
+                      return flag ? (
+                        <img
+                          src={flag}
+                          alt="country_flag"
+                          className="destination-flag"
+                        />
+                      ) : null;
+                    })()}
                   </span>
                 </div>
                 <div>
@@ -424,6 +466,16 @@ const DaysOrganiser = ({
     } else {
       return selectedDestinations[index + 1].name;
     }
+  };
+
+  const getCountryFlagImg = (destination) => {
+    if (!destination || !destination.country || !destination.country.name) return null;
+    return (
+      process.env.PUBLIC_URL +
+      "/images/country/flags/" +
+      destination.country.name.slice(0, 3).toLowerCase() +
+      ".png"
+    );
   };
 
   return (

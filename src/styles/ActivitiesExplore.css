@@ -1,22 +1,4 @@
 /* Scope all styles to .activities-explore-root for isolation */
-.activities-explore-root {
-    background-color: #f4f6fa;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height: 100vh;
-    padding-bottom: 40px;
-}
-
-.activities-explore-root .content-section {
-    margin-top: 24px;
-    background-color: #fff;
-    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.08);
-    border-radius: 16px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 32px;
-}
-
 .activities-explore-root .category-menu {
     display: flex;
     justify-content: center;
@@ -189,6 +171,27 @@
     background: #e3f2fd;
     border-radius: 8px;
     padding: 18px 0;
+}
+
+/* Show More Button */
+.show-more-btn {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 2px solid #1976d2;
+    border-radius: 24px;
+    font-size: 1em;
+    font-weight: 600;
+    padding: 8px 28px;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.show-more-btn:hover {
+    background: #1976d2;
+    color: #fff;
+    border-color: #1565c0;
 }
 
 /* Responsive for mobile */

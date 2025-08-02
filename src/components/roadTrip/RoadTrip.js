@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
 import "../../styles/RoadTrip.css";
 import { useLocation } from "react-router-dom";
@@ -14,7 +14,7 @@ const RoadTrip = ({ destinations }) => {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [currentView, setCurrentView] = useState(1);
   const [daysData, setDaysData] = useState(null);
-  const [planTitle, setPlanTitle] = useState("Days Planner");
+  const [planTitle, setPlanTitle] = useState("Road Trip Plan");
 
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -40,6 +40,11 @@ const RoadTrip = ({ destinations }) => {
       calculateRoute();
     }
   }, [currentView]);
+
+  useEffect(() => {
+    // Reset routeData if destinations change
+    setRouteData(null);
+  }, [selectedDestinations]);
 
   if (!destinations) {  //TODO: create and use loading spinner
     return <div>Loading...</div>;
