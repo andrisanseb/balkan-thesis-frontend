@@ -13,9 +13,6 @@ const DaysOrganiser = ({
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(selectedDestinations.length);
-
-  const [fuelConsumption, setFuelConsumption] = useState(0);
-  const [gasCost, setGasCost] = useState(0);
   const [dropNotAllowedMsg, setDropNotAllowedMsg] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
@@ -24,7 +21,7 @@ const DaysOrganiser = ({
       distributeActivitiesByDestination();
     }
     // eslint-disable-next-line
-  }, []);
+  }, [selectedActivities, selectedDestinations]);
 
   useEffect(() => {
     handleDaysDataChange(daysData);
@@ -64,11 +61,6 @@ const DaysOrganiser = ({
 
   const generateEmptyDay = (restArrival = null) => {
     return { activities: [], restArrival }; // restArrival is null for normal days, or a string for rest days
-  };
-
-  const addDay = () => {
-    setTotalDays(totalDays + 1);
-    setDaysData([...daysData, generateEmptyDay()]);
   };
 
   const addDayAtIndex = (insertIndex) => {
@@ -201,6 +193,23 @@ const DaysOrganiser = ({
     setDaysData(newDaysData);
   };
 
+  // Helper to get distance and duration from Google Maps API routeData
+  const getGoogleSegmentInfo = (routeData, index) => {
+    const legs =
+      routeData &&
+      routeData.routes &&
+      routeData.routes[0] &&
+      routeData.routes[0].legs;
+    if (!legs || !legs[index]) return { distance: 0, duration: 0 };
+    const leg = legs[index];
+    return {
+      distance: leg.distance ? leg.distance.value : 0, // meters
+      duration: leg.duration ? leg.duration.value : 0, // seconds
+      start_address: leg.start_address,
+      end_address: leg.end_address,
+    };
+  };
+
   const renderDayBoxes = () => {
     const boxes = [];
     let travelSegmentIndex = 0; // Only increment for travel days
@@ -210,13 +219,13 @@ const DaysOrganiser = ({
 
       // Only get segment for travel days
       let segment = null;
-      if (
-        !day.restArrival &&
+      const legs =
         routeData &&
-        routeData.segments &&
-        routeData.segments[travelSegmentIndex]
-      ) {
-        segment = routeData.segments[travelSegmentIndex];
+        routeData.routes &&
+        routeData.routes[0] &&
+        routeData.routes[0].legs;
+      if (!day.restArrival && legs && legs[travelSegmentIndex]) {
+        segment = getGoogleSegmentInfo(routeData, travelSegmentIndex);
       }
 
       // SKIP travel days with no route segment
@@ -448,26 +457,6 @@ const DaysOrganiser = ({
     return `${hours}h ${minutes}m`;
   };
 
-  const handleFuelConsumptionChange = (e) => {
-    setFuelConsumption(parseFloat(e.target.value));
-  };
-
-  const calculateGasCost = () => {
-    const totalDistance = routeData.summary.distance;
-    const gasPricePerLiter = 1.82; // TODO: find prices
-    const totalLiters = (totalDistance / 1000) * (fuelConsumption / 100);
-    const totalCost = totalLiters * gasPricePerLiter;
-    setGasCost(totalCost);
-  };
-
-  const roundTripHandler = (index) => {
-    if (index + 1 >= selectedDestinations.length) {
-      return selectedDestinations[0].name;
-    } else {
-      return selectedDestinations[index + 1].name;
-    }
-  };
-
   const getCountryFlagImg = (destination) => {
     if (!destination || !destination.country || !destination.country.name) return null;
     return (
@@ -482,7 +471,7 @@ const DaysOrganiser = ({
     <div>
       {dropNotAllowedMsg && (
         <div className="drop-not-allowed-msg">
-          This activity cannot be added to this day.
+          This activity cannot be dropped here. It belongs to a different destination.
         </div>
       )}
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -510,52 +499,6 @@ const DaysOrganiser = ({
           <div className="days-wrapper">{renderDayBoxes()}</div>
         </div>
       </DragDropContext>
-
-      {routeData == null ? (
-        <div className="loading-container">
-          <p>calculating optimal route...</p>
-          <FaSpinner className="spinner" />
-        </div>
-      ) : (
-        <div className="route-info-container">
-          {routeData && (
-            <div className="route-info">
-              {routeData.segments.map((segment, index) => (
-                <div key={index} className="segment-info">
-                  <p>
-                    <span className="destination-names">
-                      {selectedDestinations[index].name}
-                    </span>{" "}
-                    ➔{" "}
-                    <span className="destination-names">
-                      {roundTripHandler(index)}
-                    </span>
-                  </p>
-                  <p>
-                    Distance: {convertMetersToKilometers(segment.distance)} km
-                  </p>
-                  <p>
-                    Estimated Duration: {convertSecondsToHoursMinutes(segment.duration)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="fuel-cost-input">
-            <label htmlFor="fuelConsumption">
-              Enter Fuel Consumption (litres per 100km):{" "}
-            </label>
-            <input
-              type="number"
-              id="fuelConsumption"
-              value={fuelConsumption}
-              onChange={handleFuelConsumptionChange}
-            />
-            <button onClick={calculateGasCost}>Calculate Gas Cost</button>
-            <p>Gas Cost: {gasCost.toFixed(2)} €</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

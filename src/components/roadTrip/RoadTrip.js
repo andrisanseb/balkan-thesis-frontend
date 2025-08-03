@@ -21,9 +21,6 @@ const RoadTrip = ({ destinations }) => {
   const currentUser = AuthService.getCurrentUser();
   const location = useLocation();
 
-  // Route
-  const openRouteServiceApiKey = process.env.REACT_APP_OPEN_ROUTE_SERVICE_API_KEY;
-  
   const [routeData, setRouteData] = useState(null);
 
   useEffect(() => {
@@ -34,12 +31,6 @@ const RoadTrip = ({ destinations }) => {
       setDaysData(null);
     };
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (currentView === 2 && routeData == null) {
-      calculateRoute();
-    }
-  }, [currentView]);
 
   useEffect(() => {
     // Reset routeData if destinations change
@@ -80,41 +71,6 @@ const RoadTrip = ({ destinations }) => {
     setCurrentView((prev) => (prev > 1 ? prev - 1 : prev));
   };
 
-  // optimal order of destinations
-  //const turf = require("@turf/turf");
-  // TODO: turf + tsp algorithm on coordinates before calling api
-
-  // API: Calculates Route Between Selected Destinations
-  const calculateRoute = async () => {
-    try {
-      const selectedDestinationsCoordinates = selectedDestinations.map(
-        (destination) => [destination.longitude, destination.latitude]
-      );
-
-      // TODO: ADD RETURN OPTION (!!!!!!)
-      //selectedDestinationsCoordinates.push(selectedDestinationsCoordinates[0]); // places first destination in last place => round trip
-
-      const response = await fetch(
-        `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${openRouteServiceApiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            coordinates: selectedDestinationsCoordinates,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      setRouteData(data.routes[0]);
-      console.log(data.routes[0]);
-    } catch (error) {
-      console.error("Error calculating route:", error);
-    }
-  };
-
   const renderCard = () => {
     switch (currentView) {
       case 1:
@@ -136,7 +92,6 @@ const RoadTrip = ({ destinations }) => {
               selectedActivities={selectedActivities}
               onNext={nextView}
               onBack={prevView}
-              calculateRoute={calculateRoute}
             />
           </div>
         );
@@ -146,6 +101,7 @@ const RoadTrip = ({ destinations }) => {
             <Card3
               selectedDestinations={selectedDestinations}
               routeData={routeData}
+              setRouteData={setRouteData}
               selectedActivities={selectedActivities}
               handleDaysDataChange={handleDaysDataChange}
               createRoadTrip={createRoadTrip}
@@ -161,17 +117,11 @@ const RoadTrip = ({ destinations }) => {
   };
 
   const createRoadTrip = async (days) => {
-
-    //TODO: beautified version
-    // var routeDataCopy = routeData;
-    // delete routeDataCopy.way_points;
-    // delete routeDataCopy.warnings;
-    // delete routeDataCopy.extras;
-    // delete routeDataCopy.bbox;
-
     const simplifiedDays = JSON.parse(JSON.stringify(days)).map(day => ({
       activityIds: day.activities.map(activity => activity.id)
     }));
+
+    const simplifiedRoute = simplifyRouteData(routeData);
 
     try {
       const response = await fetch(API_URL+"/roadTrip", {
@@ -182,14 +132,12 @@ const RoadTrip = ({ destinations }) => {
         body: JSON.stringify({
           name: planTitle,
           userId: currentUser.id,
-          route: JSON.stringify(routeData),
+          route: JSON.stringify(simplifiedRoute),
           days: JSON.stringify(simplifiedDays),
         }),
       });
 
       if (response.ok) {
-        //TODO: my roadtrip(s) overview
-        // navigate("/my-roadtrips");
         navigate("/");
       } else {
         throw new Error("Road Trip creation failed.");
@@ -201,4 +149,24 @@ const RoadTrip = ({ destinations }) => {
 
   return <div>{renderCard()}</div>;
 };
+
+function simplifyRouteData(routeData) {
+  if (
+    !routeData ||
+    !routeData.routes ||
+    !routeData.routes[0] ||
+    !routeData.routes[0].legs
+  ) return null;
+
+  const legs = routeData.routes[0].legs;
+  return legs.map((leg) => ({
+    start_location: leg.start_location,
+    end_location: leg.end_location,
+    start_address: leg.start_address,
+    end_address: leg.end_address,
+    distance: leg.distance.value, // meters
+    duration: leg.duration.value, // seconds
+  }));
+}
+
 export default RoadTrip;
