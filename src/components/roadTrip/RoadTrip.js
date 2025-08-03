@@ -124,7 +124,7 @@ const RoadTrip = ({ destinations }) => {
     const simplifiedRoute = simplifyRouteData(routeData);
 
     try {
-      const response = await fetch(API_URL+"/roadTrip", {
+      const response = await fetch(API_URL+"/roadTrips", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
