@@ -16,6 +16,9 @@ const RoadTrip = ({ destinations }) => {
   const [daysData, setDaysData] = useState(null);
   const [planTitle, setPlanTitle] = useState("Road Trip Plan");
 
+  // Add round trip state
+  const [isRoundTrip, setIsRoundTrip] = useState(true);
+
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const currentUser = AuthService.getCurrentUser();
@@ -81,6 +84,8 @@ const RoadTrip = ({ destinations }) => {
             addSelectedDestination={addSelectedDestination}
             removeSelectedDestination={removeSelectedDestination}
             onNext={nextView}
+            isRoundTrip={isRoundTrip}
+            setIsRoundTrip={setIsRoundTrip}
           />
         );
       case 2:
@@ -108,6 +113,7 @@ const RoadTrip = ({ destinations }) => {
               planTitle={planTitle}
               setPlanTitle={setPlanTitle}
               onBack={prevView}
+              isRoundTrip={isRoundTrip}
             />
           </div>
         );
@@ -116,8 +122,11 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-  const createRoadTrip = async (days) => {
-    const simplifiedDays = JSON.parse(JSON.stringify(days)).map(day => ({
+  const createRoadTrip = async (days, dayTitles) => {
+    // Get day titles from DaysOrganiser (pass as argument or via state)
+    // Assume you pass dayTitles as a second argument: createRoadTrip(days, dayTitles)
+    const simplifiedDays = JSON.parse(JSON.stringify(days)).map((day, i) => ({
+      name: dayTitles && dayTitles[i] ? dayTitles[i] : `Day ${i + 1}`,
       activityIds: day.activities.map(activity => activity.id)
     }));
 

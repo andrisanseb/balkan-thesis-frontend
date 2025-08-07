@@ -1,0 +1,55 @@
+.my-roadtrips-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.roadtrip-card {
+  background: #f7fafc;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+  margin-bottom: 32px;
+  padding: 24px;
+}
+
+.roadtrip-card h3 {
+  color: #1976d2;
+  margin-bottom: 12px;
+}
+
+.roadtrip-route ol {
+  padding-left: 18px;
+}
+
+.roadtrip-route li {
+  margin-bottom: 8px;
+}
+
+.roadtrip-days ul {
+  padding-left: 18px;
+}
+
+.activity-id {
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-right: 4px;
+  font-size: 0.95em;
+}
+
+.remove-roadtrip-btn {
+  background: transparent;
+  border: none;
+  color: #737070;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.remove-roadtrip-btn:hover {
+  color: #d32f2f;
+  background: #f8d7da;
+}

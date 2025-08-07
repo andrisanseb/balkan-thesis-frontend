@@ -94,7 +94,7 @@ const ActivitySelector = ({
   };
 
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper content-padding">
       <h1 className="activity-title">Activities</h1>
       <p className="activity-description-info">
         Select the activities you want to include in your trip. Click on an
@@ -105,7 +105,7 @@ const ActivitySelector = ({
           htmlFor="activity-category-filter"
           style={{ marginRight: "8px" }}
         >
-          Filter by category:
+          Category:
         </label>
         <select
           id="activity-category-filter"
@@ -120,7 +120,7 @@ const ActivitySelector = ({
           ))}
         </select>
         <label htmlFor="activity-destination-filter" style={{ marginRight: "8px" }}>
-          Filter by destination:
+          Destination:
         </label>
         <select
           id="activity-destination-filter"
@@ -153,13 +153,6 @@ const ActivitySelector = ({
                       src={destInfo.flag}
                       alt="country_flag"
                       className="activity-country-flag"
-                      style={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: "50%",
-                        marginRight: 6,
-                        verticalAlign: "middle",
-                      }}
                     />
                     <span className="activity-dest-name">{destInfo.name}</span>
                   </>

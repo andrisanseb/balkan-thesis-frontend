@@ -12,6 +12,7 @@ import UserDetails from "./components/user/UserDetails";
 import RoadTrip from "./components/roadTrip/RoadTrip";
 import Assistant from "./components/Assistant";
 import ActivitiesExplore from "./components/activities/ActivitiesExplore";
+import MyRoadTrips from "./components/roadTrip/MyRoadTrips";
 
 export default function App() {
 
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="/users/:id" element={<UserDetails />} />
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
           <Route path="/experiences" element={<ActivitiesExplore destinations={destinations} />} />
+          <Route path="/my-roadtrips" element={<MyRoadTrips />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </main>

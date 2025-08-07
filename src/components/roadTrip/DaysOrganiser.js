@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
-import { FaSpinner, FaClock } from "react-icons/fa";
+import { FaSpinner, FaClock, FaPen } from "react-icons/fa"; // Add FaPen import
 
 const DaysOrganiser = ({
   selectedDestinations,
@@ -10,11 +10,14 @@ const DaysOrganiser = ({
   routeData,
   planTitle,
   setPlanTitle,
+  handleDayTitlesChange,
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(selectedDestinations.length);
   const [dropNotAllowedMsg, setDropNotAllowedMsg] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [dayTitles, setDayTitles] = useState([]);
+  const [editingDayTitleIdx, setEditingDayTitleIdx] = useState(null);
 
   useEffect(() => {
     if (selectedActivities && selectedActivities.length > 0) {
@@ -27,6 +30,36 @@ const DaysOrganiser = ({
     handleDaysDataChange(daysData);
     // eslint-disable-next-line
   }, [daysData]);
+
+  useEffect(() => {
+    // Only initialize if empty
+    if (dayTitles.length === 0 && daysData.length > 0) {
+      setDayTitles(daysData.map((_, i) => `Day ${i + 1}`));
+    }
+    // If days are added, append default titles
+    if (daysData.length > dayTitles.length) {
+      setDayTitles((prev) =>
+        [
+          ...prev,
+          ...Array(daysData.length - prev.length)
+            .fill("")
+            .map((_, i) => `Day ${prev.length + i + 1}`),
+        ]
+      );
+    }
+    // If days are removed, trim titles
+    if (daysData.length < dayTitles.length) {
+      setDayTitles((prev) => prev.slice(0, daysData.length));
+    }
+    // eslint-disable-next-line
+  }, [daysData.length]);
+
+  useEffect(() => {
+    if (handleDayTitlesChange) {
+      handleDayTitlesChange(dayTitles);
+    }
+    // eslint-disable-next-line
+  }, [dayTitles]);
 
   const distributeActivitiesByDestination = () => {
     // Prepare empty days array
@@ -89,27 +122,6 @@ const DaysOrganiser = ({
     ];
     setDaysData(newDaysData);
     setTotalDays(newDaysData.length);
-  };
-
-  const removeDay = (indexToRemove) => {
-    if (totalDays > 1 && indexToRemove >= 0 && indexToRemove < totalDays) {
-      setTotalDays(totalDays - 1);
-
-      if (daysData[indexToRemove].activities.length > 0) {
-        const activitiesToMove = daysData[indexToRemove].activities;
-        const updatedDaysData = [...daysData];
-        updatedDaysData.splice(indexToRemove, 1);
-
-        const randomDayIndex = Math.floor(Math.random() * totalDays);
-        updatedDaysData[randomDayIndex].activities.push(...activitiesToMove);
-
-        setDaysData(updatedDaysData);
-      } else {
-        setDaysData((prevDaysData) =>
-          prevDaysData.filter((_, index) => index !== indexToRemove)
-        );
-      }
-    }
   };
 
   const handleDragEnd = (result) => {
@@ -210,6 +222,12 @@ const DaysOrganiser = ({
     };
   };
 
+  const handleDayTitleChange = (index, value) => {
+    const newTitles = [...dayTitles];
+    newTitles[index] = value;
+    setDayTitles(newTitles);
+  };
+
   const renderDayBoxes = () => {
     const boxes = [];
     let travelSegmentIndex = 0; // Only increment for travel days
@@ -299,14 +317,28 @@ const DaysOrganiser = ({
 
       boxes.push(
         <div key={i} className="day-box">
-          {/* Show remove button for rest/non-travel days OR days with no route */}
-          {(day.restArrival || !segment) ? (
-            <button className="remove-button" onClick={() => removeDay(i)}>
-              -
-            </button>
-          ) : null}
+          {/* Editable day title */}
           <div className="day-header">
-            <h3>Day {i + 1}</h3>
+            {editingDayTitleIdx === i ? (
+              <input
+                type="text"
+                className="day-title-input"
+                value={dayTitles[i]}
+                onChange={(e) => handleDayTitleChange(i, e.target.value)}
+                onBlur={() => setEditingDayTitleIdx(null)}
+                autoFocus
+              />
+            ) : (
+              <h3
+                className="day-title"
+                onClick={() => setEditingDayTitleIdx(i)}
+                title="Click to edit day title"
+                style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+              >
+                {dayTitles[i]}
+                <FaPen style={{ marginLeft: "8px", fontSize: "0.9em", color: "#1976d2" }} />
+              </h3>
+            )}
           </div>
           {/* Route info for this day */}
           <div className="day-route-info">
@@ -475,7 +507,7 @@ const DaysOrganiser = ({
         </div>
       )}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="days-organiser-container">
+        <div className="days-organiser-container content-padding">
           <div className="plan-title-container">
             {isEditingTitle ? (
               <input

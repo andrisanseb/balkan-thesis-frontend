@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/ActivitiesExplore.css";
-import { FaSpinner, FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaSpinner, FaHeart, FaRegHeart, FaYoutube } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
 
 const ActivitiesExplore = ({ destinations }) => {
@@ -236,17 +236,31 @@ const ActivitiesExplore = ({ destinations }) => {
                       <p className="activity-description">{activity.description}</p>
                       <div className="activity-details"></div>
                     </div>
-                    {favoriteActivities[activity.id] ? (
-                      <FaHeart
-                        className="heart-icon liked"
-                        onClick={() => toggleFavorite(activity.id)}
-                      />
-                    ) : (
-                      <FaRegHeart
-                        className="heart-icon"
-                        onClick={() => toggleFavorite(activity.id)}
-                      />
-                    )}
+                    <div className="activity-actions-row">
+                      <button
+                        className="youtube-btn"
+                        title="Watch most related video on YouTube"
+                        onClick={() =>
+                          window.open(
+                            `https://www.youtube.com/results?search_query=${encodeURIComponent(activity.name)}&sp=EgIQAQ%253D%253D`,
+                            "_blank"
+                          )
+                        }
+                      >
+                        <FaYoutube className="youtube-icon" />
+                      </button>
+                      {favoriteActivities[activity.id] ? (
+                        <FaHeart
+                          className="heart-icon liked"
+                          onClick={() => toggleFavorite(activity.id)}
+                        />
+                      ) : (
+                        <FaRegHeart
+                          className="heart-icon"
+                          onClick={() => toggleFavorite(activity.id)}
+                        />
+                      )}
+                    </div>
                   </div>
                 );
               })}

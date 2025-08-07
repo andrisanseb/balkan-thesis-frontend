@@ -1,5 +1,4 @@
-import React from "react";
-import { FaCheck } from "react-icons/fa";
+import React, { useState } from "react";
 import "../../styles/DestinationsSelector.css";
 
 const DestinationsSelector = ({
@@ -8,8 +7,10 @@ const DestinationsSelector = ({
   addSelectedDestination,
   removeSelectedDestination,
   onNext,
+  isRoundTrip,
+  setIsRoundTrip,
 }) => (
-  <div className="content-wrapper">
+  <div className="content-wrapper content-padding">
     <h2 className="title">Destinations</h2>
 
     <div className="selected-destinations-list">
@@ -22,8 +23,19 @@ const DestinationsSelector = ({
             <span className="selected-name">{destination.name}</span>
           </div>
         ))
-      )
-    }</div>
+      )}
+    </div>
+
+    <div className="roadtrip-toggle-container" style={{ marginBottom: "1em" }}>
+      <label>
+        <input
+          type="checkbox"
+          checked={isRoundTrip}
+          onChange={() => setIsRoundTrip(!isRoundTrip)}
+        />{" "}
+        Round Trip (return to starting point)
+      </label>
+    </div>
 
     <div className="destination-cards">
       {destinations.map((destination) => {
@@ -53,7 +65,6 @@ const DestinationsSelector = ({
             <div className="destination-card-content">
               <p className="dest-name">{destination.name}</p>
               <img src={country_flag_img} alt="country_flag" />
-              {isSelected && <FaCheck className="checkmark" />}
             </div>
           </div>
         );

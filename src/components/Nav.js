@@ -20,8 +20,9 @@ export const NavBar = () => {
             <div className="navbar-container">
                 <div className="navbar-left">
                     <NavLink to="/">HOME</NavLink>
-                    <NavLink to="/experiences">EXPERIENCES</NavLink>
-                    <NavLink to="/roadTrip">ROAD TRIP</NavLink>
+                    <NavLink to="/experiences">EXPLORE</NavLink>
+                    <NavLink to="/roadTrip">PLAN ROADTRIP</NavLink>
+                    <NavLink to="/my-roadtrips">MY ROADTRIPS</NavLink>
                 </div>
                 <div className="navbar-right">
                     {currentUser ? (

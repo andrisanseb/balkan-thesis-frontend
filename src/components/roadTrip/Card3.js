@@ -12,9 +12,12 @@ const Card3 = ({
   routeData,
   setRouteData,
   onBack,
+  isRoundTrip,
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [orderedDestinations, setOrderedDestinations] = useState(selectedDestinations);
+  const [dayTitles, setDayTitles] = useState([]);
 
   // This handler will be called by DaysOrganiser
   const handleDaysData = (data) => {
@@ -26,12 +29,21 @@ const Card3 = ({
   const calculateRoute = () => {
     if (!window.google || !window.google.maps || selectedDestinations.length < 2) return;
 
-    const origin = { lat: selectedDestinations[0].latitude, lng: selectedDestinations[0].longitude };
-    const destination = origin;
-    const waypoints = selectedDestinations.slice(1).map(d => ({
-      location: { lat: d.latitude, lng: d.longitude },
-      stopover: true,
-    }));
+    // Use city names or addresses instead of lat/lng
+    const origin = selectedDestinations[0].name; // or .address if available
+    const destination = isRoundTrip
+      ? origin
+      : selectedDestinations[selectedDestinations.length - 1].name;
+
+    const waypoints = isRoundTrip
+      ? selectedDestinations.slice(1).map(d => ({
+          location: d.name, // or d.address
+          stopover: true,
+        }))
+      : selectedDestinations.slice(1, -1).map(d => ({
+          location: d.name, // or d.address
+          stopover: true,
+        }));
 
     const directionsService = new window.google.maps.DirectionsService();
 
@@ -46,8 +58,23 @@ const Card3 = ({
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           setRouteData(result);
+
+          // Reorder destinations according to waypoint_order
+          const waypointOrder = result.routes[0].waypoint_order || [];
+          let newOrder = [];
+          newOrder.push(selectedDestinations[0]);
+          waypointOrder.forEach(idx => {
+            newOrder.push(selectedDestinations[idx + 1]);
+          });
+          if (!isRoundTrip) {
+            newOrder.push(selectedDestinations[selectedDestinations.length - 1]);
+          } else {
+            newOrder.push(selectedDestinations[0]);
+          }
+          setOrderedDestinations(newOrder);
         } else {
           setRouteData(null);
+          setOrderedDestinations(selectedDestinations);
           console.error("Directions request failed due to " + status);
         }
       }
@@ -68,24 +95,25 @@ const Card3 = ({
   };
 
   const handleSubmit = () => {
-    createRoadTrip(daysData);
+    createRoadTrip(daysData, dayTitles);
   };
 
   return (
     <div className="content-wrapper">
       <div>
         <MapWithGoogleMapsProvider
-          selectedDestinations={selectedDestinations}
+          selectedDestinations={orderedDestinations}
           onMapLoad={handleMapLoad}
           routeData={routeData}
         />
         <DaysOrganiser
-          selectedDestinations={selectedDestinations}
+          selectedDestinations={orderedDestinations}
           selectedActivities={selectedActivities}
           routeData={routeData}
           handleDaysDataChange={handleDaysData}
           planTitle={planTitle}
           setPlanTitle={setPlanTitle}
+          handleDayTitlesChange={setDayTitles}
         />
       </div>
       <div className="button-row">

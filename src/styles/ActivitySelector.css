@@ -166,3 +166,12 @@
   border-color: #1976d2;
   background: #e3f2fd;
 }
+
+.activity-country-flag {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    display: inline-block;
+}
