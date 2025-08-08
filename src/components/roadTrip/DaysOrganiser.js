@@ -10,13 +10,11 @@ const DaysOrganiser = ({
   routeData,
   planTitle,
   setPlanTitle,
-  handleDayTitlesChange,
 }) => {
   const [daysData, setDaysData] = useState([]);
   const [totalDays, setTotalDays] = useState(selectedDestinations.length);
   const [dropNotAllowedMsg, setDropNotAllowedMsg] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [dayTitles, setDayTitles] = useState([]);
   const [editingDayTitleIdx, setEditingDayTitleIdx] = useState(null);
 
   useEffect(() => {
@@ -31,50 +29,18 @@ const DaysOrganiser = ({
     // eslint-disable-next-line
   }, [daysData]);
 
-  useEffect(() => {
-    // Only initialize if empty
-    if (dayTitles.length === 0 && daysData.length > 0) {
-      setDayTitles(daysData.map((_, i) => `Day ${i + 1}`));
-    }
-    // If days are added, append default titles
-    if (daysData.length > dayTitles.length) {
-      setDayTitles((prev) =>
-        [
-          ...prev,
-          ...Array(daysData.length - prev.length)
-            .fill("")
-            .map((_, i) => `Day ${prev.length + i + 1}`),
-        ]
-      );
-    }
-    // If days are removed, trim titles
-    if (daysData.length < dayTitles.length) {
-      setDayTitles((prev) => prev.slice(0, daysData.length));
-    }
-    // eslint-disable-next-line
-  }, [daysData.length]);
-
-  useEffect(() => {
-    if (handleDayTitlesChange) {
-      handleDayTitlesChange(dayTitles);
-    }
-    // eslint-disable-next-line
-  }, [dayTitles]);
-
   const distributeActivitiesByDestination = () => {
     // Prepare empty days array
-    const days = Array.from({ length: totalDays }, () => ({ activities: [] }));
+    const days = Array.from({ length: totalDays }, (_, i) => ({
+      activities: [],
+      title: `Day ${i + 1}`,
+    }));
 
     selectedActivities.forEach((activity) => {
-      // Try to assign activity to the correct day
       for (let dayIndex = 0; dayIndex < totalDays; dayIndex++) {
         const fromDest = selectedDestinations[dayIndex];
-        // For round trip, next destination wraps to 0
         const toDest =
           selectedDestinations[(dayIndex + 1) % selectedDestinations.length];
-
-        // Check if activity belongs to fromDest or toDest
-        // Adjust property as needed: activity.destinationId or activity.destination.id
         const activityDestId =
           activity.destinationId ||
           (activity.destination && activity.destination.id);
@@ -84,7 +50,7 @@ const DaysOrganiser = ({
           (toDest && activityDestId === toDest.id)
         ) {
           days[dayIndex].activities.push(activity);
-          break; // Assign to the first matching day only
+          break;
         }
       }
     });
@@ -92,12 +58,13 @@ const DaysOrganiser = ({
     setDaysData(days);
   };
 
-  const generateEmptyDay = (restArrival = null) => {
-    return { activities: [], restArrival }; // restArrival is null for normal days, or a string for rest days
+  const generateEmptyDay = (restArrival = null, title = "") => {
+    return { activities: [], restArrival, title };
   };
 
   const addDayAtIndex = (insertIndex, restArrival) => {
-    const newDay = generateEmptyDay(restArrival);
+    let title = restArrival ? `Explore ${restArrival}` : `Day ${insertIndex + 1}`;
+    const newDay = generateEmptyDay(restArrival, title);
     const newDaysData = [
       ...daysData.slice(0, insertIndex),
       newDay,
@@ -105,13 +72,12 @@ const DaysOrganiser = ({
     ];
     setDaysData(newDaysData);
     setTotalDays(newDaysData.length);
+    setDaysData(renumberDefaultDayTitles(newDaysData));
   };
 
   const handleDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
-
-    // Prevent drag if source and destination are the same position
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -122,10 +88,8 @@ const DaysOrganiser = ({
     const sourceDayIndex = parseInt(source.droppableId, 10);
     const destDayIndex = parseInt(destination.droppableId, 10);
 
-    // Get the activity to move
     const movedActivity = daysData[sourceDayIndex].activities[source.index];
 
-    // Determine allowed destination IDs for the target day
     let allowedDestinationIds = [];
     if (daysData[destDayIndex].restArrival) {
       const restDest = selectedDestinations.find(
@@ -139,19 +103,16 @@ const DaysOrganiser = ({
       allowedDestinationIds = [fromDest?.id, toDest?.id];
     }
 
-    // Get the activity's destination id
     const activityDestId =
       movedActivity.destinationId ||
       (movedActivity.destination && movedActivity.destination.id);
 
-    // Only allow drop if the activity belongs to the allowed destinations
     if (!allowedDestinationIds.includes(activityDestId)) {
       setDropNotAllowedMsg(true);
       setTimeout(() => setDropNotAllowedMsg(false), 2000);
       return;
     }
 
-    // Move within the same day: reorder activities
     if (sourceDayIndex === destDayIndex) {
       const newActivities = Array.from(daysData[sourceDayIndex].activities);
       const [removed] = newActivities.splice(source.index, 1);
@@ -164,16 +125,13 @@ const DaysOrganiser = ({
       return;
     }
 
-    // Move between different days
     const newDaysData = daysData.map((day, idx) => {
-      // Remove from source
       if (idx === sourceDayIndex) {
         return {
           ...day,
           activities: day.activities.filter((_, i) => i !== source.index),
         };
       }
-      // Insert into destination
       if (idx === destDayIndex) {
         const newActivities = [...day.activities];
         newActivities.splice(destination.index, 0, movedActivity);
@@ -186,50 +144,30 @@ const DaysOrganiser = ({
     });
 
     setDaysData(newDaysData);
-  };
-
-  // Helper to get distance and duration from Google Maps API routeData
-  const getGoogleSegmentInfo = (routeData, index) => {
-    const legs =
-      routeData &&
-      routeData.routes &&
-      routeData.routes[0] &&
-      routeData.routes[0].legs;
-    if (!legs || !legs[index]) return { distance: 0, duration: 0 };
-    const leg = legs[index];
-    return {
-      distance: leg.distance ? leg.distance.value : 0, // meters
-      duration: leg.duration ? leg.duration.value : 0, // seconds
-      start_address: leg.start_address,
-      end_address: leg.end_address,
-    };
+    setDaysData(renumberDefaultDayTitles(newDaysData));
   };
 
   const handleDayTitleChange = (index, value) => {
-    const newTitles = [...dayTitles];
-    newTitles[index] = value;
-    setDayTitles(newTitles);
+    const newDays = [...daysData];
+    newDays[index].title = value;
+    setDaysData(newDays);
   };
 
   const handleRemoveDay = (index) => {
-    if (daysData.length <= 1) return; // Prevent removing last day
+    if (daysData.length <= 1) return;
     const newDays = [...daysData];
     newDays.splice(index, 1);
     setDaysData(newDays);
-
-    const newTitles = [...dayTitles];
-    newTitles.splice(index, 1);
-    setDayTitles(newTitles);
+    setDaysData(renumberDefaultDayTitles(newDays));
   };
 
   const renderDayBoxes = () => {
     const boxes = [];
-    let travelSegmentIndex = 0; // Only increment for travel days
+    let travelSegmentIndex = 0;
 
     for (let i = 0; i < daysData.length; i++) {
       const day = daysData[i];
 
-      // Only get segment for travel days
       let segment = null;
       const legs =
         routeData &&
@@ -240,7 +178,6 @@ const DaysOrganiser = ({
         segment = getGoogleSegmentInfo(routeData, travelSegmentIndex);
       }
 
-      // SKIP travel days with no route segment
       if (!day.restArrival && !segment) {
         continue;
       }
@@ -289,7 +226,7 @@ const DaysOrganiser = ({
               <input
                 type="text"
                 className="day-title-input"
-                value={dayTitles[i]}
+                value={day.title}
                 onChange={(e) => handleDayTitleChange(i, e.target.value)}
                 onBlur={() => setEditingDayTitleIdx(null)}
                 autoFocus
@@ -301,7 +238,7 @@ const DaysOrganiser = ({
                 title="Click to edit day title"
                 style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
               >
-                {dayTitles[i]}
+                {day.title}
                 <FaPen style={{ marginLeft: "8px", fontSize: "0.9em", color: "#1976d2" }} />
               </h3>
             )}
@@ -314,7 +251,6 @@ const DaysOrganiser = ({
                   <span className="destination-names">
                     Explore: <strong>
                       {day.restArrival}
-                      {/* Find the destination object by name */}
                       {(() => {
                         const destObj = selectedDestinations.find(
                           (d) => d.name === day.restArrival
@@ -340,7 +276,6 @@ const DaysOrganiser = ({
                 <div>
                   <span className="destination-names">
                     {selectedDestinations[travelSegmentIndex]?.name}
-                    {/* Flag for from destination */}
                     {(() => {
                       const fromDest = selectedDestinations[travelSegmentIndex];
                       const flag = getCountryFlagImg(fromDest);
@@ -358,7 +293,6 @@ const DaysOrganiser = ({
                     {selectedDestinations[travelSegmentIndex + 1]
                       ? selectedDestinations[travelSegmentIndex + 1].name
                       : selectedDestinations[0]?.name}
-                    {/* Flag for to destination */}
                     {(() => {
                       const toDest =
                         selectedDestinations[travelSegmentIndex + 1] ||
@@ -437,34 +371,44 @@ const DaysOrganiser = ({
           {!day.restArrival && segment && (
             <div className="explore-more-container">
               <span>Explore one more day in:</span>
-              {/* Find start and end destination objects by matching segment addresses */}
               {(() => {
-                // Find start destination
                 const startDest = selectedDestinations.find(
                   d => segment.start_address && segment.start_address.includes(d.name)
                 );
-                // Find end destination
-                const endDest = selectedDestinations.find(
-                  d => segment.end_address && segment.end_address.includes(d.name)
-                );
+                let endDest;
+                if (
+                  i === daysData.length - 1 &&
+                  selectedDestinations.length > 1 &&
+                  selectedDestinations[0] &&
+                  segment.end_address &&
+                  segment.end_address.includes(selectedDestinations[0].name)
+                ) {
+                  endDest = selectedDestinations[0];
+                } else {
+                  endDest = selectedDestinations.find(
+                    d => segment.end_address && segment.end_address.includes(d.name)
+                  );
+                }
                 return (
                   <>
-                    <button
-                      className="explore-more-btn"
-                      onClick={() => addDayAtIndex(i, startDest?.name)}
-                      title={`Add day before for ${startDest?.name || "Start"}`}
-                      disabled={!startDest}
-                    >
-                      {startDest?.name || "Start"}
-                    </button>
-                    <button
-                      className="explore-more-btn"
-                      onClick={() => addDayAtIndex(i + 1, endDest?.name)}
-                      title={`Add day after for ${endDest?.name || "End"}`}
-                      disabled={!endDest}
-                    >
-                      {endDest?.name || "End"}
-                    </button>
+                    {startDest && (
+                      <button
+                        className="explore-more-btn"
+                        onClick={() => addDayAtIndex(i, startDest.name)}
+                        title={`Add day before for ${startDest.name}`}
+                      >
+                        {startDest.name}
+                      </button>
+                    )}
+                    {endDest && (
+                      <button
+                        className="explore-more-btn"
+                        onClick={() => addDayAtIndex(i + 1, endDest.name)}
+                        title={`Add day after for ${endDest.name}`}
+                      >
+                        {endDest.name}
+                      </button>
+                    )}
                   </>
                 );
               })()}
@@ -473,13 +417,28 @@ const DaysOrganiser = ({
         </div>
       );
 
-      // Only increment travelSegmentIndex for travel days
       if (!day.restArrival) {
         travelSegmentIndex++;
       }
     }
 
     return boxes;
+  };
+
+  const getGoogleSegmentInfo = (routeData, index) => {
+    const legs =
+      routeData &&
+      routeData.routes &&
+      routeData.routes[0] &&
+      routeData.routes[0].legs;
+    if (!legs || !legs[index]) return { distance: 0, duration: 0 };
+    const leg = legs[index];
+    return {
+      distance: leg.distance ? leg.distance.value : 0,
+      duration: leg.duration ? leg.duration.value : 0,
+      start_address: leg.start_address,
+      end_address: leg.end_address,
+    };
   };
 
   const convertMetersToKilometers = (meters) => {
@@ -501,6 +460,17 @@ const DaysOrganiser = ({
       ".png"
     );
   };
+
+  // Add this helper function:
+  function renumberDefaultDayTitles(days) {
+    return days.map((day, idx) => {
+      // If the title matches "Day N", update it to the new position
+      if (/^Day \d+$/.test(day.title)) {
+        return { ...day, title: `Day ${idx + 1}` };
+      }
+      return day;
+    });
+  }
 
   return (
     <div>

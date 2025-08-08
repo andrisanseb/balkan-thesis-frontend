@@ -17,7 +17,6 @@ const Card3 = ({
   const [daysData, setDaysData] = useState([]);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [orderedDestinations, setOrderedDestinations] = useState(selectedDestinations);
-  const [dayTitles, setDayTitles] = useState([]);
 
   // This handler will be called by DaysOrganiser
   const handleDaysData = (data) => {
@@ -95,7 +94,7 @@ const Card3 = ({
   };
 
   const handleSubmit = () => {
-    createRoadTrip(daysData, dayTitles);
+    createRoadTrip(daysData);
   };
 
   return (
@@ -113,7 +112,6 @@ const Card3 = ({
           handleDaysDataChange={handleDaysData}
           planTitle={planTitle}
           setPlanTitle={setPlanTitle}
-          handleDayTitlesChange={setDayTitles}
         />
       </div>
       <div className="button-row content-padding">

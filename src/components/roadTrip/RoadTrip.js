@@ -126,7 +126,7 @@ const RoadTrip = ({ destinations }) => {
     // Get day titles from DaysOrganiser (pass as argument or via state)
     // Assume you pass dayTitles as a second argument: createRoadTrip(days, dayTitles)
     const simplifiedDays = JSON.parse(JSON.stringify(days)).map((day, i) => ({
-      name: dayTitles && dayTitles[i] ? dayTitles[i] : `Day ${i + 1}`,
+      name: day.title ? day.title : `Day ${i + 1}`,
       activityIds: day.activities.map(activity => activity.id)
     }));
 
