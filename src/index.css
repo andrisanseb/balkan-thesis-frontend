@@ -23,6 +23,9 @@ p { /* overrides user agent stylesheet issue */
     margin: auto;
     background: rgba(255,255,255,0.85);
     box-shadow: 0 6px 32px rgba(0,0,0,0.07);
+}
+
+.content-padding {
     padding: 2.5em 2em 2em 2em;
 }
 

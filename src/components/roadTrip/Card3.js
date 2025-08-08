@@ -116,7 +116,7 @@ const Card3 = ({
           handleDayTitlesChange={setDayTitles}
         />
       </div>
-      <div className="button-row">
+      <div className="button-row content-padding">
         <button onClick={onBack} className="back-btn">Back</button>
         <button onClick={handleSubmit} className="next-btn">Submit</button>
       </div>

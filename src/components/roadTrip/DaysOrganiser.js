@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../../styles/DaysOrganiser.css";
-import { FaSpinner, FaClock, FaPen } from "react-icons/fa"; // Add FaPen import
+import { FaSpinner, FaClock, FaPen, FaTrash } from "react-icons/fa";
 
 const DaysOrganiser = ({
   selectedDestinations,
@@ -96,24 +96,7 @@ const DaysOrganiser = ({
     return { activities: [], restArrival }; // restArrival is null for normal days, or a string for rest days
   };
 
-  const addDayAtIndex = (insertIndex) => {
-    // Find the most recent travel day before insertIndex
-    let lastTravelSegmentIndex = -1;
-    for (let j = insertIndex - 1; j >= 0; j--) {
-      if (!daysData[j].restArrival) {
-        lastTravelSegmentIndex++;
-        break;
-      }
-      lastTravelSegmentIndex++;
-    }
-    // If no travel day found before, use the first travel segment
-    const travelSegmentIdx = insertIndex - lastTravelSegmentIndex;
-    const restArrival =
-      selectedDestinations[travelSegmentIdx] &&
-      selectedDestinations[travelSegmentIdx].name
-        ? selectedDestinations[travelSegmentIdx].name
-        : "";
-
+  const addDayAtIndex = (insertIndex, restArrival) => {
     const newDay = generateEmptyDay(restArrival);
     const newDaysData = [
       ...daysData.slice(0, insertIndex),
@@ -228,6 +211,17 @@ const DaysOrganiser = ({
     setDayTitles(newTitles);
   };
 
+  const handleRemoveDay = (index) => {
+    if (daysData.length <= 1) return; // Prevent removing last day
+    const newDays = [...daysData];
+    newDays.splice(index, 1);
+    setDaysData(newDays);
+
+    const newTitles = [...dayTitles];
+    newTitles.splice(index, 1);
+    setDayTitles(newTitles);
+  };
+
   const renderDayBoxes = () => {
     const boxes = [];
     let travelSegmentIndex = 0; // Only increment for travel days
@@ -249,45 +243,6 @@ const DaysOrganiser = ({
       // SKIP travel days with no route segment
       if (!day.restArrival && !segment) {
         continue;
-      }
-
-      // Add "+" button before each day except the first
-      if (i > 0) {
-        // Find the most recent travel day before insertIndex (i)
-        let travelSegmentIndexForBtn = 0;
-        for (let j = 0; j < i; j++) {
-          if (!daysData[j].restArrival) {
-            travelSegmentIndexForBtn++;
-          }
-        }
-        const arrivalDestination =
-          selectedDestinations[travelSegmentIndexForBtn] &&
-          selectedDestinations[travelSegmentIndexForBtn].name
-            ? selectedDestinations[travelSegmentIndexForBtn].name
-            : "";
-
-        // Hide "+" button if the current day is a rest day
-        const currDay = daysData[i];
-        if (!currDay.restArrival) {
-          boxes.push(
-            <div key={`add-day-btn-${i}`} className="add-day-btn-container">
-              <button
-                className="add-day-btn"
-                onClick={() => addDayAtIndex(i)}
-                title="Add day here"
-              >
-                +
-              </button>
-              <div className="arrival-destination-label">
-                {arrivalDestination && (
-                  <span>
-                    Explore <strong>{arrivalDestination}</strong>
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        }
       }
 
       const totalCost = day.activities.reduce(
@@ -317,6 +272,17 @@ const DaysOrganiser = ({
 
       boxes.push(
         <div key={i} className="day-box">
+          {/* Remove day button: only for rest/non-travel days */}
+          {day.restArrival && (
+            <button
+              className="remove-button"
+              title="Remove this day"
+              onClick={() => handleRemoveDay(i)}
+              disabled={daysData.length <= 1}
+            >
+              <FaTrash />
+            </button>
+          )}
           {/* Editable day title */}
           <div className="day-header">
             {editingDayTitleIdx === i ? (
@@ -467,6 +433,43 @@ const DaysOrganiser = ({
               </p>
             </div>
           </div>
+          {/* Explore more day buttons - only for travel days with segment info */}
+          {!day.restArrival && segment && (
+            <div className="explore-more-container">
+              <span>Explore one more day in:</span>
+              {/* Find start and end destination objects by matching segment addresses */}
+              {(() => {
+                // Find start destination
+                const startDest = selectedDestinations.find(
+                  d => segment.start_address && segment.start_address.includes(d.name)
+                );
+                // Find end destination
+                const endDest = selectedDestinations.find(
+                  d => segment.end_address && segment.end_address.includes(d.name)
+                );
+                return (
+                  <>
+                    <button
+                      className="explore-more-btn"
+                      onClick={() => addDayAtIndex(i, startDest?.name)}
+                      title={`Add day before for ${startDest?.name || "Start"}`}
+                      disabled={!startDest}
+                    >
+                      {startDest?.name || "Start"}
+                    </button>
+                    <button
+                      className="explore-more-btn"
+                      onClick={() => addDayAtIndex(i + 1, endDest?.name)}
+                      title={`Add day after for ${endDest?.name || "End"}`}
+                      disabled={!endDest}
+                    >
+                      {endDest?.name || "End"}
+                    </button>
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </div>
       );
 

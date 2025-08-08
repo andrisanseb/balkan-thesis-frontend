@@ -242,7 +242,7 @@ const ActivitiesExplore = ({ destinations }) => {
                         title="Watch most related video on YouTube"
                         onClick={() =>
                           window.open(
-                            `https://www.youtube.com/results?search_query=${encodeURIComponent(activity.name)}&sp=EgIQAQ%253D%253D`,
+                            `https://www.youtube.com/results?search_query=${encodeURIComponent(activity.name + " " + (destInfo?.name || ""))}&sp=EgIQAQ%253D%253D`,
                             "_blank"
                           )
                         }
