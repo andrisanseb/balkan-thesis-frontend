@@ -6,12 +6,16 @@ const containerStyle = {
   height: '400px'
 };
 
+function isValidLatLng(lat, lng) {
+  return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
 function getMapCenter(destinations) {
   if (destinations && destinations.length > 0) {
-    return {
-      lat: destinations[0].latitude,
-      lng: destinations[0].longitude
-    };
+    const { latitude, longitude } = destinations[0];
+    if (isValidLatLng(latitude, longitude)) {
+      return { lat: latitude, lng: longitude };
+    }
   }
   return { lat: 42.5, lng: 20.9 };
 }
@@ -28,11 +32,13 @@ function MapWithGoogleMapsProvider({ selectedDestinations, onMapLoad, routeData 
         onLoad={onMapLoad}
       >
         {selectedDestinations && selectedDestinations.map(dest => (
-          <Marker
-            key={dest.id}
-            position={{ lat: dest.latitude, lng: dest.longitude }}
-            title={dest.name}
-          />
+          isValidLatLng(dest.latitude, dest.longitude) ? (
+            <Marker
+              key={dest.id}
+              position={{ lat: dest.latitude, lng: dest.longitude }}
+              title={dest.name}
+            />
+          ) : null
         ))}
         {routeData && (
           <DirectionsRenderer directions={routeData} />

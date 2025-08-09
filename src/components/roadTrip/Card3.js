@@ -112,6 +112,7 @@ const Card3 = ({
           handleDaysDataChange={handleDaysData}
           planTitle={planTitle}
           setPlanTitle={setPlanTitle}
+          isRoundTrip={isRoundTrip}
         />
       </div>
       <div className="button-row content-padding">

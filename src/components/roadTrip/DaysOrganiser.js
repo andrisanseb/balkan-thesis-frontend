@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { FaClock, FaPen, FaTrash } from "react-icons/fa";
 import "../../styles/DaysOrganiser.css";
-import { FaSpinner, FaClock, FaPen, FaTrash } from "react-icons/fa";
 
 const DaysOrganiser = ({
   selectedDestinations,
@@ -10,9 +10,17 @@ const DaysOrganiser = ({
   routeData,
   planTitle,
   setPlanTitle,
+  isRoundTrip,
 }) => {
+  const getInitialTotalDays = () => {
+    if (isRoundTrip) {
+      return selectedDestinations.length;
+    } else {
+      return selectedDestinations.length - 1;
+    }
+  };
   const [daysData, setDaysData] = useState([]);
-  const [totalDays, setTotalDays] = useState(selectedDestinations.length);
+  const [totalDays, setTotalDays] = useState(getInitialTotalDays());
   const [dropNotAllowedMsg, setDropNotAllowedMsg] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingDayTitleIdx, setEditingDayTitleIdx] = useState(null);
@@ -30,17 +38,52 @@ const DaysOrganiser = ({
   }, [daysData]);
 
   const distributeActivitiesByDestination = () => {
-    // Prepare empty days array
-    const days = Array.from({ length: totalDays }, (_, i) => ({
-      activities: [],
-      title: `Day ${i + 1}`,
-    }));
+    // Prepare empty days array with destination1, destination2, and routeSegment
+    const legs =
+      routeData &&
+      routeData.routes &&
+      routeData.routes[0] &&
+      routeData.routes[0].legs
+        ? routeData.routes[0].legs
+        : [];
+
+    const days = Array.from({ length: totalDays }, (_, i) => {
+      const isTravelDay = i < selectedDestinations.length - 1;
+      let routeSegment = null;
+      if (isTravelDay && legs[i]) {
+        routeSegment = {
+          start_address: legs[i].start_address,
+          end_address: legs[i].end_address,
+          distance: legs[i].distance.value,
+          duration: legs[i].duration.value,
+        };
+      }
+      if (isTravelDay) {
+        return {
+          activities: [],
+          title: `Day ${i + 1}`,
+          destination1: selectedDestinations[i]?.id || null,
+          destination2: selectedDestinations[i + 1]?.id || null,
+          restArrival: null,
+          routeSegment,
+        };
+      } else {
+        // Last day or rest/explore day
+        return {
+          activities: [],
+          title: `Day ${i + 1}`,
+          destination1: selectedDestinations[i]?.id || null,
+          destination2: null,
+          restArrival: null,
+          routeSegment: null,
+        };
+      }
+    });
 
     selectedActivities.forEach((activity) => {
       for (let dayIndex = 0; dayIndex < totalDays; dayIndex++) {
         const fromDest = selectedDestinations[dayIndex];
-        const toDest =
-          selectedDestinations[(dayIndex + 1) % selectedDestinations.length];
+        const toDest = selectedDestinations[dayIndex + 1];
         const activityDestId =
           activity.destinationId ||
           (activity.destination && activity.destination.id);
@@ -58,13 +101,41 @@ const DaysOrganiser = ({
     setDaysData(days);
   };
 
-  const generateEmptyDay = (restArrival = null, title = "") => {
-    return { activities: [], restArrival, title };
+  // For rest/explore days, only destination1 is set
+  const generateEmptyDay = (restArrival = null, title = "", destination1 = null) => {
+    return { activities: [], restArrival, title, destination1, destination2: null };
   };
 
   const addDayAtIndex = (insertIndex, restArrival) => {
     let title = restArrival ? `Explore ${restArrival}` : `Day ${insertIndex + 1}`;
-    const newDay = generateEmptyDay(restArrival, title);
+    let destination1 = null;
+    let routeSegment = null;
+    if (restArrival) {
+      const destObj = selectedDestinations.find(d => d.name === restArrival);
+      destination1 = destObj ? destObj.id : null;
+    } else if (selectedDestinations[insertIndex]) {
+      destination1 = selectedDestinations[insertIndex].id;
+      // Try to get route segment for this travel day
+      const legs =
+        routeData &&
+        routeData.routes &&
+        routeData.routes[0] &&
+        routeData.routes[0].legs
+          ? routeData.routes[0].legs
+          : [];
+      if (legs[insertIndex]) {
+        routeSegment = {
+          start_address: legs[insertIndex].start_address,
+          end_address: legs[insertIndex].end_address,
+          distance: legs[insertIndex].distance.value,
+          duration: legs[insertIndex].duration.value,
+        };
+      }
+    }
+    const newDay = {
+      ...generateEmptyDay(restArrival, title, destination1),
+      routeSegment,
+    };
     const newDaysData = [
       ...daysData.slice(0, insertIndex),
       newDay,
@@ -91,16 +162,11 @@ const DaysOrganiser = ({
     const movedActivity = daysData[sourceDayIndex].activities[source.index];
 
     let allowedDestinationIds = [];
-    if (daysData[destDayIndex].restArrival) {
-      const restDest = selectedDestinations.find(
-        (d) => d.name === daysData[destDayIndex].restArrival
-      );
-      if (restDest) allowedDestinationIds = [restDest.id];
+    const destDay = daysData[destDayIndex];
+    if (destDay.restArrival) {
+      if (destDay.destination1) allowedDestinationIds = [destDay.destination1];
     } else {
-      const fromDest = selectedDestinations[destDayIndex];
-      const toDest =
-        selectedDestinations[(destDayIndex + 1) % selectedDestinations.length];
-      allowedDestinationIds = [fromDest?.id, toDest?.id];
+      allowedDestinationIds = [destDay.destination1, destDay.destination2].filter(Boolean);
     }
 
     const activityDestId =
@@ -113,19 +179,8 @@ const DaysOrganiser = ({
       return;
     }
 
-    if (sourceDayIndex === destDayIndex) {
-      const newActivities = Array.from(daysData[sourceDayIndex].activities);
-      const [removed] = newActivities.splice(source.index, 1);
-      newActivities.splice(destination.index, 0, removed);
-
-      const newDaysData = daysData.map((day, idx) =>
-        idx === sourceDayIndex ? { ...day, activities: newActivities } : day
-      );
-      setDaysData(newDaysData);
-      return;
-    }
-
-    const newDaysData = daysData.map((day, idx) => {
+    // Move routeSegment with the card if it's a travel day
+    let newDaysData = daysData.map((day, idx) => {
       if (idx === sourceDayIndex) {
         return {
           ...day,
@@ -155,28 +210,44 @@ const DaysOrganiser = ({
 
   const handleRemoveDay = (index) => {
     if (daysData.length <= 1) return;
-    const newDays = [...daysData];
+    const dayToRemove = daysData[index];
+    const activitiesToMove = dayToRemove.activities;
+    let newDays = [...daysData];
     newDays.splice(index, 1);
+
+    // Redistribute activities
+    activitiesToMove.forEach(activity => {
+      const activityDestId = activity.destinationId || (activity.destination && activity.destination.id);
+      // Find the first day with matching destination1 or destination2
+      const targetDayIdx = newDays.findIndex(day =>
+        (day.destination1 === activityDestId) || (day.destination2 === activityDestId)
+      );
+      if (targetDayIdx !== -1) {
+        newDays[targetDayIdx].activities.push(activity);
+      }
+      // If no matching day, activity is dropped (optionally, could push to first day)
+    });
+
     setDaysData(newDays);
+    setTotalDays(newDays.length);
     setDaysData(renumberDefaultDayTitles(newDays));
   };
 
   const renderDayBoxes = () => {
     const boxes = [];
-    let travelSegmentIndex = 0;
 
     for (let i = 0; i < daysData.length; i++) {
       const day = daysData[i];
 
-      let segment = null;
-      const legs =
-        routeData &&
-        routeData.routes &&
-        routeData.routes[0] &&
-        routeData.routes[0].legs;
-      if (!day.restArrival && legs && legs[travelSegmentIndex]) {
-        segment = getGoogleSegmentInfo(routeData, travelSegmentIndex);
-      }
+      // Find the destinations for this day using destination1 and destination2
+      const dayDestination1 = day.destination1
+        ? selectedDestinations.find(d => d.id === day.destination1)
+        : null;
+      const dayDestination2 = day.destination2
+        ? selectedDestinations.find(d => d.id === day.destination2)
+        : null;
+
+      const segment = day.routeSegment;
 
       if (!day.restArrival && !segment) {
         continue;
@@ -252,9 +323,7 @@ const DaysOrganiser = ({
                     Explore: <strong>
                       {day.restArrival}
                       {(() => {
-                        const destObj = selectedDestinations.find(
-                          (d) => d.name === day.restArrival
-                        );
+                        const destObj = dayDestination1;
                         const flag = getCountryFlagImg(destObj);
                         return flag ? (
                           <img
@@ -275,10 +344,9 @@ const DaysOrganiser = ({
               <>
                 <div>
                   <span className="destination-names">
-                    {selectedDestinations[travelSegmentIndex]?.name}
+                    {dayDestination1?.name}
                     {(() => {
-                      const fromDest = selectedDestinations[travelSegmentIndex];
-                      const flag = getCountryFlagImg(fromDest);
+                      const flag = getCountryFlagImg(dayDestination1);
                       return flag ? (
                         <img
                           src={flag}
@@ -290,14 +358,9 @@ const DaysOrganiser = ({
                   </span>{" "}
                   ➔{" "}
                   <span className="destination-names">
-                    {selectedDestinations[travelSegmentIndex + 1]
-                      ? selectedDestinations[travelSegmentIndex + 1].name
-                      : selectedDestinations[0]?.name}
+                    {dayDestination2?.name}
                     {(() => {
-                      const toDest =
-                        selectedDestinations[travelSegmentIndex + 1] ||
-                        selectedDestinations[0];
-                      const flag = getCountryFlagImg(toDest);
+                      const flag = getCountryFlagImg(dayDestination2);
                       return flag ? (
                         <img
                           src={flag}
@@ -372,23 +435,8 @@ const DaysOrganiser = ({
             <div className="explore-more-container">
               <span>Explore one more day in:</span>
               {(() => {
-                const startDest = selectedDestinations.find(
-                  d => segment.start_address && segment.start_address.includes(d.name)
-                );
-                let endDest;
-                if (
-                  i === daysData.length - 1 &&
-                  selectedDestinations.length > 1 &&
-                  selectedDestinations[0] &&
-                  segment.end_address &&
-                  segment.end_address.includes(selectedDestinations[0].name)
-                ) {
-                  endDest = selectedDestinations[0];
-                } else {
-                  endDest = selectedDestinations.find(
-                    d => segment.end_address && segment.end_address.includes(d.name)
-                  );
-                }
+                const startDest = dayDestination1;
+                const endDest = dayDestination2;
                 return (
                   <>
                     {startDest && (
@@ -416,33 +464,9 @@ const DaysOrganiser = ({
           )}
         </div>
       );
-
-      if (!day.restArrival) {
-        travelSegmentIndex++;
-      }
     }
 
     return boxes;
-  };
-
-  const getGoogleSegmentInfo = (routeData, index) => {
-    const legs =
-      routeData &&
-      routeData.routes &&
-      routeData.routes[0] &&
-      routeData.routes[0].legs;
-    if (!legs || !legs[index]) return { distance: 0, duration: 0 };
-    const leg = legs[index];
-    return {
-      distance: leg.distance ? leg.distance.value : 0,
-      duration: leg.duration ? leg.duration.value : 0,
-      start_address: leg.start_address,
-      end_address: leg.end_address,
-    };
-  };
-
-  const convertMetersToKilometers = (meters) => {
-    return (meters / 1000).toFixed(2);
   };
 
   const convertSecondsToHoursMinutes = (seconds) => {
@@ -462,6 +486,9 @@ const DaysOrganiser = ({
   };
 
   // Add this helper function:
+  function convertMetersToKilometers(meters) {
+    return (meters / 1000).toFixed(2);
+  }
   function renumberDefaultDayTitles(days) {
     return days.map((day, idx) => {
       // If the title matches "Day N", update it to the new position

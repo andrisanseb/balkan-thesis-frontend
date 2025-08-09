@@ -123,32 +123,26 @@ const RoadTrip = ({ destinations }) => {
   };
 
   const createRoadTrip = async (days) => {
-    // Get route segments
-    const routeSegments =
-      routeData &&
-      routeData.routes &&
-      routeData.routes[0] &&
-      routeData.routes[0].legs
-        ? routeData.routes[0].legs
-        : [];
 
-    // Build detailed days array
+
+    console.log(days);
+
+    // Build detailed days array using routeSegment from each day
     const detailedDays = days.map((day, i) => {
-      // Try to get route info for travel days
+      // Use routeSegment from day object for travelRoute
       let travelRoute = null;
-      if (!day.restArrival && routeSegments[i]) {
+      if (!day.restArrival && day.routeSegment) {
         travelRoute = {
-          start_address: routeSegments[i].start_address,
-          end_address: routeSegments[i].end_address,
-          distance: routeSegments[i].distance.value,
-          duration: routeSegments[i].duration.value,
+          start_address: day.routeSegment.start_address,
+          end_address: day.routeSegment.end_address,
+          distance: day.routeSegment.distance,
+          duration: day.routeSegment.duration,
         };
       }
 
       // For exploreDestination, use destinationId if restArrival exists
       let exploreDestination = null;
       if (day.restArrival) {
-        // Find the destination object by name
         const destObj = selectedDestinations.find(
           (d) => d.name === day.restArrival
         );
@@ -176,7 +170,7 @@ const RoadTrip = ({ destinations }) => {
           userId: currentUser.id,
           details: JSON.stringify(detailedDays),
           route: JSON.stringify(simplifiedRoute),
-          days: JSON.stringify(detailedDays),
+          //days: JSON.stringify(detailedDays),
         }),
       });
 
