@@ -122,18 +122,51 @@ const RoadTrip = ({ destinations }) => {
     }
   };
 
-  const createRoadTrip = async (days, dayTitles) => {
-    // Get day titles from DaysOrganiser (pass as argument or via state)
-    // Assume you pass dayTitles as a second argument: createRoadTrip(days, dayTitles)
-    const simplifiedDays = JSON.parse(JSON.stringify(days)).map((day, i) => ({
-      name: day.title ? day.title : `Day ${i + 1}`,
-      activityIds: day.activities.map(activity => activity.id)
-    }));
+  const createRoadTrip = async (days) => {
+    // Get route segments
+    const routeSegments =
+      routeData &&
+      routeData.routes &&
+      routeData.routes[0] &&
+      routeData.routes[0].legs
+        ? routeData.routes[0].legs
+        : [];
+
+    // Build detailed days array
+    const detailedDays = days.map((day, i) => {
+      // Try to get route info for travel days
+      let travelRoute = null;
+      if (!day.restArrival && routeSegments[i]) {
+        travelRoute = {
+          start_address: routeSegments[i].start_address,
+          end_address: routeSegments[i].end_address,
+          distance: routeSegments[i].distance.value,
+          duration: routeSegments[i].duration.value,
+        };
+      }
+
+      // For exploreDestination, use destinationId if restArrival exists
+      let exploreDestination = null;
+      if (day.restArrival) {
+        // Find the destination object by name
+        const destObj = selectedDestinations.find(
+          (d) => d.name === day.restArrival
+        );
+        exploreDestination = destObj ? destObj.id : null;
+      }
+
+      return {
+        name: day.title ? day.title : `Day ${i + 1}`,
+        travelRoute: travelRoute,
+        activities: day.activities.map((activity) => activity.id),
+        exploreDestination: exploreDestination,
+      };
+    });
 
     const simplifiedRoute = simplifyRouteData(routeData);
 
     try {
-      const response = await fetch(API_URL+"/roadTrips", {
+      const response = await fetch(API_URL + "/roadTrips", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,13 +174,15 @@ const RoadTrip = ({ destinations }) => {
         body: JSON.stringify({
           name: planTitle,
           userId: currentUser.id,
+          details: JSON.stringify(detailedDays),
           route: JSON.stringify(simplifiedRoute),
-          days: JSON.stringify(simplifiedDays),
+          days: JSON.stringify(detailedDays),
         }),
       });
 
       if (response.ok) {
         navigate("/");
+        window.location.reload();
       } else {
         throw new Error("Road Trip creation failed.");
       }
@@ -165,7 +200,8 @@ function simplifyRouteData(routeData) {
     !routeData.routes ||
     !routeData.routes[0] ||
     !routeData.routes[0].legs
-  ) return null;
+  )
+    return null;
 
   const legs = routeData.routes[0].legs;
   return legs.map((leg) => ({
