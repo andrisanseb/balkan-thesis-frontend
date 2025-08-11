@@ -69,7 +69,7 @@ export default function App() {
           <Route path="/users/:id" element={<UserDetails />} />
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
           <Route path="/experiences" element={<ActivitiesExplore destinations={destinations} />} />
-          <Route path="/my-roadtrips" element={<MyRoadTrips />} />
+          <Route path="/my-roadtrips" element={<MyRoadTrips destinations={destinations} />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </main>

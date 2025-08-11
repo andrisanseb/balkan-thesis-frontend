@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { FaMapMarkerAlt, FaClock, FaRoute, FaTrash } from "react-icons/fa";
 import "../../styles/MyRoadTrips.css";
+import AuthService from "../../services/AuthService";
 
-const API_URL = process.env.REACT_APP_API_URL || "";
-
-const MyRoadTrips = () => {
+const MyRoadTrips = ({ destinations }) => {
   const [roadTrips, setRoadTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const currentUser = AuthService.getCurrentUser();
+
   useEffect(() => {
-    // Fetch roadtrips for the current user
     async function fetchRoadTrips() {
       try {
-        // TODO: handle for different user IDs
-        const res = await fetch(API_URL + "/roadTrips/user/1");
+        const res = await fetch(
+          (process.env.REACT_APP_API_URL || "") + `/roadTrips/user/${currentUser.id}`
+        );
         const data = await res.json();
         setRoadTrips(data.data);
       } catch (err) {
@@ -21,15 +22,18 @@ const MyRoadTrips = () => {
       }
       setLoading(false);
     }
-    fetchRoadTrips();
-  }, []);
+    if (currentUser && currentUser.id) {
+      fetchRoadTrips();
+    }
+  }, [currentUser]);
 
   const handleRemove = async (tripId) => {
     if (!window.confirm("Are you sure you want to delete this roadtrip?")) return;
     try {
-      const res = await fetch(`${API_URL}/roadTrips/${tripId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL || ""}/roadTrips/${tripId}`,
+        { method: "DELETE" }
+      );
       if (res.ok) {
         setRoadTrips((prev) => prev.filter((trip) => trip.id !== tripId));
       } else {
@@ -40,6 +44,15 @@ const MyRoadTrips = () => {
     }
   };
 
+  // Helper: find activity object by ID from all destinations (same logic as Explore)
+  const getActivityById = (id) => {
+    for (const dest of destinations || []) {
+      const found = (dest.activities || []).find((a) => a.id === id);
+      if (found) return found;
+    }
+    return null;
+  };
+
   if (loading) return <div>Loading roadtrips...</div>;
   if (!roadTrips.length) return <div>No roadtrips found.</div>;
 
@@ -47,12 +60,12 @@ const MyRoadTrips = () => {
     <div className="my-roadtrips-container">
       <h2>My Roadtrips</h2>
       {roadTrips.map((trip, idx) => {
-        let route = [];
-        let days = [];
+        let details = [];
         try {
-          route = typeof trip.route === "string" ? JSON.parse(trip.route) : trip.route;
-          days = typeof trip.days === "string" ? JSON.parse(trip.days) : trip.days;
-        } catch (e) {}
+          details = typeof trip.details === "string" ? JSON.parse(trip.details) : trip.details;
+        } catch (e) {
+          details = [];
+        }
 
         return (
           <div key={trip.id || idx} className="roadtrip-card">
@@ -66,36 +79,38 @@ const MyRoadTrips = () => {
                 <FaTrash />
               </button>
             </div>
-            <div className="roadtrip-route">
-              <h4><FaRoute /> Route:</h4>
-              <ol>
-                {route.map((segment, i) => (
-                  <li key={i}>
-                    <FaMapMarkerAlt /> <strong>{segment.start_address}</strong>
-                    {" → "}
-                    <strong>{segment.end_address}</strong>
-                    <div>
-                      Distance: {(segment.distance / 1000).toFixed(1)} km
-                      {" | "}
-                      Duration: {Math.floor(segment.duration / 3600)}h {Math.round((segment.duration % 3600) / 60)}m
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
             <div className="roadtrip-days">
               <h4>Days & Activities:</h4>
               <ul>
-                {days.map((day, i) => (
+                {details.map((day, i) => (
                   <li key={i}>
                     <span>{day.name ? day.name : `Day ${i + 1}`}: </span>
-                    {day.activityIds.length
-                      ? day.activityIds.map((id) => (
-                          <span key={id} className="activity-id">
-                            Activity #{id}{" "}
-                          </span>
-                        ))
-                      : <span>No activities</span>}
+                    {day.travelRoute ? (
+                      <span>
+                        <FaRoute /> {day.travelRoute.start_address} → {day.travelRoute.end_address}
+                        <span style={{ marginLeft: '8px' }}>
+                          Distance: {(day.travelRoute.distance / 1000).toFixed(1)} km | Duration: {Math.floor(day.travelRoute.duration / 3600)}h {Math.round((day.travelRoute.duration % 3600) / 60)}m
+                        </span>
+                      </span>
+                    ) : day.exploreDestination ? (
+                      <span>
+                        <FaMapMarkerAlt /> Explore Destination {day.exploreDestination}
+                      </span>
+                    ) : (
+                      <span>No travel info</span>
+                    )}
+                    <div>
+                      {day.activities && day.activities.length
+                        ? day.activities.map((id) => {
+                            const activity = getActivityById(id);
+                            return (
+                              <span key={id} className="activity-id">
+                                {activity ? activity.name : `Activity #${id}`}{" "}
+                              </span>
+                            );
+                          })
+                        : <span>No activities</span>}
+                    </div>
                   </li>
                 ))}
               </ul>
