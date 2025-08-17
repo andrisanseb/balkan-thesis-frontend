@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../styles/ActivitiesExplore.css";
 import { FaSpinner, FaHeart, FaRegHeart, FaYoutube, FaStar } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
@@ -24,7 +24,11 @@ const ActivitiesExplore = ({ destinations }) => {
   const [userReviews, setUserReviews] = useState({}); // { [activityId]: true }
   const [userReviewData, setUserReviewData] = useState({}); // { [activityId]: {stars, comment, id} }
   const [sortType, setSortType] = useState("random");
+  const [allReviews, setAllReviews] = useState([]);
+  const [reviewSlideIndexes, setReviewSlideIndexes] = useState({});
+  const reviewSlideIntervalRef = useRef({});
   const currentUser = AuthService.getCurrentUser();
+  const [selectedCountry, setSelectedCountry] = useState("All");
 
   // Get activities from destinations prop (cached)
   useEffect(() => {
@@ -47,6 +51,7 @@ const ActivitiesExplore = ({ destinations }) => {
     try {
       const res = await fetch(API_URL + "/activityReviews");
       const reviews = await res.json();
+      setAllReviews(reviews);
 
       const ratingsMap = {};
       const countsMap = {};
@@ -175,7 +180,7 @@ const ActivitiesExplore = ({ destinations }) => {
     return categories.map((category, index) => (
       <button
         key={index}
-        className={`category-button ${selectedCategory === category ? "active-button" : ""}`}
+        className={`category-button${selectedCategory === category ? " active-button" : ""}`}
         onClick={() => changeCategory(category)}
       >
         {category}
@@ -193,6 +198,12 @@ const ActivitiesExplore = ({ destinations }) => {
         Random
       </button>
       <button
+        className={`sort-button ${sortType === "favorites" ? "active-sort" : ""}`}
+        onClick={() => setSortType("favorites")}
+      >
+        Favorites
+      </button>
+      <button
         className={`sort-button ${sortType === "popular" ? "active-sort" : ""}`}
         onClick={() => setSortType("popular")}
       >
@@ -207,25 +218,80 @@ const ActivitiesExplore = ({ destinations }) => {
     </div>
   );
 
+  // Get all unique countries from destinations
+  const countryList = [
+    ...new Set(
+      destinations
+        .map(dest => dest.country?.name)
+        .filter(Boolean)
+    ),
+  ];
+
+  // Helper to get flag image path
+  const getFlagImg = (countryName) =>
+    process.env.PUBLIC_URL +
+    "/images/country/flags/" +
+    (countryName ? countryName.slice(0, 3).toLowerCase() : "default") +
+    ".png";
+
+  // Country flag selector row
+  const renderCountryFlags = () => (
+    <div className="country-flags-row">
+      <button
+        className={`country-flag-btn${selectedCountry === "All" ? " active-country" : ""}`}
+        onClick={() => setSelectedCountry("All")}
+        title="All countries"
+      >
+        🌍
+      </button>
+      {countryList.map((country) => (
+        <button
+          key={country}
+          className={`country-flag-btn${selectedCountry === country ? " active-country" : ""}`}
+          onClick={() => setSelectedCountry(country)}
+          title={country}
+        >
+          <img
+            src={getFlagImg(country)}
+            alt={country + " flag"}
+            className="country-flag-img"
+          />
+        </button>
+      ))}
+    </div>
+  );
+
+  // Filter activities by selected country
   let filteredActivities = activities;
+  if (selectedCountry !== "All") {
+    filteredActivities = filteredActivities.filter((activity) => {
+      const destId = activity.destinationId || (activity.destination && activity.destination.id);
+      const destination = destinations.find((d) => d.id === destId);
+      return destination && destination.country && destination.country.name === selectedCountry;
+    });
+  }
   if (selectedCategory && selectedCategory !== "All") {
-    filteredActivities = activities.filter(
+    filteredActivities = filteredActivities.filter(
       (activity) => activity.category === selectedCategory
     );
   }
 
   // Sort logic
   let sortedActivities = [...filteredActivities];
-  if (sortType === "popular") {
-    sortedActivities.sort((a, b) => 
+  if (sortType === "favorites") {
+    sortedActivities = sortedActivities.filter(
+      (activity) => favoriteActivities[activity.id]
+    );
+  } else if (sortType === "popular") {
+    sortedActivities.sort((a, b) =>
       (activityReviewCounts[b.id] || 0) - (activityReviewCounts[a.id] || 0)
     );
   } else if (sortType === "best") {
-    sortedActivities.sort((a, b) => 
+    sortedActivities.sort((a, b) =>
       (activityRatings[b.id] || 0) - (activityRatings[a.id] || 0)
     );
   }
-  // else default: no sort
+  // else random/default: already shuffled on load
 
   // Pagination logic
   const displayedActivities = sortedActivities.slice(0, visibleCount);
@@ -346,15 +412,46 @@ const ActivitiesExplore = ({ destinations }) => {
     };
   };
 
+  useEffect(() => {
+    // Clear previous intervals
+    Object.values(reviewSlideIntervalRef.current).forEach(clearInterval);
+    reviewSlideIntervalRef.current = {};
+
+    displayedActivities.forEach((activity) => {
+      const reviews = allReviews.filter(r => r.activityId === activity.id);
+      if (reviews.length > 1) {
+        // Only set initial index if not already set
+        setReviewSlideIndexes(prev => {
+          if (prev[activity.id] === undefined) {
+            return { ...prev, [activity.id]: 0 };
+          }
+          return prev;
+        });
+        reviewSlideIntervalRef.current[activity.id] = setInterval(() => {
+          setReviewSlideIndexes(prev => {
+            const current = prev[activity.id] || 0;
+            const next = (current + 1) % reviews.length;
+            return { ...prev, [activity.id]: next };
+          });
+        }, 5000);
+      }
+    });
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      Object.values(reviewSlideIntervalRef.current).forEach(clearInterval);
+    };
+  }, [displayedActivities, allReviews]); // Only run when these change
+
   return (
-    <div className="activities-explore-root content-wrapper">
+    <div className="activities-explore-root content-wrapper content-padding">
       <div className="image-container">
         <img src={selectedImage} alt="Selected Category img" className="category-image" />
         <div className="category-info">
           <p>{categoryInfo}</p>
           <p>{funFact}</p>
         </div>
-      </div>
+      </div>      {renderCountryFlags()}
       <div className="category-menu">{renderCategoryButtons()}</div>
       {renderSortButtons()}
       {loading ? (
@@ -373,6 +470,13 @@ const ActivitiesExplore = ({ destinations }) => {
               const avgRating = activityRatings[activity.id];
               const reviewCount = activityReviewCounts[activity.id] || 0;
               const hasUserReviewed = !!userReviews[activity.id];
+              const reviewsForActivity = allReviews.filter(r => r.activityId === activity.id);
+              const slideIndex = reviewSlideIndexes[activity.id] || 0;
+              const reviewToShow =
+                reviewsForActivity.length > 1
+                  ? reviewsForActivity[slideIndex]
+                  : reviewsForActivity[0];
+
               return (
                 <div key={activity.id} className="activity-card">
                   <div className="activity-card-content">
@@ -397,6 +501,26 @@ const ActivitiesExplore = ({ destinations }) => {
                       </div>
                     </div>
                   </div>
+                  {/* Review slideshow row (above actions and star) */}
+                  {reviewsForActivity.length > 0 && reviewToShow && (
+                    <div className="activity-user-review-row">
+                      <span className="activity-user-review-chip">
+                        <span className="activity-user-review-username">
+                          User #{reviewToShow.userId}
+                        </span>
+                        <span className="activity-user-review-stars">
+                          {[...Array(reviewToShow.stars)].map((_, i) => (
+                            <FaStar key={i} style={{ color: "#FFD700", fontSize: "1em", marginRight: "2px" }} />
+                          ))}
+                        </span>
+                        {reviewToShow.comment && (
+                          <span className="activity-user-review-comment">
+                            "{reviewToShow.comment}"
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
                   <div className="activity-actions-row">
                     <div className="activity-rating-row">
                       <span className="activity-rating-value">
@@ -412,7 +536,6 @@ const ActivitiesExplore = ({ destinations }) => {
                         ({reviewCount})
                       </span>
                     </div>
-                    {/* ...existing buttons... */}
                     <button
                       className="youtube-btn"
                       title="Watch most related video on YouTube"
