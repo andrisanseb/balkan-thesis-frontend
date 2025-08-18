@@ -215,6 +215,12 @@ const ActivitiesExplore = ({ destinations }) => {
       >
         Best Reviewed
       </button>
+      <button
+        className={`sort-button ${sortType === "cheapest" ? "active-sort" : ""}`}
+        onClick={() => setSortType("cheapest")}
+      >
+        Cheapest
+      </button>
     </div>
   );
 
@@ -289,6 +295,10 @@ const ActivitiesExplore = ({ destinations }) => {
   } else if (sortType === "best") {
     sortedActivities.sort((a, b) =>
       (activityRatings[b.id] || 0) - (activityRatings[a.id] || 0)
+    );
+  } else if (sortType === "cheapest") {
+    sortedActivities.sort((a, b) =>
+      (a.cost ?? Infinity) - (b.cost ?? Infinity)
     );
   }
   // else random/default: already shuffled on load
@@ -506,7 +516,9 @@ const ActivitiesExplore = ({ destinations }) => {
                     <div className="activity-user-review-row">
                       <span className="activity-user-review-chip">
                         <span className="activity-user-review-username">
-                          User #{reviewToShow.userId}
+                          {reviewToShow.userUsername
+                            ? reviewToShow.userUsername
+                            : `User #${reviewToShow.userId}`}
                         </span>
                         <span className="activity-user-review-stars">
                           {[...Array(reviewToShow.stars)].map((_, i) => (
