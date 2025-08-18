@@ -13,7 +13,7 @@ import RoadTrip from "./components/roadTrip/RoadTrip";
 import Assistant from "./components/Assistant";
 import ActivitiesExplore from "./components/activities/ActivitiesExplore";
 import MyRoadTrips from "./components/roadTrip/MyRoadTrips";
-
+import ActivityController from "./components/activities/ActivityController";
 export default function App() {
 
   const API_URL = process.env.REACT_APP_API_URL;
@@ -70,7 +70,8 @@ export default function App() {
           <Route path="/roadTrip" element={<RoadTrip destinations={destinations} />} />
           <Route path="/experiences" element={<ActivitiesExplore destinations={destinations} />} />
           <Route path="/my-roadtrips" element={<MyRoadTrips destinations={destinations} />} />
-          <Route path="*" element={<div>404 Not Found</div>} />
+          <Route path="/activity-controller" element={<ActivityController destinations={destinations} />} />
+          <Route path="*" element={<div>Page not found</div>} />
         </Routes>
       </main>
       <footer>

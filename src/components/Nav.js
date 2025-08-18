@@ -23,6 +23,7 @@ export const NavBar = () => {
                     <NavLink to="/experiences">EXPLORE</NavLink>
                     <NavLink to="/roadTrip">PLAN ROADTRIP</NavLink>
                     <NavLink to="/my-roadtrips">MY ROADTRIPS</NavLink>
+                    <NavLink to="/activity-controller">ACTIVITIES</NavLink>
                 </div>
                 <div className="navbar-right">
                     {currentUser ? (
