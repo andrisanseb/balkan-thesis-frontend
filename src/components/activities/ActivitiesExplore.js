@@ -207,13 +207,13 @@ const ActivitiesExplore = ({ destinations }) => {
         className={`sort-button ${sortType === "popular" ? "active-sort" : ""}`}
         onClick={() => setSortType("popular")}
       >
-        Most Popular
+        Most Popular <span role="img" aria-label="fire">🔥</span>
       </button>
       <button
         className={`sort-button ${sortType === "best" ? "active-sort" : ""}`}
         onClick={() => setSortType("best")}
       >
-        Best Reviewed
+        Best Reviewed <span role="img" aria-label="star">⭐</span>
       </button>
       <button
         className={`sort-button ${sortType === "cheapest" ? "active-sort" : ""}`}
@@ -489,6 +489,16 @@ const ActivitiesExplore = ({ destinations }) => {
 
               return (
                 <div key={activity.id} className="activity-card">
+                  {/* Created by flag in top right */}
+                  {activity.createdByUserId && (
+                    <div className="activity-created-flag">
+                      Created by: <span className="activity-created-user">
+                        {activity.createdByUsername
+                          ? activity.createdByUsername
+                          : activity.createdByUserId}
+                      </span>
+                    </div>
+                  )}
                   <div className="activity-card-content">
                     <div className="activity-dest-info">
                       {destInfo && (
@@ -497,7 +507,6 @@ const ActivitiesExplore = ({ destinations }) => {
                             src={destInfo.flag}
                             alt="country_flag"
                             className="activity-country-flag"
-                            style={{ width: 22, height: 22, borderRadius: "50%", marginRight: 6, verticalAlign: "middle" }}
                           />
                           <span className="activity-dest-name">{destInfo.name}</span>
                         </>
@@ -544,7 +553,7 @@ const ActivitiesExplore = ({ destinations }) => {
                         title="Click to review this activity"
                         onClick={() => handleStarClick(activity.id)}
                       />
-                      <span className="activity-review-count" style={{ marginLeft: 6, color: "#1976d2", fontSize: "0.95em" }}>
+                      <span className="activity-review-count">
                         ({reviewCount})
                       </span>
                     </div>

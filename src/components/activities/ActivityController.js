@@ -79,6 +79,7 @@ const ActivityController = ({ destinations }) => {
           destinationId: form.destinationId,
           category: form.category,
           createdByUserId: currentUser.id,
+          createdByUsername: currentUser.username,
         }),
       });
       setForm({

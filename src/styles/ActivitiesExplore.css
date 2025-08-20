@@ -499,6 +499,45 @@
     display: block;
 }
 
+.activity-country-flag {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.activity-created-flag {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: linear-gradient(120deg, #ffd700 0%, #fffde7 100%);
+    color: #d32f2f;
+    font-size: 0.92em;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 4px 14px;
+    box-shadow: 0 2px 12px rgba(255,215,0,0.18), 0 1px 4px rgba(33,150,243,0.07);
+    z-index: 2;
+    min-width: 90px;
+    text-align: center;
+    border: 2px solid #ffd700;
+    letter-spacing: 0.5px;
+    transition: box-shadow 0.2s, background 0.2s;
+    animation: flagPopIn 0.7s;
+}
+
+@keyframes flagPopIn {
+    from { opacity: 0; transform: scale(0.85);}
+    to { opacity: 1; transform: scale(1);}
+}
+
+.activity-created-user {
+    color: #1976d2;
+    font-weight: 700;
+    margin-left: 2px;
+}
+
 /* Responsive for mobile */
 @media (max-width: 700px) {
     .activities-explore-root .cards {
