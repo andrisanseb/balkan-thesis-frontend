@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AuthService from "../../services/AuthService";
 import "../../styles/ActivityController.css";
+import { FaTrash } from "react-icons/fa";
 
 const API_URL = process.env.REACT_APP_API_URL;
 const currentUser = AuthService.getCurrentUser();
@@ -88,7 +89,7 @@ const ActivityController = ({ destinations }) => {
         category: "Culture",
         destinationId: "",
       });
-      await fetchActivities(); // <-- fetch updated activities immediately
+      await fetchActivities();
       await updateDestinationsCache();
     } finally {
       setLoading(false);
@@ -134,7 +135,7 @@ const ActivityController = ({ destinations }) => {
         category: "Culture",
         destinationId: "",
       });
-      await fetchActivities(); // <-- fetch updated activities immediately
+      await fetchActivities();
       await updateDestinationsCache();
     } finally {
       setLoading(false);
@@ -149,7 +150,7 @@ const ActivityController = ({ destinations }) => {
       await fetch(`${API_URL}/activities/${id}`, {
         method: "DELETE",
       });
-      await fetchActivities(); // <-- fetch updated activities immediately
+      await fetchActivities();
       await updateDestinationsCache();
     } finally {
       setLoading(false);
@@ -157,95 +158,116 @@ const ActivityController = ({ destinations }) => {
   };
 
   return (
-    <div className="activity-controller-root">
-      <h2>Manage Activities</h2>
-      <form
-        className="activity-form"
-        onSubmit={editingActivity ? handleUpdate : handleCreate}
-      >
-        <input
-          type="text"
-          name="name"
-          placeholder="Activity Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          required
-          rows={2}
-        />
-        <input
-          type="number"
-          name="cost"
-          placeholder="Cost (€)"
-          value={form.cost}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <input
-          type="number"
-          name="duration"
-          placeholder="Duration (minutes)"
-          value={form.duration}
-          onChange={handleChange}
-          min="0"
-          required
-        />
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="Culture">Culture</option>
-          <option value="Gastronomy">Gastronomy</option>
-          <option value="Nature">Nature</option>
-          <option value="Leisure">Leisure</option>
-          <option value="Religion">Religion</option>
-        </select>
-        <select
-          name="destinationId"
-          value={form.destinationId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Destination</option>
-          {destinations &&
-            destinations.map((dest) => (
-              <option key={dest.id} value={dest.id}>
-                {dest.name}
-              </option>
-            ))}
-        </select>
-        <button type="submit" disabled={loading}>
-          {editingActivity ? "Update Activity" : "Add Activity"}
-        </button>
-        {editingActivity && (
-          <button
-            type="button"
-            className="cancel-edit-btn"
-            onClick={() => {
-              setEditingActivity(null);
-              setForm({
-                name: "",
-                description: "",
-                cost: "",
-                duration: "",
-                category: "Culture",
-                destinationId: "",
-              });
-            }}
+    <div className="activity-controller-root content-wrapper content-padding">
+      <div className="activity-controller-flex-row">
+        <div className="activity-controller-left">
+          <div>
+            <h3>Share your unique experiences!</h3>
+            <p>
+              Create, edit, and manage your activities.
+              Add details, costs, and durations to help other travelers discover your favorite spots.
+            </p>
+          </div>
+        </div>
+        <div className="activity-controller-right">
+          <form
+            className="activity-form"
+            onSubmit={editingActivity ? handleUpdate : handleCreate}
           >
-            Cancel
-          </button>
-        )}
-      </form>
+            <input
+              type="text"
+              name="name"
+              placeholder="Activity Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <textarea
+              name="description"
+              placeholder="Description"
+              value={form.description}
+              onChange={handleChange}
+              required
+              rows={2}
+            />
+            <div className="activity-form-row">
+              <input
+                type="number"
+                name="cost"
+                placeholder="Cost (€)"
+                value={form.cost}
+                onChange={handleChange}
+                min="0"
+                required
+              />
+              <input
+                type="number"
+                name="duration"
+                placeholder="Duration (minutes)"
+                value={form.duration}
+                onChange={handleChange}
+                min="0"
+                required
+              />
+            </div>
+            <div className="activity-form-row">
+              <select
+                name="destinationId"
+                value={form.destinationId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Destination</option>
+                {destinations &&
+                  destinations.map((dest) => (
+                    <option key={dest.id} value={dest.id}>
+                      {dest.name}
+                    </option>
+                  ))}
+              </select>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                required
+              >
+                <option value="Culture">Culture</option>
+                <option value="Gastronomy">Gastronomy</option>
+                <option value="Nature">Nature</option>
+                <option value="Leisure">Leisure</option>
+                <option value="Religion">Religion</option>
+              </select>
+            </div>
+            <button type="submit" disabled={loading}>
+              {editingActivity ? "Update Activity" : "Add Activity"}
+            </button>
+            {editingActivity && (
+              <button
+                type="button"
+                className="cancel-edit-btn"
+                onClick={() => {
+                  setEditingActivity(null);
+                  setForm({
+                    name: "",
+                    description: "",
+                    cost: "",
+                    duration: "",
+                    category: "Culture",
+                    destinationId: "",
+                  });
+                }}
+              >
+                Cancel
+              </button>
+            )}
+          </form>
+        </div>
+      </div>
+
+      {/* Add the styled title above the activity cards */}
+      <div className="activity-manager-title">
+        Created Activities Manager
+      </div>
 
       <div className="activity-list">
         {loading ? (
@@ -266,8 +288,14 @@ const ActivityController = ({ destinations }) => {
                 </div>
                 <div>
                   Destination:{" "}
-                  {destinations.find((d) => d.id === activity.destinationId)?.name ||
-                    "Unknown"}
+                  {(() => {
+                    const destObj = destinations.find(
+                      (d) => d.id === activity.destinationId
+                    );
+                    return destObj
+                      ? `${destObj.name}, ${destObj.country?.name ?? "Unknown"}`
+                      : "Unknown";
+                  })()}
                 </div>
               </div>
               <div className="activity-actions">
@@ -275,8 +303,9 @@ const ActivityController = ({ destinations }) => {
                 <button
                   className="delete-btn"
                   onClick={() => handleDelete(activity.id)}
+                  title="Delete activity"
                 >
-                  Delete
+                  <FaTrash />
                 </button>
               </div>
             </div>
