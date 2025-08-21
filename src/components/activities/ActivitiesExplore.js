@@ -195,13 +195,13 @@ const ActivitiesExplore = ({ destinations }) => {
         className={`sort-button ${sortType === "random" ? "active-sort" : ""}`}
         onClick={() => setSortType("random")}
       >
-        Random
+        Random <span role="img" aria-label="dice">🎲</span>
       </button>
       <button
         className={`sort-button ${sortType === "favorites" ? "active-sort" : ""}`}
         onClick={() => setSortType("favorites")}
       >
-        Favorites
+        Favorites <span role="img" aria-label="heart">❤️</span>
       </button>
       <button
         className={`sort-button ${sortType === "popular" ? "active-sort" : ""}`}
@@ -219,7 +219,13 @@ const ActivitiesExplore = ({ destinations }) => {
         className={`sort-button ${sortType === "cheapest" ? "active-sort" : ""}`}
         onClick={() => setSortType("cheapest")}
       >
-        Cheapest
+        Cheapest <span role="img" aria-label="money">💸</span>
+      </button>
+      <button
+        className={`sort-button ${sortType === "guide" ? "active-sort" : ""}`}
+        onClick={() => setSortType("guide")}
+      >
+        User Suggestions <span role="img" aria-label="guide">🧑‍🏫</span>
       </button>
     </div>
   );
@@ -299,6 +305,10 @@ const ActivitiesExplore = ({ destinations }) => {
   } else if (sortType === "cheapest") {
     sortedActivities.sort((a, b) =>
       (a.cost ?? Infinity) - (b.cost ?? Infinity)
+    );
+  } else if (sortType === "guide") {
+    sortedActivities = sortedActivities.filter(
+      (activity) => activity.createdByUserId != null
     );
   }
   // else random/default: already shuffled on load

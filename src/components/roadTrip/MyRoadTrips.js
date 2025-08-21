@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaMapMarkerAlt, FaClock, FaRoute, FaTrash } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRoute, FaTrash } from "react-icons/fa";
 import "../../styles/MyRoadTrips.css";
 import AuthService from "../../services/AuthService";
 
@@ -54,10 +54,20 @@ const MyRoadTrips = ({ destinations }) => {
   };
 
   if (loading) return <div>Loading roadtrips...</div>;
-  if (!roadTrips.length) return <div>No roadtrips found.</div>;
+  if (!roadTrips.length)
+    return (
+      <div className="no-roadtrips-funny content-wrapper content-padding">
+        <h2>No roadtrips found!</h2>
+        <p>
+          🏜️ Looks like your adventure bag is empty.<br />
+          Why not start exploring and fill it with epic roadtrips?<br />
+          Hit the road, discover new places, and let your journey begin! 🚗✨
+        </p>
+      </div>
+    );
 
   return (
-    <div className="my-roadtrips-container">
+    <div className="my-roadtrips-container content-wrapper content-padding">
       <h2>My Roadtrips</h2>
       {roadTrips.map((trip, idx) => {
         let details = [];

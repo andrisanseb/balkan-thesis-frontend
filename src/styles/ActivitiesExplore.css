@@ -361,23 +361,28 @@
 }
 
 .sort-menu {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    align-items: center;
 }
 
 .sort-button {
-  border: none;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 6px 18px;
-  border-radius: 18px;
-  font-weight: 600;
-  background: #e3f2fd;
-  color: #1976d2;
-  box-shadow: 0 2px 8px rgba(33,150,243,0.04);
-  transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 6px 18px;
+    border-radius: 18px;
+    font-weight: 600;
+    background: #e3f2fd;
+    color: #1976d2;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.04);
+    transition: background 0.2s, color 0.2s;
 }
 
 .sort-button:hover,

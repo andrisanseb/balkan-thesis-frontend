@@ -23,6 +23,7 @@ p { /* overrides user agent stylesheet issue */
     margin: auto;
     background: rgba(255,255,255,0.85);
     box-shadow: 0 6px 32px rgba(0,0,0,0.07);
+    min-height: 65vh;
 }
 
 .content-padding {
