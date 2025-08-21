@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../../styles/ActivitiesExplore.css";
-import { FaSpinner, FaHeart, FaRegHeart, FaYoutube, FaStar } from "react-icons/fa";
+import { FaSpinner, FaStar } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
+import ActivityList from "./ActivityList";
 
 const ActivitiesExplore = ({ destinations }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -19,10 +20,10 @@ const ActivitiesExplore = ({ destinations }) => {
   const [reviewStars, setReviewStars] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [activityRatings, setActivityRatings] = useState({}); // { [activityId]: avg }
-  const [activityReviewCounts, setActivityReviewCounts] = useState({}); // { [activityId]: count }
-  const [userReviews, setUserReviews] = useState({}); // { [activityId]: true }
-  const [userReviewData, setUserReviewData] = useState({}); // { [activityId]: {stars, comment, id} }
+  const [activityRatings, setActivityRatings] = useState({});
+  const [activityReviewCounts, setActivityReviewCounts] = useState({});
+  const [userReviews, setUserReviews] = useState({});
+  const [userReviewData, setUserReviewData] = useState({});
   const [sortType, setSortType] = useState("random");
   const [allReviews, setAllReviews] = useState([]);
   const [reviewSlideIndexes, setReviewSlideIndexes] = useState({});
@@ -319,7 +320,6 @@ const ActivitiesExplore = ({ destinations }) => {
 
   const toggleFavorite = async (activityId) => {
     try {
-      // If the activity is currently favorite, remove it from favorites
       if (favoriteActivities[activityId]) {
         await fetch(API_URL + "/favoriteActivities", {
           method: "DELETE",
@@ -332,7 +332,6 @@ const ActivitiesExplore = ({ destinations }) => {
           }),
         });
       } else {
-        // If the activity is not currently favorite, add it to favorites
         await fetch(API_URL + "/favoriteActivities", {
           method: "POST",
           headers: {
@@ -344,8 +343,6 @@ const ActivitiesExplore = ({ destinations }) => {
           }),
         });
       }
-
-      // Update the local state to reflect the change in favorite status
       setFavoriteActivities((prevFavoriteActivities) => ({
         ...prevFavoriteActivities,
         [activityId]: !prevFavoriteActivities[activityId],
@@ -413,34 +410,13 @@ const ActivitiesExplore = ({ destinations }) => {
     setReviewSubmitting(false);
   };
 
-  const getDestinationInfo = (activity) => {
-    // Find the destination for this activity
-    if (!activity.destinationId && !activity.destination) return null;
-    const destId = activity.destinationId || (activity.destination && activity.destination.id);
-    const destination = destinations.find((d) => d.id === destId);
-    if (!destination) return null;
-    const countryFlagImg =
-      process.env.PUBLIC_URL +
-      "/images/country/flags/" +
-      (destination.country && destination.country.name
-        ? destination.country.name.slice(0, 3).toLowerCase()
-        : "default") +
-      ".png";
-    return {
-      name: destination.name,
-      flag: countryFlagImg,
-    };
-  };
-
   useEffect(() => {
-    // Clear previous intervals
     Object.values(reviewSlideIntervalRef.current).forEach(clearInterval);
     reviewSlideIntervalRef.current = {};
 
     displayedActivities.forEach((activity) => {
       const reviews = allReviews.filter(r => r.activityId === activity.id);
       if (reviews.length > 1) {
-        // Only set initial index if not already set
         setReviewSlideIndexes(prev => {
           if (prev[activity.id] === undefined) {
             return { ...prev, [activity.id]: 0 };
@@ -457,21 +433,21 @@ const ActivitiesExplore = ({ destinations }) => {
       }
     });
 
-    // Cleanup on unmount or when dependencies change
     return () => {
       Object.values(reviewSlideIntervalRef.current).forEach(clearInterval);
     };
-  }, [displayedActivities, allReviews]); // Only run when these change
+  }, [displayedActivities, allReviews]);
 
   return (
-    <div className="activities-explore-root content-wrapper content-padding">
+    <div className="content-wrapper content-padding">
       <div className="image-container">
         <img src={selectedImage} alt="Selected Category img" className="category-image" />
         <div className="category-info">
           <p>{categoryInfo}</p>
           <p>{funFact}</p>
         </div>
-      </div>      {renderCountryFlags()}
+      </div>
+      {renderCountryFlags()}
       <div className="category-menu">{renderCategoryButtons()}</div>
       {renderSortButtons()}
       {loading ? (
@@ -484,117 +460,22 @@ const ActivitiesExplore = ({ destinations }) => {
         </div>
       ) : (
         <>
-          <div className="cards">
-            {displayedActivities.map((activity) => {
-              const destInfo = getDestinationInfo(activity);
-              const avgRating = activityRatings[activity.id];
-              const reviewCount = activityReviewCounts[activity.id] || 0;
-              const hasUserReviewed = !!userReviews[activity.id];
-              const reviewsForActivity = allReviews.filter(r => r.activityId === activity.id);
-              const slideIndex = reviewSlideIndexes[activity.id] || 0;
-              const reviewToShow =
-                reviewsForActivity.length > 1
-                  ? reviewsForActivity[slideIndex]
-                  : reviewsForActivity[0];
-
-              return (
-                <div key={activity.id} className="activity-card">
-                  {/* Created by flag in top right */}
-                  {activity.createdByUserId && (
-                    <div className="activity-created-flag">
-                      Created by: <span className="activity-created-user">
-                        {activity.createdByUsername
-                          ? activity.createdByUsername
-                          : activity.createdByUserId}
-                      </span>
-                    </div>
-                  )}
-                  <div className="activity-card-content">
-                    <div className="activity-dest-info">
-                      {destInfo && (
-                        <>
-                          <img
-                            src={destInfo.flag}
-                            alt="country_flag"
-                            className="activity-country-flag"
-                          />
-                          <span className="activity-dest-name">{destInfo.name}</span>
-                        </>
-                      )}
-                    </div>
-                    <p className="activity-name">{activity.name}</p>
-                    <p className="activity-description">{activity.description}</p>
-                    <div className="activity-details">
-                      <div className="activity-cost">
-                        Cost: {activity.cost === 0 ? "Free" : `${activity.cost} €`}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Review slideshow row (above actions and star) */}
-                  {reviewsForActivity.length > 0 && reviewToShow && (
-                    <div className="activity-user-review-row">
-                      <span className="activity-user-review-chip">
-                        <span className="activity-user-review-username">
-                          {reviewToShow.userUsername
-                            ? reviewToShow.userUsername
-                            : `User #${reviewToShow.userId}`}
-                        </span>
-                        <span className="activity-user-review-stars">
-                          {[...Array(reviewToShow.stars)].map((_, i) => (
-                            <FaStar key={i} style={{ color: "#FFD700", fontSize: "1em", marginRight: "2px" }} />
-                          ))}
-                        </span>
-                        {reviewToShow.comment && (
-                          <span className="activity-user-review-comment">
-                            "{reviewToShow.comment}"
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                  <div className="activity-actions-row">
-                    <div className="activity-rating-row">
-                      <span className="activity-rating-value">
-                        {avgRating ? avgRating.toFixed(1) : "N/A"}
-                      </span>
-                      <FaStar
-                        className={`activity-rating-star ${hasUserReviewed ? "user-reviewed" : "user-not-reviewed"}`}
-                        style={{ cursor: "pointer" }}
-                        title="Click to review this activity"
-                        onClick={() => handleStarClick(activity.id)}
-                      />
-                      <span className="activity-review-count">
-                        ({reviewCount})
-                      </span>
-                    </div>
-                    <button
-                      className="youtube-btn"
-                      title="Watch most related video on YouTube"
-                      onClick={() =>
-                        window.open(
-                          `https://www.youtube.com/results?search_query=${encodeURIComponent(activity.name + " " + (destInfo?.name || ""))}&sp=EgIQAQ%253D%253D`,
-                          "_blank"
-                        )
-                      }
-                    >
-                      <FaYoutube className="youtube-icon" />
-                    </button>
-                    {favoriteActivities[activity.id] ? (
-                      <FaHeart
-                        className="heart-icon liked"
-                        onClick={() => toggleFavorite(activity.id)}
-                      />
-                    ) : (
-                      <FaRegHeart
-                        className="heart-icon"
-                        onClick={() => toggleFavorite(activity.id)}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <ActivityList
+            activities={displayedActivities}
+            destinations={destinations}
+            favoriteActivities={favoriteActivities}
+            onFavoriteToggle={toggleFavorite}
+            activityRatings={activityRatings}
+            activityReviewCounts={activityReviewCounts}
+            userReviews={userReviews}
+            allReviews={allReviews}
+            reviewSlideIndexes={reviewSlideIndexes}
+            handleStarClick={handleStarClick}
+            showReviewRow={true}
+            showFavorite={true}
+            showYoutube={true}
+            showCreatedBy={true}
+          />
           {hasMore && (
             <div style={{ textAlign: "center", marginTop: "18px" }}>
               <button
@@ -631,7 +512,7 @@ const ActivitiesExplore = ({ destinations }) => {
             {userReviews[reviewActivityId] && userReviewData[reviewActivityId] && (
               <div className="your-review-info" style={{ marginBottom: 8, color: "#1976d2", fontSize: "0.95em" }}>
                 <span>
-                  Your previous review: {userReviewData[reviewActivityId].stars}★
+                  Current review: {userReviewData[reviewActivityId].stars}★
                   {userReviewData[reviewActivityId].comment ? ` — "${userReviewData[reviewActivityId].comment}"` : ""}
                 </span>
               </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AuthService from "../../services/AuthService";
 import "../../styles/ActivityController.css";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaPen } from "react-icons/fa";
+import ActivityList from "./ActivityList";
 
 const API_URL = process.env.REACT_APP_API_URL;
 const currentUser = AuthService.getCurrentUser();
@@ -159,7 +160,7 @@ const ActivityController = ({ destinations }) => {
   };
 
   return (
-    <div className="activity-controller-root content-wrapper content-padding">
+    <div className="content-wrapper content-padding">
       <div className="activity-controller-flex-row">
         <div className="activity-controller-left">
           <div>
@@ -218,7 +219,7 @@ const ActivityController = ({ destinations }) => {
                 onChange={handleChange}
                 required
               >
-                <option value="">Select Destination</option>
+                <option value="">Destination</option>
                 {destinations &&
                   destinations.map((dest) => (
                     <option key={dest.id} value={dest.id}>
@@ -265,54 +266,47 @@ const ActivityController = ({ destinations }) => {
         </div>
       </div>
 
-      {/* Add the styled title above the activity cards */}
       <div className="activity-manager-title">
         Created Activities Manager
       </div>
 
-      <div className="activity-list">
-        {loading ? (
-          <div className="loading-msg">Loading...</div>
-        ) : activities.length === 0 ? (
-          <div className="no-activities-msg">No activities found.</div>
-        ) : (
-          activities.map((activity) => (
-            <div key={activity.id} className="activity-item">
+      {loading ? (
+        <div className="loading-msg">Loading...</div>
+      ) : activities.length === 0 ? (
+        <div className="no-activities-msg">No activities found.</div>
+      ) : (
+        <div className="cards">
+          {activities.map((activity) => (
+            <div key={activity.id}>
+              {/* Use ActivityList card layout */}
+              <ActivityList
+                activities={[activity]}
+                destinations={destinations}
+                showFavorite={false}
+                showYoutube={false}
+                showReviewRow={false}
+                showRatingRow={false}
+                showCreatedBy={false}
+              />
+              {/* Edit & Delete buttons */}
               <div>
-                <strong>{activity.name}</strong> ({activity.category})<br />
-                <span>{activity.description}</span>
-                <div>
-                  Cost: {activity.cost === 0 ? "Free" : `${activity.cost} €`}
-                </div>
-                <div>
-                  Duration: {activity.duration} minutes
-                </div>
-                <div>
-                  Destination:{" "}
-                  {(() => {
-                    const destObj = destinations.find(
-                      (d) => d.id === activity.destinationId
-                    );
-                    return destObj
-                      ? `${destObj.name}, ${destObj.country?.name ?? "Unknown"}`
-                      : "Unknown";
-                  })()}
-                </div>
-              </div>
-              <div className="activity-actions">
-                <button onClick={() => handleEdit(activity)}>Edit</button>
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEdit(activity)}
+                >
+                  <FaPen />
+                </button>
                 <button
                   className="delete-btn"
                   onClick={() => handleDelete(activity.id)}
-                  title="Delete activity"
                 >
                   <FaTrash />
                 </button>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
