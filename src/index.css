@@ -77,23 +77,3 @@ p { /* overrides user agent stylesheet issue */
     box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
     transition: background 0.2s, box-shadow 0.2s;
 }
-
-/* Activity Destination Info - global for all activity cards */
-.activity-dest-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-    font-size: 0.98em;
-    color: #1976d2;
-    font-weight: 500;
-}
-
-.activity-country-flag {
-    box-shadow: 0 1px 4px rgba(33,150,243,0.08);
-    border: 1px solid #bbdefb;
-    margin-right: 6px;
-}
-
-.activity-dest-name {
-    vertical-align: middle;
-}

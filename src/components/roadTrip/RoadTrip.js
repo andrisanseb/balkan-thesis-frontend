@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../../services/AuthService";
-import "../../styles/RoadTrip.css";
 import { useLocation } from "react-router-dom";
 import ActivitySelector from "./ActivitySelector";
 import DestinationsSelector from "./DestinationsSelector";
