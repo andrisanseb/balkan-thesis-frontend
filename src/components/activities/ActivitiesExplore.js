@@ -125,37 +125,37 @@ const ActivitiesExplore = ({ destinations }) => {
       case "Culture":
         setSelectedImage(process.env.PUBLIC_URL + "/images/category/culture.jpg");
         setCategoryInfo(
-          "Explore the rich history and traditions of the Balkans, from ancient ruins to vibrant folk dances."
+          "Experience Balkan history and traditions."
         );
         setFunFact(
-          "Did you know that the Balkans are home to some of the world's oldest continuously inhabited cities?"
+          "Some Balkan cities are among the oldest in the world."
         );
         break;
       case "Gastronomy":
         setSelectedImage(process.env.PUBLIC_URL + "/images/category/gastronomy.jpg");
         setCategoryInfo(
-          "Indulge in the diverse flavors of Balkan cuisine, where hearty stews and freshly caught seafood await."
+          "Taste Balkan specialties and local flavors."
         );
         setFunFact(
-          "The Balkans are known for their unique dishes such as cevapi, burek, and baklava."
+          "Try cevapi, burek, and baklava here!"
         );
         break;
       case "Nature":
         setSelectedImage(process.env.PUBLIC_URL + "/images/category/nature.jpg");
         setCategoryInfo(
-          "Immerse yourself in the breathtaking landscapes of the Balkans, from lush forests to cascading waterfalls."
+          "Enjoy forests, lakes, and waterfalls."
         );
         setFunFact(
-          "The Balkans are home to one of Europe's last remaining rainforests, the Biogradska Gora National Park."
+          "Biogradska Gora is one of Europe's last rainforests."
         );
         break;
       case "Religion":
         setSelectedImage(process.env.PUBLIC_URL + "/images/category/religion.jpg");
         setCategoryInfo(
-          "Discover the spiritual heritage of the Balkans, where ancient churches and mosques dot the countryside."
+          "Visit ancient churches and mosques."
         );
         setFunFact(
-          "The Balkans have a rich religious history, with influences from Christianity, Islam, and other faiths."
+          "The Balkans blend Christianity, Islam, and more."
         );
         break;
       default:
@@ -163,10 +163,10 @@ const ActivitiesExplore = ({ destinations }) => {
           "https://www.sarahdegheselle.com/wp-content/uploads/2018/10/balkan-campers-88-scaled.jpg"
         );
         setCategoryInfo(
-          "Embark on a journey through the Balkans and uncover a world of adventure and discovery."
+          "Discover adventure and beauty in the Balkans."
         );
         setFunFact(
-          "The Balkans offer a diverse range of experiences, from historic cities to stunning coastlines."
+          "Explore cities, coastlines, and hidden gems."
         );
         break;
     }
@@ -176,18 +176,29 @@ const ActivitiesExplore = ({ destinations }) => {
     setSelectedCategory(category);
   };
 
-  const renderCategoryButtons = () => {
-    const categories = ["All", "Culture", "Gastronomy", "Nature", "Leisure", "Religion"];
-    return categories.map((category, index) => (
-      <button
-        key={index}
-        className={`category-button${selectedCategory === category ? " active-button" : ""}`}
-        onClick={() => changeCategory(category)}
-      >
-        {category}
-      </button>
-    ));
-  };
+  const categoryOptions = [
+    { type: "All", label: "All", emoji: "🧭" }, // Changed from 🌍 to 🧭
+    { type: "Culture", label: "Culture", emoji: "🏛️" },
+    { type: "Gastronomy", label: "Gastronomy", emoji: "🍽️" },
+    { type: "Nature", label: "Nature", emoji: "🌲" },
+    { type: "Leisure", label: "Leisure", emoji: "🎉" },
+    { type: "Religion", label: "Religion", emoji: "⛪" }
+  ];
+
+  const renderCategoryButtons = () => (
+    <div className="sort-menu">
+      {categoryOptions.map(opt => (
+        <button
+          key={opt.type}
+          className={`sort-button${selectedCategory === opt.type ? " active-sort" : ""}`}
+          onClick={() => changeCategory(opt.type)}
+        >
+          <span className="sort-desc">{opt.label}</span>
+          <span className="sort-emoji" role="img" aria-label={opt.label}>{opt.emoji}</span>
+        </button>
+      ))}
+    </div>
+  );
 
   // Add sort buttons after category buttons
   const renderSortButtons = () => (
@@ -196,37 +207,43 @@ const ActivitiesExplore = ({ destinations }) => {
         className={`sort-button ${sortType === "random" ? "active-sort" : ""}`}
         onClick={() => setSortType("random")}
       >
-        Random <span role="img" aria-label="dice">🎲</span>
+        <span className="sort-desc">Random</span>
+        <span className="sort-emoji" role="img" aria-label="dice">🎲</span>
       </button>
       <button
         className={`sort-button ${sortType === "favorites" ? "active-sort" : ""}`}
         onClick={() => setSortType("favorites")}
       >
-        Favorites <span role="img" aria-label="heart">❤️</span>
+        <span className="sort-desc">Favorites</span>
+        <span className="sort-emoji" role="img" aria-label="heart">❤️</span>
       </button>
       <button
         className={`sort-button ${sortType === "popular" ? "active-sort" : ""}`}
         onClick={() => setSortType("popular")}
       >
-        Most Popular <span role="img" aria-label="fire">🔥</span>
+        <span className="sort-desc">Most Popular</span>
+        <span className="sort-emoji" role="img" aria-label="fire">🔥</span>
       </button>
       <button
         className={`sort-button ${sortType === "best" ? "active-sort" : ""}`}
         onClick={() => setSortType("best")}
       >
-        Best Reviewed <span role="img" aria-label="star">⭐</span>
+        <span className="sort-desc">Best Reviewed</span>
+        <span className="sort-emoji" role="img" aria-label="star">⭐</span>
       </button>
       <button
         className={`sort-button ${sortType === "cheapest" ? "active-sort" : ""}`}
         onClick={() => setSortType("cheapest")}
       >
-        Cheapest <span role="img" aria-label="money">💸</span>
+        <span className="sort-desc">Cheapest</span>
+        <span className="sort-emoji" role="img" aria-label="money">💸</span>
       </button>
       <button
         className={`sort-button ${sortType === "guide" ? "active-sort" : ""}`}
         onClick={() => setSortType("guide")}
       >
-        User Suggestions <span role="img" aria-label="guide">🧑‍🏫</span>
+        <span className="sort-desc">User Suggestions</span>
+        <span className="sort-emoji" role="img" aria-label="guide">💬</span> {/* Changed from 🧑‍🏫 to 💬 */}
       </button>
     </div>
   );
@@ -448,7 +465,7 @@ const ActivitiesExplore = ({ destinations }) => {
         </div>
       </div>
       {renderCountryFlags()}
-      <div className="category-menu">{renderCategoryButtons()}</div>
+      {renderCategoryButtons()}
       {renderSortButtons()}
       {loading ? (
         <div className="loading-container">
@@ -456,7 +473,7 @@ const ActivitiesExplore = ({ destinations }) => {
         </div>
       ) : filteredActivities.length === 0 ? (
         <div className="no-activities-message">
-          No activities found in this category.
+          No activities found.
         </div>
       ) : (
         <>

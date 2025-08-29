@@ -25,39 +25,31 @@ const Card3 = ({
   };
 
   // Calculate route using Google Maps JS API DirectionsService
-  const calculateRoute = () => {
+  const calculateRoute = async () => {
     if (!window.google || !window.google.maps || selectedDestinations.length < 2) return;
 
-    // Use city names or addresses instead of lat/lng
-    const origin = selectedDestinations[0].name; // or .address if available
-    const destination = isRoundTrip
-      ? origin
-      : selectedDestinations[selectedDestinations.length - 1].name;
+    const origin = selectedDestinations[0].name;
 
-    const waypoints = isRoundTrip
-      ? selectedDestinations.slice(1).map(d => ({
-          location: d.name, // or d.address
-          stopover: true,
-        }))
-      : selectedDestinations.slice(1, -1).map(d => ({
-          location: d.name, // or d.address
-          stopover: true,
-        }));
+    if (isRoundTrip) {
+      // Round trip: start and finish at the same place
+      const destination = origin;
+      const waypoints = selectedDestinations.slice(1).map(d => ({
+        location: d.name,
+        stopover: true,
+      }));
 
-    const directionsService = new window.google.maps.DirectionsService();
-
-    directionsService.route(
-      {
+      const directionsService = new window.google.maps.DirectionsService();
+      const routeRequest = {
         origin,
         destination,
         waypoints,
         travelMode: window.google.maps.TravelMode.DRIVING,
         optimizeWaypoints: true,
-      },
-      (result, status) => {
+      };
+
+      directionsService.route(routeRequest, (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           setRouteData(result);
-
           // Reorder destinations according to waypoint_order
           const waypointOrder = result.routes[0].waypoint_order || [];
           let newOrder = [];
@@ -65,10 +57,17 @@ const Card3 = ({
           waypointOrder.forEach(idx => {
             newOrder.push(selectedDestinations[idx + 1]);
           });
-          if (!isRoundTrip) {
-            newOrder.push(selectedDestinations[selectedDestinations.length - 1]);
-          } else {
+          if (isRoundTrip) {
             newOrder.push(selectedDestinations[0]);
+          } else if (result.routes[0].legs.length > 0) {
+            // For one-way, set the last leg's end_address as the final destination
+            const lastLeg = result.routes[0].legs[result.routes[0].legs.length - 1];
+            const endDest = selectedDestinations.find(
+              d => d.name === lastLeg.end_address
+            );
+            if (endDest && !newOrder.includes(endDest)) {
+              newOrder.push(endDest);
+            }
           }
           setOrderedDestinations(newOrder);
         } else {
@@ -76,8 +75,78 @@ const Card3 = ({
           setOrderedDestinations(selectedDestinations);
           console.error("Directions request failed due to " + status);
         }
+      });
+    } else {
+      // One-way: try each possible finish, pick the best
+      const candidates = selectedDestinations.slice(1);
+      let bestResult = null;
+      let bestDuration = Infinity;
+      let bestOrder = [];
+
+      const directionsService = new window.google.maps.DirectionsService();
+
+      for (let i = 0; i < candidates.length; i++) {
+        const destination = candidates[i].name;
+        const waypoints = selectedDestinations
+          .slice(1)
+          .filter((d, idx) => idx !== i)
+          .map(d => ({
+            location: d.name,
+            stopover: true,
+          }));
+
+        // Wrap in a promise for async/await
+        const getRoute = () =>
+          new Promise((resolve) => {
+            directionsService.route(
+              {
+                origin,
+                destination,
+                waypoints,
+                travelMode: window.google.maps.TravelMode.DRIVING,
+                optimizeWaypoints: true,
+              },
+              (result, status) => {
+                if (status === window.google.maps.DirectionsStatus.OK) {
+                  resolve(result);
+                } else {
+                  resolve(null);
+                }
+              }
+            );
+          });
+
+        // eslint-disable-next-line no-await-in-loop
+        const result = await getRoute();
+        if (result) {
+          const duration = result.routes[0].legs.reduce((sum, leg) => sum + leg.duration.value, 0);
+          if (duration < bestDuration) {
+            bestDuration = duration;
+            bestResult = result;
+            // Reorder destinations according to waypoint_order
+            const waypointOrder = result.routes[0].waypoint_order || [];
+            let newOrder = [];
+            newOrder.push(selectedDestinations[0]);
+            waypointOrder.forEach(idx => {
+              // Skip the candidate destination
+              const filtered = selectedDestinations.slice(1).filter((d, idx2) => idx2 !== i);
+              newOrder.push(filtered[idx]);
+            });
+            newOrder.push(candidates[i]);
+            bestOrder = newOrder;
+          }
+        }
       }
-    );
+
+      if (bestResult) {
+        setRouteData(bestResult);
+        setOrderedDestinations(bestOrder);
+      } else {
+        setRouteData(null);
+        setOrderedDestinations(selectedDestinations);
+        console.error("Directions request failed for all candidates.");
+      }
+    }
   };
 
   // Only calculate route after map is loaded and destinations are set

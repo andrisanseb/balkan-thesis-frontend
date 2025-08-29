@@ -310,7 +310,7 @@ const DaysOrganiser = ({
                 style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
               >
                 {day.title}
-                <FaPen style={{ marginLeft: "8px", fontSize: "0.9em", color: "#1976d2" }} />
+                <FaPen className="fa-pen" />
               </h3>
             )}
           </div>
@@ -523,8 +523,10 @@ const DaysOrganiser = ({
                 className="plan-title"
                 onClick={() => setIsEditingTitle(true)}
                 title="Click to edit plan name"
+                style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
               >
                 {planTitle}
+                <FaPen className="fa-pen" />
               </h1>
             )}
           </div>

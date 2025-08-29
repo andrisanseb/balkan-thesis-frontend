@@ -1,6 +1,6 @@
 import React from "react";
 import { FaHeart, FaRegHeart, FaYoutube, FaStar } from "react-icons/fa";
-import "../../styles/ActivitiesExplore.css";
+import "../../styles/ActivitiesList.css";
 
 const ActivityList = ({
   activities,
@@ -39,7 +39,7 @@ const ActivityList = ({
   };
 
   return (
-    <div className="cards">
+    <div className="activity-cards">
       {activities.map((activity) => {
         const destInfo = getDestinationInfo(activity);
         const avgRating = activityRatings[activity.id];

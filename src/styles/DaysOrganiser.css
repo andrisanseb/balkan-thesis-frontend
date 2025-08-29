@@ -279,13 +279,7 @@ ul {
 }
 
 .plan-title::after {
-    content: " ✎";
-    font-size: 0.7em;
-    color: #1976d2;
-    opacity: 0.7;
-    margin-left: 8px;
-    vertical-align: middle;
-    pointer-events: none;
+    content: "";
 }
 
 .plan-title-input {
@@ -338,4 +332,14 @@ ul {
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     white-space: nowrap;
+}
+
+.day-title .fa-pen,
+.plan-title .fa-pen,
+.fa-pen {
+    font-size: 0.5em !important;
+    margin-left: 6px;
+    color: #1976d2;
+    vertical-align: middle;
+    opacity: 0.7;
 }
