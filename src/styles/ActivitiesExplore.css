@@ -21,8 +21,6 @@
   align-items: center;
 }
 
-
-
 .review-modal-actions {
   display: flex;
   gap: 12px;
@@ -105,7 +103,6 @@
   color: #fff;
 }
 
-
 .active-button,
 .sort-button:hover,
 .active-sort {
@@ -121,8 +118,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: auto;
-    margin-bottom: 16px;
+    margin: 10px auto 40px auto;
 }
 
 .category-image {
@@ -201,6 +197,13 @@
         z-index: 2;
     }
 
+    .sort-button {
+        gap: 4px;
+        font-size: 0.9em;
+        padding: 4px 12px;
+        border-radius: 18px;
+    }
+
     .sort-desc {
         display: none;
     }
@@ -208,15 +211,6 @@
         font-size: 1.2em;
         display: inline-block;
     }
-}
-
-.country-flags-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    margin-top: 8px;
 }
 
 .country-flag-btn {
@@ -246,8 +240,8 @@
 }
 
 .country-flag-img {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     object-fit: cover;
     display: block;

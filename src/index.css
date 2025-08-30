@@ -54,6 +54,7 @@ p { /* overrides user agent stylesheet issue */
     box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
     transition: background 0.2s, box-shadow 0.2s;
 }
+
 .next-btn:disabled {
     background: #b0bec5;
     color: #fff;
@@ -114,6 +115,10 @@ p { /* overrides user agent stylesheet issue */
     padding: 0.1em 0.1em 0.5em 0.1em;
   }
 
+  .button-row {
+    margin: 1.2em 1.5em;
+  }
+
   .next-btn,
   .back-btn {
     margin-top: 1.2em;
@@ -121,4 +126,5 @@ p { /* overrides user agent stylesheet issue */
     font-size: 0.97em;
     border-radius: 6px;
   }
+
 }

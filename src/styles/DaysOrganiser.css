@@ -1,10 +1,8 @@
 .days-organiser-container {
-    background: linear-gradient(120deg, #e3f2fd 0%, #f9f9f9 100%);
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 40px;
+    margin: 18px 8px;
 }
 
 .days-wrapper {
@@ -13,12 +11,6 @@
     justify-content: center;
     gap: 2px;
     margin-top: 24px;
-}
-
-.day-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
 }
 
 .activity {
@@ -39,17 +31,6 @@
 .activity:focus {
     outline: none;
     box-shadow: none;
-}
-
-/* Hide the default drag handle icon if present */
-[draggable="true"] {
-    -webkit-user-drag: none;
-}
-
-/* Optionally, hide the drag preview image */
-.activity {
-    /* Prevent default drag preview image (the black dot) */
-    opacity: 1 !important;
 }
 
 .activity:hover {
@@ -84,20 +65,20 @@
     font-size: 1.3em;
     font-weight: 600;
     color: #1976d2;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.7px;
     text-align: center;
 }
 
 .remove-button {
     position: absolute;
     top: 10px;
-    right: 16px;
+    right: 10px;
     background: #f5f5f5;
     color: #d32f2f;
     border: none;
-    width: 28px;
-    height: 28px;
-    font-size: 1.3em;
+    width: 22px;
+    height: 22px;
+    font-size: 1.1em;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 1px 4px rgba(211,47,47,0.08);

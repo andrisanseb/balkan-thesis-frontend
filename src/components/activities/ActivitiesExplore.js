@@ -266,7 +266,7 @@ const ActivitiesExplore = ({ destinations }) => {
 
   // Country flag selector row
   const renderCountryFlags = () => (
-    <div className="country-flags-row">
+    <div className="sort-menu">
       <button
         className={`country-flag-btn${selectedCountry === "All" ? " active-country" : ""}`}
         onClick={() => setSelectedCountry("All")}

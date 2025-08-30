@@ -316,7 +316,7 @@
     .activity-cards {
         gap: 16px;
         padding: 8px 0;
-        margin: 10px;
+        margin: 0 80px;
     }
     
     .activity-card {

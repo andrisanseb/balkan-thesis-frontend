@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AuthService from "../../services/AuthService";
 import "../../styles/ActivityController.css";
-import { FaTrash, FaPen } from "react-icons/fa";
+import { FaTrash, FaPen, FaSpinner } from "react-icons/fa";
 import ActivityList from "./ActivityList";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -196,7 +196,7 @@ const ActivityController = ({ destinations }) => {
               <input
                 type="number"
                 name="cost"
-                placeholder="Cost (€)"
+                placeholder="Cost"
                 value={form.cost}
                 onChange={handleChange}
                 min="0"
@@ -271,14 +271,15 @@ const ActivityController = ({ destinations }) => {
       </div>
 
       {loading ? (
-        <div className="loading-msg">Loading...</div>
+        <div className="loading-container">
+          <FaSpinner className="spinner" />
+        </div>
       ) : activities.length === 0 ? (
-        <div className="no-activities-msg">No activities found.</div>
+        <div className="no-activities-msg">No activities created.</div>
       ) : (
-        <div className="cards">
+        <div>
           {activities.map((activity) => (
             <div key={activity.id}>
-              {/* Use ActivityList card layout */}
               <ActivityList
                 activities={[activity]}
                 destinations={destinations}
@@ -288,7 +289,6 @@ const ActivityController = ({ destinations }) => {
                 showRatingRow={false}
                 showCreatedBy={false}
               />
-              {/* Edit & Delete buttons */}
               <div>
                 <button
                   className="edit-btn"

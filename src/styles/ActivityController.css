@@ -37,12 +37,11 @@
   color: #fff;
   border: none;
   border-radius: 18px;
-  font-size: 1em;
+  font-size: 0.85em;
   font-weight: 600;
-  padding: 8px 0;
+  padding: 6px 10px;
   cursor: pointer;
   transition: background 0.2s;
-  width: 120px;
   text-align: center;
   margin: auto;
 }
@@ -62,7 +61,7 @@
   display: flex;
   gap: 32px;
   align-items: flex-start;
-  margin-bottom: 32px;
+  margin: 32px 10px;
 }
 
 .activity-controller-left {
@@ -84,7 +83,7 @@
   font-size: 1.15em;
   font-weight: 600;
   color: #1976d2;
-  margin: 18px 0 10px 0;
+  margin: 18px 0;
   letter-spacing: 0.5px;
 }
 

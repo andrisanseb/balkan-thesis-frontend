@@ -304,7 +304,6 @@ const DaysOrganiser = ({
               />
             ) : (
               <h3
-                className="day-title"
                 onClick={() => setEditingDayTitleIdx(i)}
                 title="Click to edit day title"
                 style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}

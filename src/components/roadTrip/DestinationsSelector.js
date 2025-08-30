@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import "../../styles/DestinationsSelector.css";
 
 const DestinationsSelector = ({
@@ -21,27 +21,29 @@ const DestinationsSelector = ({
       <div className="selector-row">
         <div className="selector-left">
           <div className="catchy-intro">
-            <h3>
-              Ready to plan your adventure? <br />
-              First, will you return to where you started, or end somewhere new?
-            </h3>
-            <div className="roadtrip-toggle-container">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={isRoundTrip}
-                  onChange={() => setIsRoundTrip(!isRoundTrip)}
-                />{" "}
-                Yes, make it a round trip (finish where you started)
-              </label>
+            <h2>Ready to plan your adventure?</h2>
+            <div className="roadtrip-toggle-btns">
+              <button
+                type="button"
+                className={`toggle-btn${!isRoundTrip ? " active" : ""}`}
+                onClick={() => setIsRoundTrip(false)}
+              >
+                One-way
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn${isRoundTrip ? " active" : ""}`}
+                onClick={() => setIsRoundTrip(true)}
+              >
+                Road Trip
+              </button>
             </div>
           </div>
         </div>
         <div className="selector-right">
           <div className="catchy-select">
             <h3>
-              Now, choose your stops! <br />
-              The first one will be your starting point, <br />
+              Choose your stops! <br />
               Optimal route will be calculated!
             </h3>
           </div>
@@ -53,14 +55,14 @@ const DestinationsSelector = ({
                 {selectedDestinations.map((destination, idx) => (
                   <div className="selected-destination-item" key={destination.id}>
                     {idx === 0 ? (
-                      <span className="selected-order">Start:</span>
+                      <span className="selected-order" title="Start">🚩</span>
                     ) : null}
                     <span className="selected-name">{destination.name}</span>
                   </div>
                 ))}
                 {isRoundTrip && selectedDestinations.length > 0 && (
                   <div className="selected-destination-item">
-                    <span className="selected-order">Finish:</span>
+                    <span className="selected-order" title="Finish">🏁</span>
                     <span className="selected-name">{selectedDestinations[0].name}</span>
                   </div>
                 )}

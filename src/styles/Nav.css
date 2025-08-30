@@ -1,7 +1,6 @@
 .nav-new-container {
     width: 100%;
-    background: linear-gradient(90deg, #fffde7 0%, #e3f2fd 100%);
-    box-shadow: 0 2px 16px rgba(25, 118, 210, 0.07);
+    background: rgb(96, 147, 128);
     position: relative;
     z-index: 100;
     padding: 0;
@@ -11,21 +10,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
-    margin: auto;
-    padding: 12px 32px;
+    padding: 14px 10px 14px 10px;
     box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
 }
 
 .nav-brand a {
-    font-size: 1.5em;
+    font-size: 1.7em;
     font-weight: 800;
-    color: #8e24aa;
+    color: #f7c111;
     letter-spacing: 2px;
-    text-shadow: 0 2px 8px #e3f2fd;
     text-decoration: none;
+    text-shadow:
+        -1px -1px 0 #fff,
+         1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+         1px  1px 0 #fff;
 }
 
 .nav-center {
@@ -40,7 +39,7 @@
 }
 
 .nav-links-desktop a {
-    color: #1976d2;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 700;
     font-size: 1.08em;
@@ -49,11 +48,11 @@
 
 .nav-links-desktop a.active,
 .nav-links-desktop a:focus {
-    color: #8e24aa;
+    color: #f7c111;
 }
 
 .nav-links-desktop a:hover {
-    color: #8e24aa;
+    color: #f7c111;
 }
 
 .nav-profile {
@@ -64,11 +63,11 @@
 
 .nav-username {
     font-weight: 700;
-    color: #8e24aa;
+    color: #000000;
     background: #ede7f6;
     border-radius: 12px;
-    padding: 4px 12px;
-    font-size: 1em;
+    padding: 2px 8px;
+    font-size: 0.8em;
     margin-right: 4px;
     text-decoration: none;
 }
@@ -77,9 +76,9 @@
     background: #ffebee;
     color: #d32f2f;
     border: none;
-    border-radius: 8px;
-    padding: 6px 14px;
-    font-size: 1.2em;
+    border-radius: 10px;
+    padding: 2px 10px;
+    font-size: 1em;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     display: flex;
@@ -96,68 +95,76 @@
     background: none;
     border: none;
     font-size: 2em;
-    color: #1976d2;
+    color: #f7c111;
     cursor: pointer;
-    margin-left: 16px;
 }
 
-@media (max-width: 920px) {
-    .nav-row {
-        padding: 10px 8px;
-    }
+@media (max-width: 880px) {
+
     .nav-center,
     .nav-links-desktop,
     .nav-profile {
         display: none;
     }
+
     .nav-hamburger {
         display: block;
     }
+
     .nav-brand {
         flex: 1 1 0;
     }
+
     .nav-mobile-menu {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        background: #fffde7;
-        box-shadow: 0 2px 16px rgba(25, 118, 210, 0.07);
+        background: rgb(109, 166, 145);
         z-index: 99;
         gap: 0;
-        border-radius: 0 0 12px 12px;
         position: static;
         padding: 0;
         margin-top: 0;
         animation: slideDown 0.3s;
     }
+
     @keyframes slideDown {
         from { opacity: 0; transform: translateY(-16px);}
         to { opacity: 1; transform: translateY(0);}
     }
+
     .nav-mobile-menu a,
     .nav-mobile-menu .nav-username,
     .nav-mobile-menu .nav-logout-btn,
     .nav-mobile-menu button {
-        padding: 18px 0;
-        font-size: 1.15em;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.08em;
+        letter-spacing: 0.5px;
+        padding: 12px 0;
         border-radius: 0;
-        border-bottom: 1px solid #e3f2fd;
+        border-bottom: 1px solid rgb(96, 147, 128);;
         width: 100%;
         text-align: center;
         box-sizing: border-box;
         background: none;
-        color: #1976d2;
-        margin: 0;
         display: block;
+        text-decoration: none;
     }
+
+    .nav-mobile-menu a.active,
+    .nav-mobile-menu a:focus {
+        color: #f7c111;
+    }
+
+    .nav-mobile-menu a:hover {
+        color: #f7c111;
+    }
+
     .nav-mobile-menu .nav-logout-btn {
         color: #d32f2f;
-        background: #ffebee;
         border: none;
-        font-size: 1.2em;
-        border-radius: 0;
-        padding: 18px 0;
     }
+
     .nav-mobile-menu .nav-logout-btn:hover {
         background: #d32f2f;
         color: #fff;
