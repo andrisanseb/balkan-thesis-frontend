@@ -157,12 +157,6 @@
     transform: scale(1.07);
 }
 
-.toggle-btn:hover, .toggle-btn:focus {
-    background: #bbdefb;
-    color: #1976d2;
-    border-color: #64b5f6;
-    transform: scale(1.04);
-}
 
 @media (max-width: 880px) {
     .selector-row {

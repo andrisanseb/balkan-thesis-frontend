@@ -311,6 +311,19 @@
   resize: vertical;
 }
 
+/* Selectability (used in selector) */
+.activity-card.selected {
+    border: 2.5px solid #1976d2;
+    background: #e3f2fd;
+}
+
+.activity-list-selected-icon {
+    color: #1976d2;
+    font-size: 1.1em;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
 /* Responsive */
 @media (max-width: 610px) {
     .activity-cards {

@@ -1,10 +1,12 @@
 import React from "react";
-import { FaHeart, FaRegHeart, FaYoutube, FaStar } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaYoutube, FaStar, FaCheck } from "react-icons/fa";
 import "../../styles/ActivitiesList.css";
 
 const ActivityList = ({
-  activities,
-  destinations,
+  activities = [],
+  destinations = [],
+  onActivityClick,
+  selectedActivities = [],
   favoriteActivities = {},
   onFavoriteToggle,
   activityRatings = {},
@@ -51,9 +53,15 @@ const ActivityList = ({
           reviewsForActivity.length > 1
             ? reviewsForActivity[slideIndex]
             : reviewsForActivity[0];
+        const isSelected = selectedActivities.some(a => a.id === activity.id);
 
         return (
-          <div key={activity.id} className="activity-card">
+          <div
+            key={activity.id}
+            className={`activity-card${isSelected ? " selected" : ""}`}
+            onClick={() => onActivityClick && onActivityClick(activity)}
+            style={{ cursor: onActivityClick ? "pointer" : "default" }}
+          >
             {/* Created by user flag in top right */}
             {showCreatedBy && activity.createdByUserId && (
               <div
@@ -80,7 +88,14 @@ const ActivityList = ({
                   </>
                 )}
               </div>
-              <p className="activity-name">{activity.name}</p>
+              <p className="activity-name">
+                {activity.name}
+                {isSelected && (
+                  <span className="activity-list-selected-icon">
+                    <FaCheck />
+                  </span>
+                )}
+              </p>
               <p className="activity-description">{activity.description}</p>
               <div className="activity-details">
                 <div className="activity-cost">
