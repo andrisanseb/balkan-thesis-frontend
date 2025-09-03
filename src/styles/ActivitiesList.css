@@ -21,8 +21,7 @@
 }
 
 .activity-card:hover {
-    box-shadow: 0 8px 24px rgba(33,150,243,0.18);
-    border-color: #1976d2;
+    box-shadow: 0 10px 26px rgba(33,150,243,0.18);
 }
 
 .activity-card-content {
@@ -31,6 +30,16 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.activity-dest-name {
+    font-size: 1.08em;
+    font-weight: 600;
+    color: #1976d2;
+    letter-spacing: 0.4px;
+    transition: background 0.2s, color 0.2s;
+    display: inline-block;
+    margin-left: 6px;
 }
 
 .activity-name {
@@ -42,7 +51,7 @@
 }
 
 .activity-description {
-    font-size: 0.98em;
+    font-size: 0.94em;
     color: #333;
     margin-bottom: 2px;
 }
@@ -60,8 +69,7 @@
     font-size: 0.98em;
     color: #1976d2;
     font-weight: 500;
-    margin-bottom: 2px;
-    margin-top: 2px;
+    margin: 0 2px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -69,7 +77,7 @@
 
 .heart-icon {
     color: #ccc;
-    font-size: 1.5em;
+    font-size: 1.46em;
     cursor: pointer;
     transition: color 0.2s;
     padding: 4px;
@@ -100,8 +108,7 @@
     font-weight: 600;
     padding: 8px 28px;
     cursor: pointer;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin: 0 8px;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
@@ -132,9 +139,9 @@
 }
 
 .activity-rating-value {
-    font-size: 0.9em;
-    color: #1976d2;
-    font-weight: 600;
+    font-size: 0.8em;
+    font-weight: 500;
+    color: #333;
 }
 
 .activity-rating-star {
@@ -152,34 +159,23 @@
 
 .youtube-btn {
     background: transparent;
-    color: #1976d2;
+    color: #FF0000;
     border: none;
-    border-radius: 5px;
-    padding: 2px 6px;
     cursor: pointer;
-    font-weight: normal;
     display: flex;
     align-items: center;
     transition: background 0.2s, color 0.2s;
 }
 
-.youtube-btn:hover {
-    background: #e3f2fd;
-    color: #1565c0;
-}
-
 .youtube-icon {
     font-size: 1.4rem;
-    margin-right: 0;
     color: inherit;
 }
 
 .activity-cost {
     font-size: 0.98em;
     color: #1976d2;
-    margin-bottom: 2px;
-    margin-top: 2px;
-    font-weight: 500;
+    margin: 0 2px;
 }
 
 .activity-user-review-row {
@@ -191,11 +187,10 @@
     color: #1976d2;
     font-weight: 500;
     border-radius: 8px 8px 0 0;
-    margin-bottom: 0;
-    min-height: 24px;
     transition: background 0.6s, box-shadow 0.6s, opacity 1s;
     opacity: 0.85;
     animation: reviewFadeInSlow 1.2s;
+    margin: 0 2px;
 }
 
 @keyframes reviewFadeInSlow {
@@ -250,6 +245,12 @@
     border-radius: 50%;
     margin-right: 6px;
     vertical-align: middle;
+}
+
+.activity-review-count {
+    font-size: 0.8em;
+    color: #333;
+    font-weight: 400;
 }
 
 .activity-created-flag {

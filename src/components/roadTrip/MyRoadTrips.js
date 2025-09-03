@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaRoute, FaTrash, FaMoneyBillWave, FaClock, FaCarSide } from "react-icons/fa";
+import { FaRoute, FaTrash, FaMoneyBillWave, FaClock, FaCarSide, FaSpinner } from "react-icons/fa";
 import "../../styles/MyRoadTrips.css";
 import AuthService from "../../services/AuthService";
 
@@ -53,7 +53,12 @@ const MyRoadTrips = ({ destinations }) => {
     return null;
   };
 
-  if (loading) return <div>Loading roadtrips...</div>;
+  if (loading)
+    return (
+      <div className="loading-container">
+        <FaSpinner className="spinner" />
+      </div>
+    );
   if (!roadTrips.length)
     return (
       <div className="no-roadtrips-funny content-wrapper content-padding">

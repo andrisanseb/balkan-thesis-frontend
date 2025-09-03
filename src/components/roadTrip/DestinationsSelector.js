@@ -21,7 +21,7 @@ const DestinationsSelector = ({
       <div className="selector-row">
         <div className="selector-left">
           <div className="catchy-intro">
-            <h2>Ready to plan your adventure?</h2>
+            <h1 className="big-green-title">READY TO PLAN YOUR ADVENTURE ?</h1>
             <div className="roadtrip-toggle-btns">
               <button
                 type="button"
@@ -41,12 +41,22 @@ const DestinationsSelector = ({
           </div>
         </div>
         <div className="selector-right">
-          <div className="catchy-select">
-            <h3>
-              Choose your stops! <br />
-              Optimal route will be calculated!
-            </h3>
-          </div>
+          <h3>
+            {isRoundTrip
+              ? (
+                <>
+                  Choose your stops! <br />
+                  We'll find the optimal round trip route, returning to your starting point.
+                </>
+              )
+              : (
+                <>
+                  Choose your stops! <br />
+                  The best one-way route will be calculated, and your finish destination will be found.
+                </>
+              )
+            }
+          </h3>
           <div className="selected-destinations-list">
             {selectedDestinations.length === 0 ? (
               <span className="selected-placeholder">No destinations selected yet.</span>

@@ -394,13 +394,13 @@ const DaysOrganiser = ({
                       {(provided) => (
                         <li
                           key={activity.id}
-                          className="activity"
+                          className="activity-organiser"
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <span className="activity-name">{activity.name}</span>
-                          <div className="activity-details">
+                          <span className="activity-name-organiser">{activity.name}</span>
+                          <div className="activity-details-organiser">
                             <p className="duration">
                               <FaClock /> {formatDuration(activity.duration)}
                             </p>

@@ -18,6 +18,13 @@ const Card3 = ({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [orderedDestinations, setOrderedDestinations] = useState(selectedDestinations);
 
+  // Reset map and route when Card3 is shown or destinations change
+  useEffect(() => {
+    setMapLoaded(false);
+    setRouteData(null);
+    setOrderedDestinations(selectedDestinations);
+  }, [selectedDestinations, setRouteData]);
+
   // This handler will be called by DaysOrganiser
   const handleDaysData = (data) => {
     setDaysData(data);
@@ -167,7 +174,7 @@ const Card3 = ({
   };
 
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper content-padding">
       <div>
         <MapWithGoogleMapsProvider
           selectedDestinations={orderedDestinations}

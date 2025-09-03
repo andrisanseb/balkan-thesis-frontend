@@ -92,7 +92,6 @@ export const Welcome = () => {
                     )}
                 </div>
                 <div className="welcome-action">
-                    <span>Ready to start exploring?</span>
                     <a href="/experiences" className="welcome-btn">Find Experiences</a>
                     <a href="/roadTrip" className="welcome-btn">Plan Your Trip</a>
                 </div>

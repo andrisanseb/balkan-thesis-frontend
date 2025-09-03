@@ -44,9 +44,9 @@ export const NavBar = () => {
                     <div className="nav-profile">
                         {currentUser ? (
                             <>
-                                <Link className="nav-username" to="/my-profile">
+                                <span className="nav-username" style={{ cursor: "default" }}>
                                     {currentUser.username.toUpperCase()}
-                                </Link>
+                                </span>
                                 <button className="nav-logout-btn" onClick={handleLogout} title="Logout">
                                     <FaSignOutAlt />
                                 </button>
@@ -74,9 +74,9 @@ export const NavBar = () => {
                         <NavLink to="/activity-controller" onClick={() => setMenuOpen(false)}>ACTIVITIES</NavLink>
                         {currentUser ? (
                             <>
-                                <Link className="nav-username" to="/my-profile" onClick={() => setMenuOpen(false)}>
+                                <span className="nav-username" style={{ cursor: "default" }}>
                                     {currentUser.username.toUpperCase()}
-                                </Link>
+                                </span>
                                 <button className="nav-logout-btn" onClick={() => { setMenuOpen(false); handleLogout(); }} title="Logout">
                                     <FaSignOutAlt />
                                 </button>

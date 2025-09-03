@@ -13,7 +13,7 @@
     margin-top: 24px;
 }
 
-.activity {
+.activity-organiser {
     background: #f7fafc;
     border: 1px solid #e3f2fd;
     border-radius: 6px;
@@ -27,17 +27,17 @@
 }
 
 /* Hide the default drag preview dot from react-beautiful-dnd */
-.activity:active,
-.activity:focus {
+.activity-organiser:active,
+.activity-organiser:focus {
     outline: none;
     box-shadow: none;
 }
 
-.activity:hover {
+.activity-organiser:hover {
     background: #e3f2fd;
 }
 
-.activity.dragging {
+.activity-organiser.dragging {
     opacity: 0.6;
 }
 
@@ -116,7 +116,7 @@ ul {
     font-size: 14px;
 }
 
-.activity-details {
+.activity-details-organiser {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -125,7 +125,7 @@ ul {
     gap: 12px;
 }
 
-.activity-name {
+.activity-name-organiser {
     font-weight: 600;
     color: #1976d2;
     margin-bottom: 2px;
@@ -181,35 +181,6 @@ ul {
 
 .distance-duration {
     font-size: 14px;
-}
-
-.gas-cost-container {
-    margin-top: 20px;
-}
-
-.gas-cost-container label {
-    margin-right: 10px;
-}
-
-.gas-cost-container input {
-    margin-right: 10px;
-    padding: 2px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.gas-cost-container button {
-    margin-right: 10px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-}
-
-.gas-cost-container button:hover {
-    background-color: #0056b3;
 }
 
 .day-route-info {

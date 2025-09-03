@@ -68,6 +68,15 @@ const ActivitySelector = ({
         : String(activity.destinationId || (activity.destination && activity.destination.id)) === String(selectedDestinationFilter)
     );
 
+  // Sort by best reviewed
+  const bestReviewedActivities = [...filteredActivities]
+    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .slice(0, 5);
+
+  // Remove best reviewed from the rest to avoid duplicates
+  const bestReviewedIds = new Set(bestReviewedActivities.map(a => a.id));
+  const restActivities = filteredActivities.filter(a => !bestReviewedIds.has(a.id));
+
   return (
     <div className="content-wrapper content-padding">
       <h1 className="big-green-title">Activities</h1>
@@ -111,8 +120,22 @@ const ActivitySelector = ({
         </select>
       </div>
       <div>
+        <h2 style={{ color: "#1976d2", marginBottom: "8px" }}>Best Reviewed</h2>
         <ActivityList
-          activities={filteredActivities}
+          activities={bestReviewedActivities}
+          destinations={selectedDestinations}
+          showFavorite={false}
+          showYoutube={false}
+          showRatingRow={false}
+          showCreatedBy={false}
+          onActivityClick={toggleActivitySelection}
+          selectedActivities={selectedActivities}
+        />
+      </div>
+      <div>
+        <h2 style={{ color: "#1976d2", margin: "24px 0 8px 0" }}>All Activities</h2>
+        <ActivityList
+          activities={restActivities}
           destinations={selectedDestinations}
           showFavorite={false}
           showYoutube={false}
