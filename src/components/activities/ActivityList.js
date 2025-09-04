@@ -141,30 +141,57 @@ const ActivityList = ({
             <div className="activity-actions-row">
               {showRatingRow && (
                 <div className="activity-rating-row">
-                  <span className="activity-rating-value">
-                    {avgRating ? avgRating.toFixed(1) : "N/A"}
-                  </span>
-                  <FaStar
-                    className={`activity-rating-star ${hasUserReviewed ? "user-reviewed" : "user-not-reviewed"}`}
-                    style={{ cursor: "pointer" }}
-                    title="Click to review this activity"
-                    onClick={() => handleStarClick && handleStarClick(activity.id)}
-                  />
-                  <span className="activity-review-count">
-                    ({reviewCount})
-                  </span>
+                  {reviewCount > 0 ? (
+                    <>
+                      <span className="activity-rating-value">
+                        {avgRating
+                          ? Number.isInteger(avgRating)
+                            ? avgRating
+                            : avgRating.toFixed(1).replace(/\.0$/, '')
+                          : ""}
+                      </span>
+                      <FaStar
+                        className={`activity-rating-star ${hasUserReviewed ? "user-reviewed" : "user-not-reviewed"}`}
+                        style={{ cursor: "pointer" }}
+                        title="Click to review this activity"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleStarClick && handleStarClick(activity.id);
+                        }}
+                      />
+                      <span className="activity-review-count">
+                        ({reviewCount})
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <FaStar
+                        className="activity-rating-star user-not-reviewed"
+                        style={{ cursor: "pointer" }}
+                        title="Be the first to review this activity!"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleStarClick && handleStarClick(activity.id);
+                        }}
+                      />
+                      <span className="activity-review-count" style={{ color: "#888", marginLeft: "6px" }}>
+                        no reviews yet
+                      </span>
+                    </>
+                  )}
                 </div>
               )}
               {showYoutube && (
                 <button
                   className="youtube-btn"
                   title="Watch most related video on YouTube"
-                  onClick={() =>
+                  onClick={e => {
+                    e.stopPropagation();
                     window.open(
                       `https://www.youtube.com/results?search_query=${encodeURIComponent(activity.name + " " + (destInfo?.name || ""))}&sp=EgIQAQ%253D%253D`,
                       "_blank"
-                    )
-                  }
+                    );
+                  }}
                 >
                   <FaYoutube className="youtube-icon" />
                 </button>
@@ -173,12 +200,18 @@ const ActivityList = ({
                 favoriteActivities[activity.id] ? (
                   <FaHeart
                     className="heart-icon liked"
-                    onClick={() => onFavoriteToggle && onFavoriteToggle(activity.id)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      onFavoriteToggle && onFavoriteToggle(activity.id);
+                    }}
                   />
                 ) : (
                   <FaRegHeart
                     className="heart-icon"
-                    onClick={() => onFavoriteToggle && onFavoriteToggle(activity.id)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      onFavoriteToggle && onFavoriteToggle(activity.id);
+                    }}
                   />
                 )
               )}

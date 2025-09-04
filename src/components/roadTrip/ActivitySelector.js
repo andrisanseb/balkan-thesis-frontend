@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ActivityList from "../activities/ActivityList";
 import "../../styles/ActivitySelector.css";
+import { useReviewModal } from "../../hooks/useReviewModal";
+import ReviewModal from "../activities/ReviewModal";
 
 const categories = [
   "All",
@@ -18,20 +20,57 @@ const ActivitySelector = ({
   onNext,
   onBack,
 }) => {
-  const [selectedActivities, setSelectedActivities] = useState(
-    selectedActivitiesProp
-  );
+  const API_URL = process.env.REACT_APP_API_URL;
+  const [selectedActivities, setSelectedActivities] = useState(selectedActivitiesProp);
   const [allActivities, setAllActivities] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedDestinationFilter, setSelectedDestinationFilter] = useState(
-    "All"
-  );
+  const [selectedDestinationFilter, setSelectedDestinationFilter] = useState("All");
+  const [activityRatings, setActivityRatings] = useState({});
+  const [activityReviewCounts, setActivityReviewCounts] = useState({});
+  const [allReviews, setAllReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [favoriteActivities, setFavoriteActivities] = useState({});
+
+  // Review modal hook
+  const {
+    reviewModalOpen,
+    reviewActivityId,
+    reviewStars,
+    setReviewStars,
+    reviewComment,
+    setReviewComment,
+    reviewSubmitting,
+    setReviewSubmitting,
+    openReviewModal,
+    closeReviewModal,
+  } = useReviewModal();
+
+  // Fetch favorite activities for the user
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        if (!currentUser) return;
+        const favoritesResponse = await fetch(
+          API_URL + "/favoriteActivities/" + currentUser.id
+        );
+        const favoriteActivityIds = await favoritesResponse.json();
+        const favoriteActivitiesObj = {};
+        favoriteActivityIds.forEach(id => {
+          favoriteActivitiesObj[id] = true;
+        });
+        setFavoriteActivities(favoriteActivitiesObj);
+      } catch (error) {
+        setFavoriteActivities({});
+      }
+    };
+    fetchFavorites();
+  }, [API_URL]);
 
   useEffect(() => {
     let allActivities = selectedDestinations.flatMap(
       (destination) => destination.activities
     );
-    // Always shuffle activities randomly
     allActivities = [...allActivities].sort(() => Math.random() - 0.5);
     setAllActivities(allActivities);
     setSelectedActivities((prev) =>
@@ -44,6 +83,42 @@ const ActivitySelector = ({
   useEffect(() => {
     onSelectedActivitiesChange(selectedActivities);
   }, [selectedActivities]);
+
+  // Fetch reviews and calculate ratings/counts
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch(API_URL + "/activityReviews");
+      const reviews = await res.json();
+      setAllReviews(reviews);
+
+      const ratingsMap = {};
+      const countsMap = {};
+      reviews.forEach((review) => {
+        if (!ratingsMap[review.activityId]) {
+          ratingsMap[review.activityId] = { sum: 0, count: 0 };
+        }
+        ratingsMap[review.activityId].sum += review.stars;
+        ratingsMap[review.activityId].count += 1;
+      });
+      Object.keys(ratingsMap).forEach((activityId) => {
+        countsMap[activityId] = ratingsMap[activityId].count;
+      });
+      const avgRatings = {};
+      Object.keys(ratingsMap).forEach((activityId) => {
+        avgRatings[activityId] = ratingsMap[activityId].sum / ratingsMap[activityId].count;
+      });
+      setActivityRatings(avgRatings);
+      setActivityReviewCounts(countsMap);
+    } catch (err) {
+      setActivityRatings({});
+      setActivityReviewCounts({});
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, [API_URL]);
 
   const toggleActivitySelection = (activity) => {
     setSelectedActivities((prevSelectedActivities) => {
@@ -68,14 +143,96 @@ const ActivitySelector = ({
         : String(activity.destinationId || (activity.destination && activity.destination.id)) === String(selectedDestinationFilter)
     );
 
-  // Sort by best reviewed
+  // My Favorites: activities that are in favoriteActivities
+  const myFavoriteActivities = filteredActivities.filter(
+    (a) => favoriteActivities[a.id]
+  );
+
+  // Best reviewed: top 5 by average rating, then by review count if ratings are equal
   const bestReviewedActivities = [...filteredActivities]
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .sort((a, b) => {
+      const ratingA = activityRatings[a.id] || 0;
+      const ratingB = activityRatings[b.id] || 0;
+      if (ratingB !== ratingA) {
+        return ratingB - ratingA;
+      }
+      // If ratings are equal, compare by review count
+      const countA = activityReviewCounts[a.id] || 0;
+      const countB = activityReviewCounts[b.id] || 0;
+      return countB - countA;
+    })
     .slice(0, 5);
 
-  // Remove best reviewed from the rest to avoid duplicates
+  // Most popular: top 5 by review count, then by average rating if counts are equal
+  const mostPopularActivities = [...filteredActivities]
+    .sort((a, b) => {
+      const countA = activityReviewCounts[a.id] || 0;
+      const countB = activityReviewCounts[b.id] || 0;
+      if (countB !== countA) {
+        return countB - countA;
+      }
+      // If review counts are equal, compare by average rating
+      const ratingA = activityRatings[a.id] || 0;
+      const ratingB = activityRatings[b.id] || 0;
+      return ratingB - ratingA;
+    })
+    .slice(0, 5);
+
+  // Remove best reviewed, most popular, and favorites from the rest to avoid duplicates
   const bestReviewedIds = new Set(bestReviewedActivities.map(a => a.id));
-  const restActivities = filteredActivities.filter(a => !bestReviewedIds.has(a.id));
+  const mostPopularIds = new Set(mostPopularActivities.map(a => a.id));
+  const myFavoriteIds = new Set(myFavoriteActivities.map(a => a.id));
+  const restActivities = filteredActivities.filter(
+    a => !bestReviewedIds.has(a.id) && !mostPopularIds.has(a.id) && !myFavoriteIds.has(a.id)
+  );
+
+  // Find user review for the modal
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const userReviewData = allReviews.find(
+    r => r.activityId === reviewActivityId && r.userId === currentUser?.id
+  );
+
+  // Submit or update review
+  const submitReview = async () => {
+    if (!reviewStars) return alert("Please select a star rating.");
+    setReviewSubmitting(true);
+    try {
+      // Check if user already reviewed this activity
+      const existingReview = allReviews.find(
+        r => r.activityId === reviewActivityId && r.userId === currentUser?.id
+      );
+      if (existingReview) {
+        // Update existing review
+        await fetch(`${API_URL}/activityReviews`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            activityId: reviewActivityId,
+            stars: reviewStars,
+            comment: reviewComment,
+          }),
+        });
+      } else {
+        // Create new review
+        await fetch(`${API_URL}/activityReviews`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            activityId: reviewActivityId,
+            stars: reviewStars,
+            comment: reviewComment,
+          }),
+        });
+      }
+      closeReviewModal();
+      await fetchReviews();
+    } catch (err) {
+      alert("Failed to submit review.");
+    }
+    setReviewSubmitting(false);
+  };
 
   return (
     <div className="content-wrapper content-padding">
@@ -85,10 +242,7 @@ const ActivitySelector = ({
         activity to add or remove it from your selection.
       </p>
       <div className="activity-filter-row">
-        <label
-          htmlFor="activity-category-filter"
-          style={{ marginRight: "8px" }}
-        >
+        <label htmlFor="activity-category-filter" style={{ marginRight: "8px" }}>
           Category:
         </label>
         <select
@@ -119,32 +273,99 @@ const ActivitySelector = ({
           ))}
         </select>
       </div>
-      <div>
-        <h2 style={{ color: "#1976d2", marginBottom: "8px" }}>Best Reviewed</h2>
-        <ActivityList
-          activities={bestReviewedActivities}
-          destinations={selectedDestinations}
-          showFavorite={false}
-          showYoutube={false}
-          showRatingRow={false}
-          showCreatedBy={false}
-          onActivityClick={toggleActivitySelection}
-          selectedActivities={selectedActivities}
-        />
-      </div>
-      <div>
-        <h2 style={{ color: "#1976d2", margin: "24px 0 8px 0" }}>All Activities</h2>
-        <ActivityList
-          activities={restActivities}
-          destinations={selectedDestinations}
-          showFavorite={false}
-          showYoutube={false}
-          showRatingRow={false}
-          showCreatedBy={false}
-          onActivityClick={toggleActivitySelection}
-          selectedActivities={selectedActivities}
-        />
-      </div>
+      {loading ? (
+        <div className="loading-container">
+          <span className="spinner" />
+        </div>
+      ) : (
+        <>
+          <div>
+            <h2 style={{ color: "#1976d2", marginBottom: "8px" }}>
+              My Favorites <span role="img" aria-label="heart">❤️</span>
+            </h2>
+            <ActivityList
+              activities={myFavoriteActivities}
+              destinations={selectedDestinations}
+              activityRatings={activityRatings}
+              activityReviewCounts={activityReviewCounts}
+              showFavorite={false}
+              showYoutube={true}
+              showRatingRow={true}
+              showCreatedBy={false}
+              onActivityClick={toggleActivitySelection}
+              selectedActivities={selectedActivities}
+              handleStarClick={openReviewModal}
+              allReviews={allReviews}
+            />
+          </div>
+          <div>
+            <h2 style={{ color: "#1976d2", marginBottom: "8px" }}>
+              Best Reviewed <span role="img" aria-label="star">⭐</span>
+            </h2>
+            <ActivityList
+              activities={bestReviewedActivities}
+              destinations={selectedDestinations}
+              activityRatings={activityRatings}
+              activityReviewCounts={activityReviewCounts}
+              showFavorite={false}
+              showYoutube={true}
+              showRatingRow={true}
+              showCreatedBy={false}
+              onActivityClick={toggleActivitySelection}
+              selectedActivities={selectedActivities}
+              handleStarClick={openReviewModal}
+              allReviews={allReviews}
+            />
+          </div>
+          <div>
+            <h2 style={{ color: "#1976d2", margin: "24px 0 8px 0" }}>
+              Most Popular <span role="img" aria-label="fire">🔥</span>
+            </h2>
+            <ActivityList
+              activities={mostPopularActivities}
+              destinations={selectedDestinations}
+              activityRatings={activityRatings}
+              activityReviewCounts={activityReviewCounts}
+              showFavorite={false}
+              showYoutube={true}
+              showRatingRow={true}
+              showCreatedBy={false}
+              onActivityClick={toggleActivitySelection}
+              selectedActivities={selectedActivities}
+              handleStarClick={openReviewModal}
+              allReviews={allReviews}
+            />
+          </div>
+          <div>
+            <h2 style={{ color: "#1976d2", margin: "24px 0 8px 0" }}>All Activities</h2>
+            <ActivityList
+              activities={restActivities}
+              destinations={selectedDestinations}
+              activityRatings={activityRatings}
+              activityReviewCounts={activityReviewCounts}
+              showFavorite={false}
+              showYoutube={true}
+              showRatingRow={true}
+              showCreatedBy={false}
+              onActivityClick={toggleActivitySelection}
+              selectedActivities={selectedActivities}
+              handleStarClick={openReviewModal}
+              allReviews={allReviews}
+            />
+          </div>
+        </>
+      )}
+      <ReviewModal
+        open={reviewModalOpen}
+        stars={reviewStars}
+        setStars={setReviewStars}
+        comment={reviewComment}
+        setComment={setReviewComment}
+        submitting={reviewSubmitting}
+        onSubmit={submitReview}
+        onCancel={closeReviewModal}
+        userReviewData={userReviewData}
+      />
       <div className="button-row">
         <button onClick={onBack} className="back-btn">
           Back

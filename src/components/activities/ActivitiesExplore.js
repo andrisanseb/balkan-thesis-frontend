@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../../styles/ActivitiesExplore.css";
-import { FaSpinner, FaStar } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import AuthService from "../../services/AuthService";
 import ActivityList from "./ActivityList";
+import { useReviewModal } from "../../hooks/useReviewModal";
+import ReviewModal from "../activities/ReviewModal";
 
 const ActivitiesExplore = ({ destinations }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -15,11 +17,6 @@ const ActivitiesExplore = ({ destinations }) => {
   const [loading, setLoading] = useState(true);
   const [favoriteActivities, setFavoriteActivities] = useState({});
   const [visibleCount, setVisibleCount] = useState(12);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [reviewActivityId, setReviewActivityId] = useState(null);
-  const [reviewStars, setReviewStars] = useState(0);
-  const [reviewComment, setReviewComment] = useState("");
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [activityRatings, setActivityRatings] = useState({});
   const [activityReviewCounts, setActivityReviewCounts] = useState({});
   const [userReviews, setUserReviews] = useState({});
@@ -30,6 +27,20 @@ const ActivitiesExplore = ({ destinations }) => {
   const reviewSlideIntervalRef = useRef({});
   const currentUser = AuthService.getCurrentUser();
   const [selectedCountry, setSelectedCountry] = useState("All");
+
+  // Review modal hook
+  const {
+    reviewModalOpen,
+    reviewActivityId,
+    reviewStars,
+    setReviewStars,
+    reviewComment,
+    setReviewComment,
+    reviewSubmitting,
+    setReviewSubmitting,
+    openReviewModal,
+    closeReviewModal,
+  } = useReviewModal();
 
   // Get activities from destinations prop (cached)
   useEffect(() => {
@@ -177,7 +188,7 @@ const ActivitiesExplore = ({ destinations }) => {
   };
 
   const categoryOptions = [
-    { type: "All", label: "All", emoji: "🧭" }, // Changed from 🌍 to 🧭
+    { type: "All", label: "All", emoji: "🧭" },
     { type: "Culture", label: "Culture", emoji: "🏛️" },
     { type: "Gastronomy", label: "Gastronomy", emoji: "🍽️" },
     { type: "Nature", label: "Nature", emoji: "🌲" },
@@ -243,7 +254,7 @@ const ActivitiesExplore = ({ destinations }) => {
         onClick={() => setSortType("guide")}
       >
         <span className="sort-desc">User Suggestions</span>
-        <span className="sort-emoji" role="img" aria-label="guide">💬</span> {/* Changed from 🧑‍🏫 to 💬 */}
+        <span className="sort-emoji" role="img" aria-label="guide">💬</span>
       </button>
     </div>
   );
@@ -369,24 +380,17 @@ const ActivitiesExplore = ({ destinations }) => {
     }
   };
 
-  // Open review modal, prefill if user has reviewed
+  // Use the reusable modal logic
   const handleStarClick = (activityId) => {
-    if (userReviews[activityId] && userReviewData[activityId]) {
-      setReviewStars(userReviewData[activityId].stars);
-      setReviewComment(userReviewData[activityId].comment || "");
+    const review = userReviewData[activityId];
+    if (review) {
+      setReviewStars(review.stars);
+      setReviewComment(review.comment || "");
     } else {
       setReviewStars(0);
       setReviewComment("");
     }
-    setReviewActivityId(activityId);
-    setReviewModalOpen(true);
-  };
-
-  const closeReviewModal = () => {
-    setReviewModalOpen(false);
-    setReviewActivityId(null);
-    setReviewStars(0);
-    setReviewComment("");
+    openReviewModal(activityId);
   };
 
   // Submit or update review
@@ -455,6 +459,9 @@ const ActivitiesExplore = ({ destinations }) => {
     };
   }, [displayedActivities, allReviews]);
 
+  // Find user review for the modal
+  const userReviewForModal = userReviewData[reviewActivityId];
+
   return (
     <div className="content-wrapper content-padding">
       <div className="image-container">
@@ -505,50 +512,17 @@ const ActivitiesExplore = ({ destinations }) => {
           )}
         </>
       )}
-      {/* Review Modal */}
-      {reviewModalOpen && (
-        <div className="review-modal-overlay">
-          <div className="review-modal">
-            <h3>Review Activity</h3>
-            <div className="review-stars">
-              {[1,2,3,4,5].map((star) => (
-                <FaStar
-                  key={star}
-                  className={`review-star ${reviewStars >= star ? "selected" : ""}`}
-                  onClick={() => setReviewStars(star)}
-                />
-              ))}
-            </div>
-            <textarea
-              className="review-comment"
-              placeholder="Add a comment (optional)"
-              value={reviewComment}
-              onChange={e => setReviewComment(e.target.value)}
-              rows={3}
-            />
-            {userReviews[reviewActivityId] && userReviewData[reviewActivityId] && (
-              <div className="your-review-info" style={{ marginBottom: 8, color: "#1976d2", fontSize: "0.95em" }}>
-                <span>
-                  Current review: {userReviewData[reviewActivityId].stars}★
-                  {userReviewData[reviewActivityId].comment ? ` — "${userReviewData[reviewActivityId].comment}"` : ""}
-                </span>
-              </div>
-            )}
-            <div className="review-modal-actions">
-              <button
-                className="review-submit-btn"
-                onClick={submitReview}
-                disabled={reviewSubmitting}
-              >
-                {reviewSubmitting ? "Submitting..." : "Submit"}
-              </button>
-              <button className="review-cancel-btn" onClick={closeReviewModal}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ReviewModal
+        open={reviewModalOpen}
+        stars={reviewStars}
+        setStars={setReviewStars}
+        comment={reviewComment}
+        setComment={setReviewComment}
+        submitting={reviewSubmitting}
+        onSubmit={submitReview}
+        onCancel={closeReviewModal}
+        userReviewData={userReviewForModal}
+      />
     </div>
   );
 };

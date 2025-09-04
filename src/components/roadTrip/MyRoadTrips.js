@@ -73,7 +73,7 @@ const MyRoadTrips = ({ destinations }) => {
 
   return (
     <div className="content-wrapper content-padding">
-      <h2>My Roadtrips</h2>
+      <h2 className="big-green-title">My Roadtrips</h2>
       <div className="roadtrip-list-flex">
         {roadTrips.map((trip, idx) => {
           let details = [];
