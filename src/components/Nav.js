@@ -3,12 +3,13 @@ import AuthService from '../services/AuthService';
 import '../styles/Nav.css';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { FaSignOutAlt, FaBars } from "react-icons/fa";
+import { FaSignOutAlt, FaBars, FaKey, FaUserPlus } from "react-icons/fa"; // Add icons
 
 export const NavBar = () => {
     const navigate = useNavigate();
     const currentUser = AuthService.getCurrentUser();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 880);
 
     const handleLogout = () => {
         AuthService.logout();
@@ -18,6 +19,7 @@ export const NavBar = () => {
 
     useEffect(() => {
         const handleResize = () => {
+            setIsMobile(window.innerWidth <= 880);
             if (window.innerWidth > 900 && menuOpen) {
                 setMenuOpen(false);
             }
@@ -33,16 +35,28 @@ export const NavBar = () => {
                     <div className="nav-brand">
                         <Link to="/">BalkanTrip</Link>
                     </div>
-                    <div className="nav-center">
-                        <div className="nav-links-desktop">
-                            <NavLink to="/experiences">EXPLORE</NavLink>
-                            <NavLink to="/roadTrip">PLAN ROADTRIP</NavLink>
-                            <NavLink to="/my-roadtrips">MY ROADTRIPS</NavLink>
-                            <NavLink to="/activity-controller">ACTIVITIES</NavLink>
+                    {currentUser && !isMobile && (
+                        <div className="nav-center">
+                            <div className="nav-links-desktop">
+                                <NavLink to="/experiences">EXPLORE</NavLink>
+                                <NavLink to="/roadTrip">PLAN ROADTRIP</NavLink>
+                                <NavLink to="/my-roadtrips">MY ROADTRIPS</NavLink>
+                                <NavLink to="/activity-controller">ACTIVITIES</NavLink>
+                            </div>
                         </div>
-                    </div>
-                    <div className="nav-profile">
-                        {currentUser ? (
+                    )}
+                    <div className="nav-profile" style={{ marginLeft: "auto" }}>
+                        {!currentUser && (
+                            <>
+                                <Link to="/login" title="Login" className="nav-icon-link">
+                                    <FaKey style={{ marginRight: 6 }} />
+                                </Link>
+                                <Link to="/register" title="Register" className="nav-icon-link">
+                                    <FaUserPlus style={{ marginRight: 6 }} />
+                                </Link>
+                            </>
+                        )}
+                        {currentUser && !isMobile && (
                             <>
                                 <span className="nav-username" style={{ cursor: "default" }}>
                                     {currentUser.username.toUpperCase()}
@@ -51,42 +65,30 @@ export const NavBar = () => {
                                     <FaSignOutAlt />
                                 </button>
                             </>
-                        ) : (
-                            <>
-                                <Link to="/login">LOGIN</Link>
-                                <Link to="/register">REGISTER</Link>
-                            </>
                         )}
                     </div>
-                    <button
-                        className="nav-hamburger"
-                        aria-label="Toggle navigation"
-                        onClick={() => setMenuOpen(!menuOpen)}
-                    >
-                        <FaBars />
-                    </button>
+                    {currentUser && isMobile && (
+                        <button
+                            className="nav-hamburger"
+                            aria-label="Toggle navigation"
+                            onClick={() => setMenuOpen(!menuOpen)}
+                        >
+                            <FaBars />
+                        </button>
+                    )}
                 </div>
-                {menuOpen && (
+                {menuOpen && currentUser && isMobile && (
                     <div className="nav-mobile-menu">
                         <NavLink to="/experiences" onClick={() => setMenuOpen(false)}>EXPLORE</NavLink>
                         <NavLink to="/roadTrip" onClick={() => setMenuOpen(false)}>PLAN ROADTRIP</NavLink>
                         <NavLink to="/my-roadtrips" onClick={() => setMenuOpen(false)}>MY ROADTRIPS</NavLink>
                         <NavLink to="/activity-controller" onClick={() => setMenuOpen(false)}>ACTIVITIES</NavLink>
-                        {currentUser ? (
-                            <>
-                                <span className="nav-username" style={{ cursor: "default" }}>
-                                    {currentUser.username.toUpperCase()}
-                                </span>
-                                <button className="nav-logout-btn" onClick={() => { setMenuOpen(false); handleLogout(); }} title="Logout">
-                                    <FaSignOutAlt />
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <Link to="/login" onClick={() => setMenuOpen(false)}>LOGIN</Link>
-                                <Link to="/register" onClick={() => setMenuOpen(false)}>REGISTER</Link>
-                            </>
-                        )}
+                        <span className="nav-username" style={{ cursor: "default" }}>
+                            {currentUser.username.toUpperCase()}
+                        </span>
+                        <button className="nav-logout-btn" onClick={() => { setMenuOpen(false); handleLogout(); }} title="Logout">
+                            <FaSignOutAlt />
+                        </button>
                     </div>
                 )}
             </div>

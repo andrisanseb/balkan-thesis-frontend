@@ -61,6 +61,30 @@
     gap: 10px;
 }
 
+.nav-profile .nav-icon-link {
+    background: #ffebee;
+    color: #1976d2;
+    border: none;
+    border-radius: 10px;
+    padding: 2px 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    margin-left: 4px;
+    margin-right: 4px;
+    box-shadow: none;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.nav-profile .nav-icon-link:hover,
+.nav-profile .nav-icon-link:focus {
+    background: #1976d2;
+    color: #fff;
+}
+
 .nav-username {
     font-weight: 700;
     color: #000000;
@@ -103,9 +127,16 @@
 @media (max-width: 880px) {
 
     .nav-center,
-    .nav-links-desktop,
-    .nav-profile {
+    .nav-links-desktop {
         display: none;
+    }
+
+    /* Only hide .nav-profile if user is logged in (handled in JS) */
+    .nav-profile {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
     }
 
     .nav-hamburger {

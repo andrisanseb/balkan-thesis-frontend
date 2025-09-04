@@ -50,11 +50,9 @@ export default function App() {
 
   return (
     <>
-      {currentUser && (
-        <header>
-          <NavBar />
-        </header>
-      )}
+      <header>
+        <NavBar />
+      </header>
       <main>
         {/* <Assistant /> */}
         <Routes>
